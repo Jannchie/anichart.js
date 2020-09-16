@@ -9,12 +9,7 @@ class ACBar {
     this.barRedius = 4;
     this.itemCount = 6;
     this.labelPandding = 10;
-    this.barHeight =
-      ((this.height - this.margin.top - this.margin.bottom) / this.itemCount) *
-      0.8;
-    this.initCanvas();
     this.getValueText = (value) => `pts ${value}M`;
-    this.loadData(data);
   }
 
   initCanvas() {
@@ -218,17 +213,24 @@ class ACBar {
       this.imageData[k] = await d3.image(this.imageData[k]);
     }
     hintText("Loading Layout", this);
+
+    // TODO: ?
+    this.margin.top += 50;
+    this.barHeight =
+      ((this.height - this.margin.top - this.margin.bottom) / this.itemCount) *
+      0.8;
     this.ctx.font = `${this.barHeight}px Sarasa Mono SC`;
-    let maxTextWidth = d3.max([...this.nameSet], (name) => {
-      return this.ctx.measureText(name).width;
-    });
-    this.margin.left += maxTextWidth;
+
     this.margin.left += this.labelPandding;
     this.margin.right += this.ctx.measureText(
       this.getValueText(d3.format(",.2f")(this.maxValue))
     ).width;
-
     this.margin.right += this.labelPandding;
+
+    let maxTextWidth = d3.max([...this.nameSet], (name) => {
+      return this.ctx.measureText(name).width;
+    });
+    this.margin.left += maxTextWidth;
   }
   /**
    * Convolution
@@ -274,24 +276,66 @@ class ACBar {
       }
     }
   }
-  drawFrame(n, img) {
+
+  drawAxis(xScale) {
+    var magic = [1, 2, 3, 4, 5, 10];
+    // 长度范围
+    let range = xScale.range();
+    // 数值范围
+    let domain = xScale.domain();
+
+    let tickArray = ((domain) => {
+      let count = 5;
+      let min = domain[0];
+      let max = domain[1];
+      let delta = Math.ceil((max - min) / count);
+      let mul = 1;
+      while (true) {
+        for (let index = 0; index < magic.length; index++) {
+          const element = magic[index] * mul;
+          if (delta <= element) {
+            delta = element;
+            let ticks = [];
+            let c = 0;
+            while (ticks.length != count) {
+              if (c * delta < min) {
+                c++;
+                continue;
+              }
+              ticks.push(delta * c++);
+            }
+            return ticks;
+          }
+        }
+        mul *= 10;
+      }
+    })(domain);
+    console.log(tickArray);
+    this.ctx.fillStyle = "white";
+    this.ctx.textAlign = "center";
+    this.ctx.font = `${this.barHeight * 0.7}px Sarasa Mono SC`;
+    for (let tick of tickArray) {
+      this.ctx.fillText(tick, this.margin.left + xScale(tick), 50);
+    }
+  }
+
+  drawFrame(n) {
     let cData = this.frameData[n];
     this.ctx.clearRect(0, 0, this.width, this.height);
     this.ctx.fillStyle = this.background;
     this.ctx.fillRect(0, 0, this.width, this.height);
 
-    var xScale = d3
+    let xScale = d3
       .scaleLinear()
       .domain([0, d3.max(cData, (d) => d.value)])
       .range([0, this.width - this.margin.left - this.margin.right]);
 
-    var yScale = d3
+    let yScale = d3
       .scaleLinear()
       .domain([0, this.itemCount])
-      .range([
-        this.margin.top,
-        this.height - this.margin.top - this.margin.bottom,
-      ]);
+      .range([this.margin.top, this.height - this.margin.bottom]);
+
+    this.drawAxis(xScale);
     // cData.sort((a, b) => a.rank - b.rank);
     cData.forEach((e) => {
       this.ctx.drawBar(
@@ -308,6 +352,8 @@ class ACBar {
   }
 
   async play() {
+    this.initCanvas();
+    this.loadData(data);
     await this.preRender();
     let frame = 1;
     let len = this.frameData.length;
@@ -331,16 +377,26 @@ let data = [
     image:
       "https://i2.hdslb.com/bfs/face/983034448f81f45f05956d0455a86fe0639d6a36.jpg@80w_80h.jpg",
   },
-  { name: "B", value: [1, 2, 3, 4, 5, 6], color: "#198844" },
-  { name: "D", value: [1, 3, 4, 5, 6, 7], color: "#3971ED" },
+  { name: "B", value: [1, 2, 3, 4, 52, 13], color: "#198844" },
+  {
+    name: "D",
+    value: [1, 3, 4, 5, 62, 7],
+    color: "#3971ED",
+    image:
+      "https://i1.hdslb.com/bfs/face/2254162161a60b528cfec449f3450409a81ebc37.jpg@80w_80h.jpg",
+  },
   {
     name: "E",
     value: [undefined, 3.3, undefined, undefined, undefined, undefined],
     color: "white",
   },
-  { name: "F", value: [undefined, undefined, 2, 1, 5, 5], color: "#3971ED" },
-  { name: "G", value: [undefined, 7, 1, 2, undefined, 3], color: "#3971ED" },
-  { name: "H", value: [undefined, 1, 1, 2, 2, 1], color: "#3971ED" },
+  {
+    name: "F",
+    value: [undefined, undefined, 2, 1, 512, 52563],
+    color: "#3971ED",
+  },
+  { name: "G", value: [undefined, 7, 1, 2, undefined, 52], color: "#3971ED" },
+  { name: "H", value: [undefined, 1, 1, 2, 52, 64], color: "#3971ED" },
 ];
 
 aChartBar = new ACBar(data);
