@@ -11,6 +11,7 @@ module.exports = {
   devtool: "inline-source-map",
   devServer: {
     contentBase: "./dist",
+    index: "./demo/canvas.html",
   },
   module: {
     rules: [
