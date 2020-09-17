@@ -7,15 +7,4 @@ module.exports = merge(common, {
     contentBase: "./dist",
     index: "./demo/canvas.html",
   },
-  module: {
-    rules: [
-      {
-        test: /\.js$/,
-        use: {
-          loader: "babel-loader",
-        },
-        exclude: "/node_modules/",
-      },
-    ],
-  },
 });
