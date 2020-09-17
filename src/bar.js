@@ -1,7 +1,7 @@
 import * as d3 from "d3";
 import { Whammy } from "./whammy";
 class AniBarChart {
-  constructor(data) {
+  constructor(data, setting) {
     this.width = 1000;
     this.height = 300;
     this.margin = { left: 10, right: 10, top: 10, bottom: 10 };
