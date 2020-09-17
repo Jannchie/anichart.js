@@ -14,15 +14,15 @@ let background = "#1D1F21";
 let color = [
   "#CC342B",
   "#D25252",
-  "#198844",
   "#3971ED",
   "#A36AC7",
-  "#608B4E",
   "#CE9178",
   "#EFC090",
   "#FBA922",
   "#4EC9B0",
   "#CCDF32",
+  "#608B4E",
+  "#198844",
 ];
 
 let interval = 2;

@@ -1,8 +1,8 @@
-// Create an export button
+let canvas = d3.select("canvas").node();
 
-var context = canvas.getContext("2d");
+let context = canvas.getContext("2d");
 
-var video = new Whammy.Video(frameRate);
+var video = new Whammy.Video(60);
 
 var DOMURL = window.URL || window.webkitURL || window;
 
@@ -19,7 +19,6 @@ var timer = d3.timer(() => {
     }, 100);
   }
   var image = canvas.toDataURL();
-  // console.log(image);
   video.add(context);
 });
 

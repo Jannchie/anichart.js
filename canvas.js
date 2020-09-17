@@ -5,11 +5,13 @@ class ACBar {
     this.margin = { left: 10, right: 10, top: 10, bottom: 10 };
     this.background = "#1D1F21";
     this.frameRate = 60;
-    this.interval = 6;
+    this.interval = 5;
     this.barRedius = 4;
     this.itemCount = 6;
     this.labelPandding = 10;
+    this.axisTextSize = 24;
     this.getValueText = (value) => `pts ${value}M`;
+    this.output = false;
   }
 
   initCanvas() {
@@ -75,8 +77,12 @@ class ACBar {
     ) => {
       let imgPandding = this.imageData[name] == undefined ? 0 : this.barHeight;
       this.ctx.globalAlpha = alpha;
+
+      // draw rect
       this.ctx.fillStyle = fillColor;
       this.ctx.radiusRect(x, y, xScale(value), height, this.barRedius, name);
+
+      // draw bar text
       this.ctx.textAlign = "right";
       this.ctx.fillStyle = this.background;
       this.ctx.font = `${height}px Sarasa Mono SC black`;
@@ -110,17 +116,42 @@ class ACBar {
       this.ctx.globalAlpha = 1;
     };
   }
+
+  getTickArray(max, min, count) {
+    var magic = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    let mul = 100;
+    let delta = Math.ceil((max - min) / count);
+    // 最小刻度
+    let x = magic[0] * mul;
+    // 最大刻度
+    let y = magic[0] * mul + delta * (count - 1);
+
+    while (magic[0] * mul >= min) {
+      mul /= 10;
+    }
+    console.log(x, y);
+  }
   loadData(data) {
     let frameData = [];
     this.imageData = {};
     let nameSet = new Set();
     this.maxValue = 0;
+    // 获取关键帧
+    this.keyFrames = d3.range(
+      0,
+      data[0].value.length * this.frameRate * this.interval,
+      this.frameRate * this.interval
+    );
+
+    // 对每组数据
     for (let item of data) {
       if (item.image != undefined) {
         this.imageData[item.name] = item.image;
       }
       let name = item.name;
       nameSet.add(name);
+
+      // 对每个value
       for (let i = 0; i < item.value.length - 1; i++) {
         const lValue = item.value[i];
         const rValue = item.value[i + 1];
@@ -153,7 +184,10 @@ class ACBar {
           default:
             break;
         }
+
+        // 对每一帧
         for (let j of d3.range(this.frameRate * this.interval + 1)) {
+          // f: 帧号
           let f = i * this.frameRate * this.interval + j;
           if (frameData[f] == undefined) {
             frameData[f] = [];
@@ -171,13 +205,19 @@ class ACBar {
             state: state,
             pos: offset < 0 ? 0 : offset,
           });
+          // 全局最大值
           if (val > this.maxValue) {
             this.maxValue = val;
+          }
+          // TODO: 获取每一帧的最大值和最小值
+          if (frameData[f].max == undefined) frameData[f].max = val;
+          if (frameData[f].max < val) {
+            frameData[f].max = val;
           }
         }
       }
     }
-
+    // 计算排序
     frameData.forEach((e) => {
       e.sort((a, b) => {
         if (a.value == undefined || a.state == "out" || a.state == "null")
@@ -190,14 +230,14 @@ class ACBar {
         if (d.state == "out" || d.state == "null") {
           d.rank = this.itemCount + 1;
         }
-
         d.rank = i;
       });
     });
-    this.calPosition(nameSet, frameData);
+
     this.frameData = frameData;
     this.nameSet = nameSet;
   }
+
   async preRender() {
     function hintText(txt, self) {
       self.ctx.fillStyle = self.background;
@@ -211,14 +251,16 @@ class ACBar {
     for (let k in this.imageData) {
       console.log(k);
       this.imageData[k] = await d3.image(this.imageData[k]);
+      this.imageData[k].setAttribute("crossOrigin", "Anonymous");
     }
     hintText("Loading Layout", this);
 
-    // TODO: ?
-    this.margin.top += 50;
+    this.margin.top += this.axisTextSize;
     this.barHeight =
       ((this.height - this.margin.top - this.margin.bottom) / this.itemCount) *
       0.8;
+    // TODO: ?
+
     this.ctx.font = `${this.barHeight}px Sarasa Mono SC`;
 
     this.margin.left += this.labelPandding;
@@ -232,6 +274,14 @@ class ACBar {
     });
     this.margin.left += maxTextWidth;
   }
+
+  // calAxis(axisRangeByFrames) {
+  //   for (let axisRange of axisRangeByFrames) {
+  //     // console.log(axisRange);
+  //     // let [a, b] = this.getTickArray(...axisRange, 6);
+  //   }
+  // }
+
   /**
    * Convolution
    *
@@ -276,72 +326,82 @@ class ACBar {
       }
     }
   }
-
-  drawAxis(xScale) {
-    var magic = [1, 2, 3, 4, 5, 10];
-    // 长度范围
-    let range = xScale.range();
-    // 数值范围
-    let domain = xScale.domain();
-
-    let tickArray = ((domain) => {
-      let count = 5;
-      let min = domain[0];
-      let max = domain[1];
-      let delta = Math.ceil((max - min) / count);
-      let mul = 1;
-      while (true) {
-        for (let index = 0; index < magic.length; index++) {
-          const element = magic[index] * mul;
-          if (delta <= element) {
-            delta = element;
-            let ticks = [];
-            let c = 0;
-            while (ticks.length != count) {
-              if (c * delta < min) {
-                c++;
-                continue;
-              }
-              ticks.push(delta * c++);
-            }
-            return ticks;
-          }
-        }
-        mul *= 10;
-      }
-    })(domain);
-    console.log(tickArray);
-    this.ctx.fillStyle = "white";
-    this.ctx.textAlign = "center";
-    this.ctx.font = `${this.barHeight * 0.7}px Sarasa Mono SC`;
-    for (let tick of tickArray) {
-      this.ctx.fillText(tick, this.margin.left + xScale(tick), 50);
-    }
+  calScale() {
+    this.tickArrays = this.keyFrames.map((f) => {
+      let scale = d3
+        .scaleLinear()
+        .domain([0, this.frameData[f].max])
+        .range([0, this.width - this.margin.left - this.margin.right]);
+      return scale.ticks(6);
+    });
+    this.frameData.forEach((f, i) => {
+      f.yScale = d3
+        .scaleLinear()
+        .domain([0, this.itemCount])
+        .range([this.margin.top, this.height - this.margin.bottom]);
+      f.xScale = d3
+        .scaleLinear()
+        .domain([0, f.max])
+        .range([0, this.width - this.margin.left - this.margin.right]);
+    });
   }
+  calAxis() {
+    //TODO: draw axis
+  }
+  drawAxis(n, cData) {
+    let xScale = cData.xScale;
 
+    let idx = n / (this.interval * this.frameRate);
+    let idx1 = Math.floor(idx); // 下限
+    let idx2 = Math.ceil(idx); // 上限
+    let a = d3.easePolyOut.exponent(10)(idx % 1);
+    let mainTicks = this.tickArrays[idx1];
+    let secondTicks = this.tickArrays[idx2];
+    this.ctx.globalAlpha = a;
+    this.ctx.font = `${this.axisTextSize}px Sarasa Mono SC`;
+    this.ctx.fillStyle = "#888";
+    this.ctx.strokeStyle = "#888";
+    this.ctx.lineWidth = 2;
+    this.ctx.textAlign = "center";
+    secondTicks.forEach((val) => {
+      this.ctx.beginPath();
+      this.ctx.moveTo(this.margin.left + xScale(val), this.margin.top);
+      this.ctx.lineTo(
+        this.margin.left + xScale(val),
+        this.height - this.margin.bottom
+      );
+      this.ctx.stroke();
+
+      this.ctx.fillText(
+        d3.format(",.1f")(val),
+        this.margin.left + xScale(val),
+        this.axisTextSize
+      );
+    });
+
+    this.ctx.globalAlpha = 1 - a;
+    mainTicks.forEach((val) => {
+      this.ctx.fillText(
+        d3.format(",.1f")(val),
+        this.margin.left + xScale(val),
+        this.axisTextSize
+      );
+    });
+    this.ctx.globalAlpha = 1;
+  }
   drawFrame(n) {
     let cData = this.frameData[n];
     this.ctx.clearRect(0, 0, this.width, this.height);
     this.ctx.fillStyle = this.background;
     this.ctx.fillRect(0, 0, this.width, this.height);
+    this.drawAxis(n, cData);
 
-    let xScale = d3
-      .scaleLinear()
-      .domain([0, d3.max(cData, (d) => d.value)])
-      .range([0, this.width - this.margin.left - this.margin.right]);
-
-    let yScale = d3
-      .scaleLinear()
-      .domain([0, this.itemCount])
-      .range([this.margin.top, this.height - this.margin.bottom]);
-
-    this.drawAxis(xScale);
     // cData.sort((a, b) => a.rank - b.rank);
     cData.forEach((e) => {
       this.ctx.drawBar(
-        xScale,
+        cData.xScale,
         this.margin.left,
-        yScale(e.pos),
+        cData.yScale(e.pos),
         e.value,
         this.barHeight,
         e.color,
@@ -350,17 +410,42 @@ class ACBar {
       );
     });
   }
+  downloadBlob(blob) {
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    document.body.appendChild(a);
+    a.style = "display: none";
+    a.href = url;
+    a.download = "test.webm";
+    a.click();
+    window.URL.revokeObjectURL(url);
+  }
 
   async play() {
+    var video = new Whammy.Video(this.frameRate);
     this.initCanvas();
     this.loadData(data);
+    // 计算x轴坐标
     await this.preRender();
+    this.calPosition(this.nameSet, this.frameData);
+    this.calScale();
+    this.calAxis();
+
     let frame = 1;
     let len = this.frameData.length;
     let t = d3.timer(() => {
       try {
+        if (this.output) {
+          video.add(this.ctx);
+        }
         this.drawFrame(frame++);
-        if (frame >= len) t.stop();
+        if (frame >= len) {
+          t.stop();
+          if (this.output) {
+            let blob = video.compile();
+            this.downloadBlob(blob);
+          }
+        }
       } catch (e) {
         console.log(e);
         t.stop();
