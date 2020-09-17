@@ -5,7 +5,7 @@ class ACBar {
     this.margin = { left: 10, right: 10, top: 10, bottom: 10 };
     this.background = "#1D1F21";
     this.frameRate = 60;
-    this.interval = 2;
+    this.interval = 10;
     this.barRedius = 4;
     this.itemCount = 6;
     this.labelPandding = 10;
@@ -332,7 +332,7 @@ class ACBar {
       dict[name] = tmpList;
       return dict;
     }, {});
-    console.log(tempDict);
+    // console.log(tempDict);
     for (let i = 0; i < frameData.length; i++) {
       const e = frameData[i];
       for (let j = 0; j < e.length; j++) {
@@ -341,6 +341,13 @@ class ACBar {
       }
     }
   }
+  getKeyFrame(i) {
+    let idx = i / (this.interval * this.frameRate);
+    let idx1 = Math.floor(idx); // 下限
+    let idx2 = Math.ceil(idx);
+    return [idx1, idx2];
+  }
+
   calScale() {
     this.tickArrays = this.keyFrames.map((f) => {
       let scale = d3
@@ -367,8 +374,7 @@ class ACBar {
     let xScale = cData.xScale;
 
     let idx = n / (this.interval * this.frameRate);
-    let idx1 = Math.floor(idx); // 下限
-    let idx2 = Math.ceil(idx); // 上限
+    let [idx1, idx2] = this.getKeyFrame(n);
     let a = d3.easePolyOut.exponent(10)(idx % 1);
     let mainTicks = this.tickArrays[idx1];
     let secondTicks = this.tickArrays[idx2];
@@ -415,7 +421,6 @@ class ACBar {
     this.ctx.fillRect(0, 0, this.width, this.height);
     this.drawAxis(n, cData);
 
-    // cData.sort((a, b) => a.rank - b.rank);
     cData.forEach((e) => {
       this.ctx.drawBar(
         cData.xScale,
@@ -440,6 +445,24 @@ class ACBar {
     window.URL.revokeObjectURL(url);
   }
 
+  calRenderSort() {
+    // 调整渲染顺序
+    for (let i = 0; i < this.frameData.length; i++) {
+      const e = this.frameData[i];
+      let t = i == this.frameData.length - 1 ? i : i + 1;
+      let afterDict = this.frameData[t].reduce((pv, cv) => {
+        pv[cv.name] = cv.pos;
+        return pv;
+      }, {});
+      e.sort((a, b) => {
+        // a上升
+        if (afterDict[a.name] - a.pos < 0 || afterDict[b.name] - b.pos > 0) {
+          return 1;
+        }
+        return -1;
+      });
+    }
+  }
   async play() {
     var video = new Whammy.Video(this.frameRate);
     this.initCanvas();
@@ -447,6 +470,7 @@ class ACBar {
     // 计算x轴坐标
     await this.preRender();
     this.calPosition(this.nameSet, this.frameData);
+    this.calRenderSort();
     this.calScale();
     this.calAxis();
 
@@ -499,8 +523,8 @@ let data = [
     value: [undefined, undefined, 2, 1, 512, 52563],
     color: "#3971ED",
   },
-  { name: "G", value: [undefined, 7, 1, 2, undefined, 52], color: "#3971ED" },
-  { name: "H", value: [undefined, 1, 1, 2, 52, 64], color: "#3971ED" },
+  { name: "G", value: [undefined, 7, 1, 2, undefined, 52], color: "yellow" },
+  { name: "H", value: [undefined, 1, 1, 2, 52, 64], color: "orange" },
 ];
 
 aChartBar = new ACBar(data);
