@@ -1,10 +1,11 @@
 {
   "name": "anichart",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "author": "jannchie <jannchie@gmail.com>",
   "license": "MIT",
-  "private": true,
+  "private": false,
+  "main": "dist/main.js",
   "scripts": {
     "build": "webpack"
   },
