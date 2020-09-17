@@ -1,0 +1,8 @@
+{
+  "name": "anichart",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "jannchie <jannchie@gmail.com>",
+  "license": "MIT",
+  "private": false
+}
