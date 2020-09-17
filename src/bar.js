@@ -153,7 +153,7 @@ class AniBarChart {
     while (magic[0] * mul >= min) {
       mul /= 10;
     }
-    console.log(x, y);
+    // console.log(x, y);
   }
   loadData(data) {
     let frameData = [];
@@ -197,7 +197,7 @@ class AniBarChart {
             break;
           case "out":
             int = d3.interpolateNumber(lValue, 0);
-            console.log(lValue, 0);
+            // console.log(lValue, 0);
             aint = d3.interpolateNumber(1, -2);
             break;
           case "in":
@@ -275,7 +275,7 @@ class AniBarChart {
   async preRender() {
     this.hintText("Loading Images", this);
     for (let k in this.imageData) {
-      console.log(k);
+      // console.log(k);
       this.imageData[k] = await d3.image(this.imageData[k]);
       this.imageData[k].setAttribute("crossOrigin", "Anonymous");
     }
