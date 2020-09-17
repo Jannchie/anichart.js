@@ -437,3 +437,5 @@ var Whammy = (function () {
     // expose methods of madness
   };
 })();
+
+export { Whammy };
