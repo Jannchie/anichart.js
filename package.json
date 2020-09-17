@@ -1,11 +1,11 @@
 {
   "name": "anichart",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "",
   "author": "jannchie <jannchie@gmail.com>",
   "license": "MIT",
   "private": false,
-  "main": "dist/main.js",
+  "main": "dist/anichart.js",
   "scripts": {
     "build": "webpack"
   },
@@ -17,5 +17,10 @@
   },
   "dependencies": {
     "d3": "^6.1.1"
-  }
+  },
+  "keywords": [
+    "Data visualization",
+    "animation",
+    "chart"
+  ]
 }
