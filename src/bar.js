@@ -15,6 +15,13 @@ class AniBarChart {
     this.tickNumber = 4;
     this.getValueText = (value) => `pts ${value}M`;
     this.output = false;
+
+    this.outerMargin = {
+      left: this.margin.left,
+      right: this.margin.right,
+      top: this.margin.top,
+      bottom: this.margin.bottom,
+    };
   }
 
   initCanvas() {
@@ -255,22 +262,24 @@ class AniBarChart {
     this.nameSet = nameSet;
   }
 
-  async preRender() {
-    function hintText(txt, self) {
-      self.ctx.fillStyle = self.background;
-      self.ctx.fillRect(0, 0, self.width, self.height);
-      self.ctx.fillStyle = "#fff";
-      self.ctx.font = `20px Sarasa Mono SC`;
-      self.ctx.fillText(txt, 20, 30);
-    }
+  hintText(txt, self) {
+    self.ctx.textAlign = "left";
+    self.ctx.fillStyle = self.background;
+    self.ctx.fillRect(0, 0, self.width, self.height);
+    self.ctx.fillStyle = "#fff";
+    self.ctx.font = `20px Sarasa Mono SC`;
+    self.ctx.fillText(txt, 20, 30);
+    this.drawWatermark();
+  }
 
-    hintText("Loading Images", this);
+  async preRender() {
+    this.hintText("Loading Images", this);
     for (let k in this.imageData) {
       console.log(k);
       this.imageData[k] = await d3.image(this.imageData[k]);
       this.imageData[k].setAttribute("crossOrigin", "Anonymous");
     }
-    hintText("Loading Layout", this);
+    this.hintText("Loading Layout", this);
 
     this.margin.top += this.axisTextSize;
     this.barHeight =
@@ -416,13 +425,25 @@ class AniBarChart {
     this.ctx.stroke();
   }
 
+  drawWatermark() {
+    this.ctx.textAlign = "right";
+    this.ctx.font = `20px Sarasa Mono SC thin`;
+
+    this.ctx.fillStyle = "#fff4";
+    this.ctx.fillText(
+      window.atob("UE9XRVIgQlkgSkFOTkNISUU="),
+      this.width - this.outerMargin.left,
+      this.height - this.outerMargin.bottom
+    );
+  }
+
   drawFrame(n) {
     let cData = this.frameData[n];
     this.ctx.clearRect(0, 0, this.width, this.height);
     this.ctx.fillStyle = this.background;
     this.ctx.fillRect(0, 0, this.width, this.height);
+    this.drawWatermark();
     this.drawAxis(n, cData);
-
     cData.forEach((e) => {
       this.ctx.drawBar(
         cData.xScale,
@@ -468,6 +489,7 @@ class AniBarChart {
   async play() {
     var video = new Whammy.Video(this.frameRate);
     this.initCanvas();
+    this.hintText("Loading Data", this);
     this.loadData(data);
     // 计算x轴坐标
     await this.preRender();
