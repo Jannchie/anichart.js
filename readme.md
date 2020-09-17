@@ -4,7 +4,13 @@
 
 ## 安装
 
-### 使用npm
+### 使用Yarn
+
+```bash
+yarn add anichart
+```
+
+### 使用Npm
 
 ```bash
 npm i anichart
@@ -17,6 +23,14 @@ npm i anichart
 ```
 
 ## 用法
+
+### 使用Npm或者Yarn导入
+
+如果使用标签导入可以跳过这一步，如果使用npm或者Yarn需要通过以下代码引入包：
+
+``` js
+import * as anichart from "anichart";
+```
 
 ### 准备数据
 
