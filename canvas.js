@@ -1,15 +1,16 @@
 class ACBar {
   constructor(data) {
-    this.width = 800;
+    this.width = 1000;
     this.height = 300;
     this.margin = { left: 10, right: 10, top: 10, bottom: 10 };
     this.background = "#1D1F21";
     this.frameRate = 60;
-    this.interval = 5;
+    this.interval = 2;
     this.barRedius = 4;
     this.itemCount = 6;
     this.labelPandding = 10;
-    this.axisTextSize = 24;
+    this.axisTextSize = 20;
+    this.tickNumber = 4;
     this.getValueText = (value) => `pts ${value}M`;
     this.output = false;
   }
@@ -35,7 +36,6 @@ class ACBar {
         this.ctx.beginPath();
         this.ctx.radiusArea(x, y, imageWidth, imageHeight, r);
         this.ctx.clip(); //call the clip method so the next render is clipped in last path
-        this.ctx.stroke();
         this.ctx.closePath();
         this.ctx.drawImage(
           img,
@@ -75,12 +75,37 @@ class ACBar {
       name,
       alpha = 1
     ) => {
+      let width = xScale(value);
+      let r = this.barRedius > width / 2 ? width / 2 : this.barRedius;
       let imgPandding = this.imageData[name] == undefined ? 0 : this.barHeight;
       this.ctx.globalAlpha = alpha;
 
       // draw rect
       this.ctx.fillStyle = fillColor;
-      this.ctx.radiusRect(x, y, xScale(value), height, this.barRedius, name);
+      this.ctx.radiusRect(x, y, width, height, r, name);
+
+      // draw bar label text
+      this.ctx.fillStyle = fillColor;
+      this.ctx.font = `${height}px Sarasa Mono SC black`;
+      this.ctx.textAlign = "right";
+      this.ctx.fillText(name, x - this.labelPandding, y + height * 0.88);
+
+      // draw bar value text
+      this.ctx.textAlign = "left";
+      this.ctx.fillText(
+        this.getValueText(d3.format(",.2f")(value)),
+        width + this.margin.left + this.labelPandding,
+        y + height * 0.88
+      );
+
+      // draw bar info
+      this.ctx.save();
+
+      // clip bar info
+      this.ctx.beginPath();
+      this.ctx.radiusArea(x, y, width, height, r);
+      this.ctx.clip(); //call the clip method so the next render is clipped in last path
+      this.ctx.closePath();
 
       // draw bar text
       this.ctx.textAlign = "right";
@@ -91,19 +116,7 @@ class ACBar {
         xScale(value) + this.margin.left - this.labelPandding - imgPandding,
         y + height * 0.88
       );
-
-      this.ctx.fillStyle = fillColor;
-      this.ctx.font = `${height}px Sarasa Mono SC black`;
-      this.ctx.textAlign = "right";
-
-      this.ctx.fillText(name, x - this.labelPandding, y + height * 0.88);
-
-      this.ctx.textAlign = "left";
-      this.ctx.fillText(
-        this.getValueText(d3.format(",.2f")(value)),
-        xScale(value) + this.margin.left + this.labelPandding,
-        y + height * 0.88
-      );
+      // draw bar img
       this.ctx.drawClipedImg(
         this.imageData[name],
         x + xScale(value) - this.barHeight,
@@ -112,6 +125,8 @@ class ACBar {
         this.barHeight,
         4
       );
+
+      this.ctx.restore();
 
       this.ctx.globalAlpha = 1;
     };
@@ -332,7 +347,7 @@ class ACBar {
         .scaleLinear()
         .domain([0, this.frameData[f].max])
         .range([0, this.width - this.margin.left - this.margin.right]);
-      return scale.ticks(6);
+      return scale.ticks(this.tickNumber);
     });
     this.frameData.forEach((f, i) => {
       f.yScale = d3
@@ -364,14 +379,7 @@ class ACBar {
     this.ctx.lineWidth = 2;
     this.ctx.textAlign = "center";
     secondTicks.forEach((val) => {
-      this.ctx.beginPath();
-      this.ctx.moveTo(this.margin.left + xScale(val), this.margin.top);
-      this.ctx.lineTo(
-        this.margin.left + xScale(val),
-        this.height - this.margin.bottom
-      );
-      this.ctx.stroke();
-
+      this.drawTick(xScale, val);
       this.ctx.fillText(
         d3.format(",.1f")(val),
         this.margin.left + xScale(val),
@@ -381,6 +389,7 @@ class ACBar {
 
     this.ctx.globalAlpha = 1 - a;
     mainTicks.forEach((val) => {
+      this.drawTick(xScale, val);
       this.ctx.fillText(
         d3.format(",.1f")(val),
         this.margin.left + xScale(val),
@@ -389,6 +398,16 @@ class ACBar {
     });
     this.ctx.globalAlpha = 1;
   }
+  drawTick(xScale, val) {
+    this.ctx.beginPath();
+    this.ctx.moveTo(this.margin.left + xScale(val), this.margin.top);
+    this.ctx.lineTo(
+      this.margin.left + xScale(val),
+      this.height - this.margin.bottom
+    );
+    this.ctx.stroke();
+  }
+
   drawFrame(n) {
     let cData = this.frameData[n];
     this.ctx.clearRect(0, 0, this.width, this.height);
