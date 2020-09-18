@@ -2,9 +2,10 @@ import * as d3 from "d3";
 import { Whammy } from "./whammy";
 class AniBarChart {
   constructor(data, setting) {
+    this.data = data;
     this.width = 1000;
     this.height = 300;
-    this.margin = { left: 10, right: 10, top: 10, bottom: 10 };
+    this.outerMargin = { left: 10, right: 10, top: 10, bottom: 10 };
     this.background = "#1D1F21";
     this.frameRate = 60;
     this.interval = 10;
@@ -15,14 +16,19 @@ class AniBarChart {
     this.tickNumber = 4;
     this.getValueText = (value) => `pts ${value}M`;
     this.output = false;
+    this.valueFormat = d3.format(",.2f");
 
-    this.outerMargin = {
-      left: this.margin.left,
-      right: this.margin.right,
-      top: this.margin.top,
-      bottom: this.margin.bottom,
+    this.innerMargin = {
+      left: this.outerMargin.left,
+      right: this.outerMargin.right,
+      top: this.outerMargin.top,
+      bottom: this.outerMargin.bottom,
     };
   }
+
+  setOptions(options) {}
+
+  setData() {}
 
   initCanvas() {
     const canvas = d3
@@ -102,8 +108,8 @@ class AniBarChart {
       // draw bar value text
       this.ctx.textAlign = "left";
       this.ctx.fillText(
-        this.getValueText(d3.format(",.2f")(value)),
-        width + this.margin.left + this.labelPandding,
+        this.getValueText(this.valueFormat(value)),
+        width + this.innerMargin.left + this.labelPandding,
         y + height * 0.88
       );
 
@@ -122,7 +128,10 @@ class AniBarChart {
       this.ctx.font = `${height}px Sarasa Mono SC black`;
       this.ctx.fillText(
         name,
-        xScale(value) + this.margin.left - this.labelPandding - imgPandding,
+        xScale(value) +
+          this.innerMargin.left -
+          this.labelPandding -
+          imgPandding,
         y + height * 0.88
       );
       // draw bar img
@@ -281,24 +290,25 @@ class AniBarChart {
     }
     this.hintText("Loading Layout", this);
 
-    this.margin.top += this.axisTextSize;
+    this.innerMargin.top += this.axisTextSize;
     this.barHeight =
-      ((this.height - this.margin.top - this.margin.bottom) / this.itemCount) *
+      ((this.height - this.innerMargin.top - this.innerMargin.bottom) /
+        this.itemCount) *
       0.8;
     // TODO: ?
 
     this.ctx.font = `${this.barHeight}px Sarasa Mono SC`;
 
-    this.margin.left += this.labelPandding;
-    this.margin.right += this.ctx.measureText(
-      this.getValueText(d3.format(",.2f")(this.maxValue))
+    this.innerMargin.left += this.labelPandding;
+    this.innerMargin.right += this.ctx.measureText(
+      this.getValueText(this.valueFormat(this.maxValue))
     ).width;
-    this.margin.right += this.labelPandding;
+    this.innerMargin.right += this.labelPandding;
 
     let maxTextWidth = d3.max([...this.nameSet], (name) => {
       return this.ctx.measureText(name).width;
     });
-    this.margin.left += maxTextWidth;
+    this.innerMargin.left += maxTextWidth;
   }
 
   // calAxis(axisRangeByFrames) {
@@ -364,18 +374,24 @@ class AniBarChart {
       let scale = d3
         .scaleLinear()
         .domain([0, this.frameData[f].max])
-        .range([0, this.width - this.margin.left - this.margin.right]);
+        .range([
+          0,
+          this.width - this.innerMargin.left - this.innerMargin.right,
+        ]);
       return scale.ticks(this.tickNumber);
     });
     this.frameData.forEach((f, i) => {
       f.yScale = d3
         .scaleLinear()
         .domain([0, this.itemCount])
-        .range([this.margin.top, this.height - this.margin.bottom]);
+        .range([this.innerMargin.top, this.height - this.innerMargin.bottom]);
       f.xScale = d3
         .scaleLinear()
         .domain([0, f.max])
-        .range([0, this.width - this.margin.left - this.margin.right]);
+        .range([
+          0,
+          this.width - this.innerMargin.left - this.innerMargin.right,
+        ]);
     });
   }
   calAxis() {
@@ -399,7 +415,7 @@ class AniBarChart {
       this.drawTick(xScale, val);
       this.ctx.fillText(
         d3.format(",.1f")(val),
-        this.margin.left + xScale(val),
+        this.innerMargin.left + xScale(val),
         this.axisTextSize
       );
     });
@@ -409,7 +425,7 @@ class AniBarChart {
       this.drawTick(xScale, val);
       this.ctx.fillText(
         d3.format(",.1f")(val),
-        this.margin.left + xScale(val),
+        this.innerMargin.left + xScale(val),
         this.axisTextSize
       );
     });
@@ -417,10 +433,10 @@ class AniBarChart {
   }
   drawTick(xScale, val) {
     this.ctx.beginPath();
-    this.ctx.moveTo(this.margin.left + xScale(val), this.margin.top);
+    this.ctx.moveTo(this.innerMargin.left + xScale(val), this.innerMargin.top);
     this.ctx.lineTo(
-      this.margin.left + xScale(val),
-      this.height - this.margin.bottom
+      this.innerMargin.left + xScale(val),
+      this.height - this.innerMargin.bottom
     );
     this.ctx.stroke();
   }
@@ -447,7 +463,7 @@ class AniBarChart {
     cData.forEach((e) => {
       this.ctx.drawBar(
         cData.xScale,
-        this.margin.left,
+        this.innerMargin.left,
         cData.yScale(e.pos),
         e.value,
         this.barHeight,
@@ -490,7 +506,7 @@ class AniBarChart {
     var video = new Whammy.Video(this.frameRate);
     this.initCanvas();
     this.hintText("Loading Data", this);
-    this.loadData(data);
+    this.loadData(this.data);
     // 计算x轴坐标
     await this.preRender();
     this.calPosition(this.nameSet, this.frameData);
