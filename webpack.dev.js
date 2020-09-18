@@ -21,6 +21,17 @@ module.exports = merge(common, {
     contentBase: "./dist",
     index: "index.html",
   },
+  module: {
+    rules: [
+      {
+        test: /\.csv/,
+        loader: "file-loader",
+        options: {
+          outputPath: "data",
+        },
+      },
+    ],
+  },
   plugins: [
     new HtmlWebpackPlugin({
       title: "Test",
