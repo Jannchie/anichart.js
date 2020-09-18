@@ -319,7 +319,7 @@ class AniBarChart {
   // }
 
   /**
-   * Convolution
+   * Convolution 卷积
    *
    * @param {Set} nameSet
    * @param {List} frameData
@@ -348,7 +348,9 @@ class AniBarChart {
           i - frames > 0 ? i - frames : 0,
           i + frames
         );
-        tmpList[i] = d3.mean(tmpArray);
+        let mean = d3.mean(tmpArray);
+        // 优化条目变换的缓动效果
+        tmpList[i] = d3.easeCubicInOut(mean % 1) + Math.floor(mean);
       }
       dict[name] = tmpList;
       return dict;
