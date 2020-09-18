@@ -272,6 +272,7 @@ class AniBarChart {
         for (let j of d3.range(this.frameRate * this.interval + 1)) {
           // f: 帧号
           let f = i * this.frameRate * this.interval + j;
+
           if (frameData[f] == undefined) {
             frameData[f] = [];
           }
@@ -280,19 +281,20 @@ class AniBarChart {
           let alpha = aint(d3.easePolyOut(r));
           if (alpha == 0) continue;
           let offset = offsetInt(d3.easePolyOut(r));
-          frameData[f].push({
-            name: name,
-            value: val,
-            color: item.color,
-            alpha: alpha < 0 ? 0 : alpha,
-            state: state,
-            pos: offset < 0 ? 0 : offset,
-          });
+          if (j != 0 || i == 0)
+            frameData[f].push({
+              name: name,
+              value: val,
+              color: item.color,
+              alpha: alpha < 0 ? 0 : alpha,
+              state: state,
+              pos: offset < 0 ? 0 : offset,
+            });
           // 全局最大值
           if (val > this.maxValue) {
             this.maxValue = val;
           }
-          // TODO: 获取每一帧的最大值和最小值
+          // 获取每一帧的最大值和最小值
           if (frameData[f].max == undefined) frameData[f].max = val;
           if (frameData[f].max < val) {
             frameData[f].max = val;
