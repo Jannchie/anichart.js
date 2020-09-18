@@ -1,2 +1,2 @@
-import aniBarChart from "./bar-test";
-aniBarChart.play();
+import runBartest from "./bar-test";
+runBartest();
