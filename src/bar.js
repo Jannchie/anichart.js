@@ -1,7 +1,9 @@
 import * as d3 from "d3";
+import { interrupt } from "d3";
 import { Whammy } from "./whammy";
+window.d3 = d3;
 class AniBarChart {
-  constructor(data, setting) {
+  constructor(data = {}, setting = {}) {
     this.data = data;
     this.width = 1000;
     this.height = 300;
@@ -17,7 +19,9 @@ class AniBarChart {
     this.getValueText = (value) => `pts ${value}M`;
     this.output = false;
     this.valueFormat = d3.format(",.2f");
+    this.keyDateDelta = 0;
 
+    this.ready = false;
     this.innerMargin = {
       left: this.outerMargin.left,
       right: this.outerMargin.right,
@@ -28,7 +32,53 @@ class AniBarChart {
 
   setOptions(options) {}
 
-  setData() {}
+  async LoadCsv(path) {
+    this.data = [];
+    let dateFormat = "%Y-%m-%d";
+    let csvData = await d3.csv(path);
+
+    let tsList = [...d3.group(csvData, (d) => d.date).keys()]
+      .map((d) => +d3.timeParse(dateFormat)(d))
+      .sort();
+    let delta = (() => {
+      let d = Infinity;
+      for (let i = 1; i < tsList.length; i++) {
+        const c = tsList[i];
+        const p = tsList[i - 1];
+        if (c - p < d) d = c - p;
+      }
+      return d;
+    })();
+    let firstTs = tsList[0];
+    let lastTs = tsList[tsList.length - 1];
+    tsList = d3.range(firstTs, lastTs + 1, delta);
+
+    let frameCount = this.frameRate * this.interval * (tsList.length - 1);
+
+    this.getCurrentDate = d3
+      .scaleLinear()
+      .domain([0, frameCount])
+      .range([firstTs, lastTs]);
+    let temp = d3.group(
+      csvData,
+      (d) => d.name,
+      (d) => d.date
+    );
+    for (let [name, data] of temp) {
+      console.log(data);
+      let dtList = [...data.keys()].map((d) => +d3.timeParse(dateFormat)(d));
+      let valList = [...data.values()].map((d) => Number(d[0].value));
+      let scale = d3.scaleLinear().domain(dtList).range(valList);
+      let obj = {};
+      obj.name = name;
+      obj.value = [];
+      for (let ts of tsList) {
+        obj.value.push(scale(ts));
+      }
+      console.log(obj);
+      this.data.push(obj);
+    }
+  }
 
   initCanvas() {
     const canvas = d3
@@ -189,11 +239,11 @@ class AniBarChart {
         const lValue = item.value[i];
         const rValue = item.value[i + 1];
         let state = "normal";
-        if (lValue == undefined && rValue == undefined) {
+        if (lValue != lValue && rValue != rValue) {
           state = "null";
-        } else if (lValue == undefined && rValue != undefined) {
+        } else if (lValue != lValue && rValue == rValue) {
           state = "in";
-        } else if (lValue != undefined && rValue == undefined) {
+        } else if (lValue == lValue && rValue != rValue) {
           state = "out";
         }
         let int = d3.interpolateNumber(lValue, rValue);
@@ -210,7 +260,7 @@ class AniBarChart {
             aint = d3.interpolateNumber(1, -2);
             break;
           case "in":
-            int = d3.interpolateNumber(rValue * 0.8, rValue);
+            int = d3.interpolateNumber(rValue * 0.2, rValue);
             aint = d3.interpolateNumber(0, 3);
             offsetInt = d3.interpolateNumber(1, -2);
             break;
@@ -457,12 +507,13 @@ class AniBarChart {
   }
 
   drawFrame(n) {
-    let cData = this.frameData[n];
     this.ctx.clearRect(0, 0, this.width, this.height);
-    this.ctx.fillStyle = this.background;
-    this.ctx.fillRect(0, 0, this.width, this.height);
+
+    let cData = this.frameData[n];
+    this.drawBackground();
     this.drawWatermark();
     this.drawAxis(n, cData);
+    this.drawDate(n);
     cData.forEach((e) => {
       this.ctx.drawBar(
         cData.xScale,
@@ -476,6 +527,25 @@ class AniBarChart {
       );
     });
   }
+
+  drawDate(n) {
+    let timestamp = this.getCurrentDate(n);
+    this.ctx.textAlign = "right";
+    this.ctx.font = `20px Sarasa Mono SC thin`;
+
+    this.ctx.fillStyle = "#fff4";
+    this.ctx.fillText(
+      d3.timeFormat("%Y-%m-%d %H:%M")(new Date(timestamp)),
+      this.width - this.outerMargin.left,
+      this.height - this.outerMargin.bottom - 20
+    );
+  }
+
+  drawBackground() {
+    this.ctx.fillStyle = this.background;
+    this.ctx.fillRect(0, 0, this.width, this.height);
+  }
+
   downloadBlob(blob) {
     var url = URL.createObjectURL(blob);
     var a = document.createElement("a");
@@ -506,17 +576,10 @@ class AniBarChart {
     }
   }
   async play() {
+    if (!this.ready) {
+      await this.readyToDraw();
+    }
     var video = new Whammy.Video(this.frameRate);
-    this.initCanvas();
-    this.hintText("Loading Data", this);
-    this.loadData(this.data);
-    // 计算x轴坐标
-    await this.preRender();
-    this.calPosition(this.nameSet, this.frameData);
-    this.calRenderSort();
-    this.calScale();
-    this.calAxis();
-
     let frame = 1;
     let len = this.frameData.length;
     let t = d3.timer(() => {
@@ -537,6 +600,20 @@ class AniBarChart {
         t.stop();
       }
     });
+  }
+
+  async readyToDraw() {
+    this.initCanvas();
+    this.hintText("Loading Data", this);
+    this.loadData(this.data);
+    // 计算x轴坐标
+    await this.preRender();
+    this.calPosition(this.nameSet, this.frameData);
+    this.calRenderSort();
+    this.calScale();
+    this.calAxis();
+    console.log(this.frameData);
+    this.ready = true;
   }
 }
 export default AniBarChart;
