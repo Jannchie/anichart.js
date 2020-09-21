@@ -40,6 +40,12 @@ class AniBarChart {
         "#CC342B",
       ],
     };
+    this.colorGener = (function* (cs) {
+      let i = 0;
+      while (true) {
+        yield cs.colors[i++ % cs.colors.length];
+      }
+    })(this.colorSchame);
 
     this.colorData = {
       生活: "#FFF",
@@ -85,20 +91,19 @@ class AniBarChart {
       .scaleLinear()
       .domain([0, frameCount])
       .range([firstTs, lastTs]);
+
+    csvData.forEach((d) => {
+      if (d.id == undefined) d.id = d.name;
+    });
+
     let temp = d3.group(
       csvData,
-      (d) => d.name,
+      (d) => d.id,
       (d) => +d3.timeParse(dateFormat)(d.date)
     );
-    console.log(csvData);
-    console.log(temp);
-    for (let [name, data] of temp) {
-      console.log(name);
-      console.log(data);
+    for (let [id, data] of temp) {
       let dtList = [...data.keys()];
       let valList = [...data.values()].map((d) => d[0]);
-      console.log(dtList);
-      console.log(valList);
       let scale = d3
         .scaleLinear()
         .domain(dtList)
@@ -110,17 +115,28 @@ class AniBarChart {
         if (cData != undefined) {
           obj = { ...cData[0] };
           obj.value = Number(cData[0].value);
-          obj.date = d3.timeFormat("%Y-%m-%d")(ct);
+          obj.date = ct;
         } else if (obj == undefined) {
           continue;
         } else {
           obj = { ...obj };
           obj.value = scale(Number(ct));
-          obj.date = d3.timeFormat("%Y-%m-%d")(ct);
+          obj.date = ct;
         }
         if (obj.value == obj.value) this.data.push(obj);
       }
     }
+    this.keyFramesCount = tsList.length;
+    this.setKeyFramesInfo();
+    console.log(0, this.totalFrames);
+    this.tsToFi = d3
+      .scaleLinear()
+      .domain(d3.extent(tsList))
+      .range([0, this.totalFrames]);
+    this.fiToTs = d3
+      .scaleLinear()
+      .range(d3.extent(tsList))
+      .domain([0, this.totalFrames]);
   }
 
   initCanvas() {
@@ -255,45 +271,26 @@ class AniBarChart {
     while (magic[0] * mul >= min) {
       mul /= 10;
     }
-    // // console.log(x, y);
   }
-  loadData(data) {
+  calculateFrameData(data) {
     console.log(data);
     let frameData = [];
     this.imageData = {};
     let nameSet = new Set();
     this.maxValue = 0;
 
-    // 关键帧个数
-    let nameMap = d3.group(data, (d) => d.name);
-    console.log(nameMap.values());
-    // 获取关键帧
-    this.keyFrames = d3.range(
-      0,
-      data[0].value.length * this.frameRate * this.interval,
-      this.frameRate * this.interval
-    );
-    this.nextColor = (function* (cs) {
-      let i = 0;
-      while (true) {
-        yield cs.colors[i++ % cs.colors.length];
-      }
-    })(this.colorSchame);
+    d3.group(data);
     // 对每组数据
-    for (let item of data) {
-      if (item.image != undefined) {
-        this.imageData[item.name] = item.image;
-      }
-      let name = item.name;
-      nameSet.add(name);
-      let colorKey = this.getColorKey(item);
-      if (!this.colorData.hasOwnProperty(colorKey)) {
-        this.colorData[colorKey] = this.nextColor.next().value;
-      }
-      // 对每个value
-      for (let i = 0; i < item.value.length - 1; i++) {
-        const lValue = item.value[i];
-        const rValue = item.value[i + 1];
+    let idMap = d3.group(data, (d) => d.id);
+    for (let [id, dataList] of idMap) {
+      nameSet.add(id);
+
+      // 对每个数据区间
+      for (let i = 0; i < dataList.length - 1; i++) {
+        const lData = dataList[i];
+        const rData = dataList[i + 1];
+        const lValue = lData.value;
+        const rValue = rData.value;
         let state = "normal";
         if (lValue != lValue && rValue != rValue) {
           state = "null";
@@ -323,25 +320,26 @@ class AniBarChart {
           default:
             break;
         }
-
+        const lDate = lData.date;
+        const rDate = rData.date;
         // 对每一帧
-        for (let j of d3.range(this.frameRate * this.interval + 1)) {
-          // f: 帧号
-          let f = i * this.frameRate * this.interval + j;
-
+        // f: 帧号
+        for (let f of d3.range(this.tsToFi(lDate), this.tsToFi(rDate))) {
+          f = Math.round(f);
           if (frameData[f] == undefined) {
             frameData[f] = [];
           }
-          let r = j / (this.frameRate * this.interval);
+          let r =
+            (f % (this.frameRate * this.interval)) /
+            (this.frameRate * this.interval);
           let val = int(r);
           let alpha = aint(d3.easePolyOut(r));
           if (alpha == 0) continue;
           let offset = offsetInt(d3.easePolyOut(r));
-          if (j != 0 || i == 0) {
+          if (r != 0 || i == 0) {
             let fd = {
-              item: item,
-              color: this.colorData[this.getColorKey(item)],
-              name: name,
+              ...lData,
+              color: this.colorData[this.getColorKey(lData)],
               value: val,
               alpha: alpha < 0 ? 0 : alpha,
               state: state,
@@ -381,6 +379,16 @@ class AniBarChart {
 
     this.frameData = frameData;
     this.nameSet = nameSet;
+  }
+
+  setKeyFramesInfo() {
+    this.totalFrames =
+      (this.keyFramesCount - 1) * this.frameRate * this.interval;
+    this.keyFrames = d3.range(
+      0,
+      this.totalFrames,
+      this.frameRate * this.interval
+    );
   }
 
   hintText(txt, self) {
@@ -508,9 +516,6 @@ class AniBarChart {
           this.width - this.innerMargin.left - this.innerMargin.right,
         ]);
     });
-  }
-  calAxis() {
-    //TODO: draw axis
   }
   drawAxis(n, cData) {
     let xScale = cData.xScale;
@@ -674,13 +679,14 @@ class AniBarChart {
     this.initCanvas();
     this.hintText("Loading Data", this);
     console.log(this.data);
-    this.loadData(this.data);
+    this.calculateFrameData(this.data);
+
     // 计算x轴坐标
     await this.preRender();
     this.calPosition(this.nameSet, this.frameData);
     this.calRenderSort();
     this.calScale();
-    this.calAxis();
+    // this.calAxis();
     this.postProcessData();
     this.ready = true;
   }
