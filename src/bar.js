@@ -677,6 +677,22 @@ class AniBarChart {
   }
   async readyToDraw() {
     this.initCanvas();
+
+    // <input type="range" id="slider" min="0" max="1000" step="1" value="0" οnchange="print()" />
+    let slider = d3.select("body").append("input");
+    this.slider = slider.node();
+    slider
+      .attr("type", "range")
+      .attr("style", `width: ${this.width}px`)
+      .attr("min", 0)
+      .attr("max", 1000)
+      .attr("step", 1)
+      .attr("value", 0)
+      .on("input", () => {
+        console.log(this.slider.value);
+        this.drawFrame(this.slider.value);
+      });
+
     this.hintText("Loading Data", this);
     console.log(this.data);
     this.calculateFrameData(this.data);
