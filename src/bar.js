@@ -20,6 +20,32 @@ class AniBarChart {
     this.output = false;
     this.valueFormat = d3.format(",.2f");
     this.keyDateDelta = 0;
+    this.colorKey = "channel";
+    this.colorSchame = {
+      background: "#1D1F21",
+      colors: [
+        "#D25252",
+        "#569CD6",
+        "#4EC9B0",
+        "#EFC090",
+        "#608B4E",
+        "#C5C8C6",
+        "#FBA922",
+        "#D197D9",
+        "#198844",
+        "#F92672",
+        "#00AD9C",
+        "#FB9FB1",
+        "#8BC34A",
+        "#CC342B",
+      ],
+    };
+
+    this.colorData = {
+      生活: "#FFF",
+    };
+
+    this.getColorKey = (d) => d[this.colorKey];
 
     this.ready = false;
     this.innerMargin = {
@@ -65,17 +91,20 @@ class AniBarChart {
       (d) => d.date
     );
     for (let [name, data] of temp) {
-      console.log(data);
       let dtList = [...data.keys()].map((d) => +d3.timeParse(dateFormat)(d));
-      let valList = [...data.values()].map((d) => Number(d[0].value));
-      let scale = d3.scaleLinear().domain(dtList).range(valList);
+      let valList = [...data.values()].map((d) => d[0]);
+      console.log(valList);
+      let scale = d3
+        .scaleLinear()
+        .domain(dtList)
+        .range(valList.map((d) => Number(d.value)));
       let obj = {};
       obj.name = name;
       obj.value = [];
       for (let ts of tsList) {
         obj.value.push(scale(ts));
       }
-      console.log(obj);
+      // console.log(obj);
       this.data.push(obj);
     }
   }
@@ -212,9 +241,10 @@ class AniBarChart {
     while (magic[0] * mul >= min) {
       mul /= 10;
     }
-    // console.log(x, y);
+    // // console.log(x, y);
   }
   loadData(data) {
+    console.log(data);
     let frameData = [];
     this.imageData = {};
     let nameSet = new Set();
@@ -225,7 +255,12 @@ class AniBarChart {
       data[0].value.length * this.frameRate * this.interval,
       this.frameRate * this.interval
     );
-
+    this.nextColor = (function* (cs) {
+      let i = 0;
+      while (true) {
+        yield cs.colors[i++ % cs.colors.length];
+      }
+    })(this.colorSchame);
     // 对每组数据
     for (let item of data) {
       if (item.image != undefined) {
@@ -233,7 +268,10 @@ class AniBarChart {
       }
       let name = item.name;
       nameSet.add(name);
-
+      let colorKey = this.getColorKey(item);
+      if (!this.colorData.hasOwnProperty(colorKey)) {
+        this.colorData[colorKey] = this.nextColor.next().value;
+      }
       // 对每个value
       for (let i = 0; i < item.value.length - 1; i++) {
         const lValue = item.value[i];
@@ -256,7 +294,7 @@ class AniBarChart {
             break;
           case "out":
             int = d3.interpolateNumber(lValue, 0);
-            // console.log(lValue, 0);
+            // // console.log(lValue, 0);
             aint = d3.interpolateNumber(1, -2);
             break;
           case "in":
@@ -281,15 +319,19 @@ class AniBarChart {
           let alpha = aint(d3.easePolyOut(r));
           if (alpha == 0) continue;
           let offset = offsetInt(d3.easePolyOut(r));
-          if (j != 0 || i == 0)
-            frameData[f].push({
+          if (j != 0 || i == 0) {
+            let fd = {
+              item: item,
+              color: this.colorData[this.getColorKey(item)],
               name: name,
               value: val,
-              color: item.color,
               alpha: alpha < 0 ? 0 : alpha,
               state: state,
               pos: offset < 0 ? 0 : offset,
-            });
+            };
+
+            frameData[f].push(fd);
+          }
           // 全局最大值
           if (val > this.maxValue) {
             this.maxValue = val;
@@ -336,7 +378,7 @@ class AniBarChart {
   async preRender() {
     this.hintText("Loading Images", this);
     for (let k in this.imageData) {
-      // console.log(k);
+      // // console.log(k);
       this.imageData[k] = await d3.image(this.imageData[k]);
       this.imageData[k].setAttribute("crossOrigin", "Anonymous");
     }
@@ -365,7 +407,7 @@ class AniBarChart {
 
   // calAxis(axisRangeByFrames) {
   //   for (let axisRange of axisRangeByFrames) {
-  //     // console.log(axisRange);
+  //     // // console.log(axisRange);
   //     // let [a, b] = this.getTickArray(...axisRange, 6);
   //   }
   // }
@@ -408,7 +450,7 @@ class AniBarChart {
       dict[name] = tmpList;
       return dict;
     }, {});
-    // console.log(tempDict);
+    // // console.log(tempDict);
     for (let i = 0; i < frameData.length; i++) {
       const e = frameData[i];
       for (let j = 0; j < e.length; j++) {
@@ -598,12 +640,18 @@ class AniBarChart {
           }
         }
       } catch (e) {
-        console.log(e);
+        // console.log(e);
         t.stop();
       }
     });
   }
-
+  postProcessData() {
+    this.frameData.forEach((fd, i) => {
+      fd.forEach((bd, j) => {
+        // console.log(bd);
+      });
+    });
+  }
   async readyToDraw() {
     this.initCanvas();
     this.hintText("Loading Data", this);
@@ -614,7 +662,7 @@ class AniBarChart {
     this.calRenderSort();
     this.calScale();
     this.calAxis();
-    console.log(this.frameData);
+    this.postProcessData();
     this.ready = true;
   }
 }
