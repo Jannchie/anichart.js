@@ -88,24 +88,38 @@ class AniBarChart {
     let temp = d3.group(
       csvData,
       (d) => d.name,
-      (d) => d.date
+      (d) => +d3.timeParse(dateFormat)(d.date)
     );
+    console.log(csvData);
+    console.log(temp);
     for (let [name, data] of temp) {
-      let dtList = [...data.keys()].map((d) => +d3.timeParse(dateFormat)(d));
+      console.log(name);
+      console.log(data);
+      let dtList = [...data.keys()];
       let valList = [...data.values()].map((d) => d[0]);
+      console.log(dtList);
       console.log(valList);
       let scale = d3
         .scaleLinear()
         .domain(dtList)
         .range(valList.map((d) => Number(d.value)));
-      let obj = {};
-      obj.name = name;
-      obj.value = [];
-      for (let ts of tsList) {
-        obj.value.push(scale(ts));
+      let obj;
+      for (let i = 0; i < tsList.length; i++) {
+        let ct = tsList[i];
+        let cData = data.get(ct);
+        if (cData != undefined) {
+          obj = { ...cData[0] };
+          obj.value = Number(cData[0].value);
+          obj.date = d3.timeFormat("%Y-%m-%d")(ct);
+        } else if (obj == undefined) {
+          continue;
+        } else {
+          obj = { ...obj };
+          obj.value = scale(Number(ct));
+          obj.date = d3.timeFormat("%Y-%m-%d")(ct);
+        }
+        if (obj.value == obj.value) this.data.push(obj);
       }
-      // console.log(obj);
-      this.data.push(obj);
     }
   }
 
@@ -249,6 +263,10 @@ class AniBarChart {
     this.imageData = {};
     let nameSet = new Set();
     this.maxValue = 0;
+
+    // 关键帧个数
+    let nameMap = d3.group(data, (d) => d.name);
+    console.log(nameMap.values());
     // 获取关键帧
     this.keyFrames = d3.range(
       0,
@@ -655,6 +673,7 @@ class AniBarChart {
   async readyToDraw() {
     this.initCanvas();
     this.hintText("Loading Data", this);
+    console.log(this.data);
     this.loadData(this.data);
     // 计算x轴坐标
     await this.preRender();
