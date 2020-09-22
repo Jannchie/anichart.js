@@ -40,6 +40,8 @@ class AniBarChart {
         "#CC342B",
       ],
     };
+    this.useCtl = true;
+
     this.colorGener = (function* (cs) {
       let i = 0;
       while (true) {
@@ -336,8 +338,10 @@ class AniBarChart {
         }
         // 对每一帧
         // f: 帧号
-        for (let f of d3.range(this.tsToFi(lDate), this.tsToFi(rDate))) {
-          f = Math.round(f);
+        for (let f of d3.range(
+          Math.round(this.tsToFi(lDate)),
+          Math.round(this.tsToFi(rDate))
+        )) {
           if (frameData[f] == undefined) {
             frameData[f] = [];
           }
@@ -348,6 +352,7 @@ class AniBarChart {
           let alpha = aint(d3.easePolyOut(r));
           if (alpha == 0) continue;
           let offset = offsetInt(d3.easePolyOut(r));
+
           let fd = {
             ...lData,
             color: this.colorData[this.getColorKey(lData)],
@@ -583,6 +588,8 @@ class AniBarChart {
   drawFrame(n) {
     this.ctx.clearRect(0, 0, this.width, this.height);
     let cData = this.frameData[n];
+    // console.log(cData);
+
     this.drawBackground();
     this.drawWatermark();
     this.drawAxis(n, cData);
@@ -668,9 +675,10 @@ class AniBarChart {
             this.downloadBlob(blob);
           }
         }
-
-        this.slider.value = this.currentFrame;
-        this.updateCtlText();
+        if (this.useCtl) {
+          this.slider.value = this.currentFrame;
+          this.updatectlCurrentFrame();
+        }
         this.drawFrame(this.currentFrame++);
         if (this.output) {
           video.add(this.ctx);
@@ -697,7 +705,9 @@ class AniBarChart {
     this.calScale();
     // this.calAxis();
     this.postProcessData();
-    this.addCtl();
+    if (this.useCtl) {
+      this.addCtl();
+    }
     this.ready = true;
   }
   addCtl() {
@@ -732,21 +742,40 @@ class AniBarChart {
       .attr("value", 0)
       .on("input", () => {
         this.currentFrame = +this.slider.value;
-        this.updateCtlText();
+        this.updatectlCurrentFrame();
         this.drawFrame(this.currentFrame);
       });
-    this.ctlText = ctl.append("text");
-    this.updateCtlText();
+    this.ctlCurrentFrame = ctl
+      .append("input")
+      .attr("id", "c-frame")
+      .attr("type", "text")
+      .style("font-family", "Sarasa Mono SC")
+      .attr("size", this.totalFrames.toString().length)
+      .on("input", () => {
+        let val = +d3.select("#c-frame").node().value;
+        if (val < 1) {
+          val = 1;
+        } else if (val > this.totalFrames) {
+          val = this.totalFrames;
+        } else if (isNaN(val)) {
+          val = 1;
+        }
+        this.currentFrame = val - 1;
+        this.slider.value = this.currentFrame;
+        this.drawFrame(this.currentFrame);
+      });
+    ctl.append("text").text(` / ${d3.format(",d")(this.totalFrames)}`);
+    this.updatectlCurrentFrame();
     this.slider = slider.node();
   }
   updateCtl() {
     this.slider.value = n;
-    this.updateCtlText();
+    this.updatectlCurrentFrame();
   }
-  updateCtlText() {
+  updatectlCurrentFrame() {
     let b = this.totalFrames.toString().length;
     let f = d3.format(`0${b},d`);
-    this.ctlText.text(`${f(this.currentFrame + 1)} / ${f(this.totalFrames)}`);
+    this.ctlCurrentFrame.node().value = `${this.currentFrame + 1}`;
   }
 }
 export default AniBarChart;
