@@ -47,9 +47,7 @@ class AniBarChart {
       }
     })(this.colorSchame);
 
-    this.colorData = {
-      生活: "#FFF",
-    };
+    this.colorData = {};
 
     this.getColorKey = (d) => d[this.colorKey];
 
@@ -335,6 +333,11 @@ class AniBarChart {
             break;
           default:
             break;
+        }
+        if (this.colorData[this.getColorKey(lData)] == undefined) {
+          this.colorData[
+            this.getColorKey(lData)
+          ] = this.colorGener.next().value;
         }
         // 对每一帧
         // f: 帧号
