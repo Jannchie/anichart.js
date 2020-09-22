@@ -87,7 +87,7 @@ class AniBarChart {
 
     this.getCurrentDate = d3
       .scaleLinear()
-      .domain([0, frameCount])
+      .domain([0, frameCount - 1])
       .range([firstTs, lastTs]);
 
     csvData.forEach((d) => {
@@ -111,7 +111,6 @@ class AniBarChart {
         .domain(dtList)
         .range(valList.map((d) => d.value));
       let obj = valList[0];
-      console.log(valList);
       for (let i = 0; i < tsList.length; i++) {
         let ct = tsList[i];
         let cData = data.get(ct);
@@ -129,7 +128,6 @@ class AniBarChart {
     }
     this.keyFramesCount = tsList.length;
     this.setKeyFramesInfo();
-    console.log(0, this.totalFrames);
     this.tsToFi = d3
       .scaleLinear()
       .domain(d3.extent(tsList))
@@ -276,7 +274,6 @@ class AniBarChart {
     }
   }
   calculateFrameData(data) {
-    console.log(data);
     let frameData = [];
     this.imageData = {};
     let nameSet = new Set();
@@ -287,8 +284,6 @@ class AniBarChart {
     let idMap = d3.group(data, (d) => d.id);
     for (let [id, dataList] of idMap) {
       nameSet.add(id);
-      console.log(dataList);
-      console.log(this.tsList);
       // 对每个数据区间
       for (let i = 0; i < dataList.length - 1; i++) {
         const lData = dataList[i];
@@ -419,7 +414,6 @@ class AniBarChart {
   async preRender() {
     this.hintText("Loading Images", this);
     for (let k in this.imageData) {
-      // // console.log(k);
       this.imageData[k] = await d3.image(this.imageData[k]);
       this.imageData[k].setAttribute("crossOrigin", "Anonymous");
     }
@@ -444,11 +438,11 @@ class AniBarChart {
       return this.ctx.measureText(name).width;
     });
     this.innerMargin.left += maxTextWidth;
+    this.currentFrame = 0;
   }
 
   // calAxis(axisRangeByFrames) {
   //   for (let axisRange of axisRangeByFrames) {
-  //     // // console.log(axisRange);
   //     // let [a, b] = this.getTickArray(...axisRange, 6);
   //   }
   // }
@@ -491,7 +485,6 @@ class AniBarChart {
       dict[name] = tmpList;
       return dict;
     }, {});
-    // // console.log(tempDict);
     for (let i = 0; i < frameData.length; i++) {
       const e = frameData[i];
       for (let j = 0; j < e.length; j++) {
@@ -502,7 +495,6 @@ class AniBarChart {
   }
   getKeyFrame(i) {
     let idx = i / (this.interval * this.frameRate);
-    console.log(idx);
     let idx1 = Math.floor(idx); // 下限
     let idx2 = Math.ceil(idx);
     return [idx1, idx2];
@@ -534,7 +526,6 @@ class AniBarChart {
     });
   }
   drawAxis(n, cData) {
-    console.log(n, cData);
     let xScale = cData.xScale;
     let idx = n / (this.interval * this.frameRate);
     let [idx1, idx2] = this.getKeyFrame(n);
@@ -658,56 +649,45 @@ class AniBarChart {
     }
   }
   async play() {
+    if (this.player) {
+      this.player.stop();
+      this.player = false;
+      return;
+    }
     if (!this.ready) {
       await this.readyToDraw();
     }
     var video = new Whammy.Video(this.frameRate);
-    let frame = 0;
     let len = this.frameData.length;
-    let t = d3.timer(() => {
+    this.player = d3.timer(() => {
       try {
-        if (frame == len - 1) {
-          t.stop();
+        if (this.currentFrame == len - 1) {
+          this.player.stop();
           if (this.output) {
             let blob = video.compile();
             this.downloadBlob(blob);
           }
         }
-        this.drawFrame(frame++);
+
+        this.slider.value = this.currentFrame;
+        this.updateCtlText();
+        this.drawFrame(this.currentFrame++);
         if (this.output) {
           video.add(this.ctx);
         }
       } catch (e) {
-        // console.log(e);
-        t.stop();
+        this.player.stop();
       }
     });
   }
   postProcessData() {
     this.frameData.forEach((fd, i) => {
-      fd.forEach((bd, j) => {
-        // console.log(bd);
-      });
+      fd.forEach((bd, j) => {});
     });
   }
   async readyToDraw() {
     this.initCanvas();
-    let slider = d3.select("body").append("input");
-    this.slider = slider.node();
-    slider
-      .attr("type", "range")
-      .attr("style", `width: ${this.width}px`)
-      .attr("min", 0)
-      .attr("max", this.totalFrames - 1)
-      .attr("step", 1)
-      .attr("value", 0)
-      .on("input", () => {
-        console.log(this.slider.value);
-        this.drawFrame(this.slider.value);
-      });
-
     this.hintText("Loading Data", this);
-    console.log(this.data);
     this.calculateFrameData(this.data);
 
     // 计算x轴坐标
@@ -717,7 +697,54 @@ class AniBarChart {
     this.calScale();
     // this.calAxis();
     this.postProcessData();
+    this.addCtl();
     this.ready = true;
+  }
+  addCtl() {
+    let ctl = d3
+      .select("body")
+      .append("div")
+      .style("font-family", "Sarasa Mono SC")
+      .attr("class", "ctl")
+      .style("width", `${this.width}px`)
+      .style("display", "flex");
+    ctl
+      .append("button")
+
+      .attr("id", "play-btn")
+      .style("font-family", "Sarasa Mono SC")
+      .text("PLAY")
+      .on("click", () => {
+        let btn = d3.select("#play-btn");
+        let text = btn.text();
+        let next = btn.text() == "STOP" ? "PLAY" : "STOP";
+        this.play();
+        d3.select("#play-btn").text(next);
+      });
+
+    let slider = ctl.append("input");
+    slider
+      .style("flex-grow", 1)
+      .attr("type", "range")
+      .attr("min", 0)
+      .attr("max", this.totalFrames - 1)
+      .attr("step", 1)
+      .attr("value", 0)
+      .on("input", () => {
+        this.currentFrame = +this.slider.value;
+        this.updateCtlText();
+        this.drawFrame(this.currentFrame);
+      });
+    this.ctlText = ctl.append("text");
+    this.updateCtlText();
+    this.slider = slider.node();
+  }
+  updateCtl() {
+    this.slider.value = n;
+    this.updateCtlText();
+  }
+  updateCtlText() {
+    this.ctlText.text(`${this.currentFrame + 1} / ${this.totalFrames}`);
   }
 }
 export default AniBarChart;

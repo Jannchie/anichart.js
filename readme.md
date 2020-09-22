@@ -46,46 +46,26 @@ import * as anichart from "anichart";
 
 ### 准备数据
 
-```js
-let data = [
-  {
-    name: "我TM超长",
-    value: [1, 1, 4, 5, 6, 12],
-    color: "#CC342B",
-    image:
-      "https://i2.hdslb.com/bfs/face/983034448f81f45f05956d0455a86fe0639d6a36.jpg@80w_80h.jpg",
-  },
-  { name: "B", value: [1, 2, 3, 4, 52, 13], color: "#198844" },
-  {
-    name: "D",
-    value: [1, 3, 4, 5, 62, 7],
-    color: "#3971ED",
-    image:
-      "https://i1.hdslb.com/bfs/face/2254162161a60b528cfec449f3450409a81ebc37.jpg@80w_80h.jpg",
-  },
-  {
-    name: "E",
-    value: [undefined, 3.3, undefined, undefined, undefined, undefined],
-    color: "white",
-  },
-  {
-    name: "F",
-    value: [undefined, undefined, 2, 1, 512, 52563],
-    color: "#3971ED",
-  },
-  {
-    name: "G",
-    value: [undefined, 7, 1, 2, undefined, 52],
-    color: "yellow",
-  },
-  { name: "H", value: [undefined, 1, 1, 2, 52, 64], color: "orange" },
-];
+``` csv
+name,date,value,channel,other
+Jannchie,2020-01-01,1,科技,other
+Jannchie,2020-01-03,6,科技,other
+Jannchie,2020-01-05,3,科技,other
+Jannchie,2020-01-07,-,科技,other
+Jannchie,2020-01-09,7,科技,other
+Jannchie,2020-01-12,12,科技,other
+Cake47,2020-01-03,10,生活,other
+Cake47,2020-01-02,5,生活,other
+Cake47,2020-01-06,2,生活,other
+Cake47,2020-01-09,3,生活,other
+Cake47,2020-01-11,4,生活,other
 ```
 
 ### 载入数据
 
 ```js
 let a = new anichart.Bar(data);
+let a = a.loadCsv(path);
 ```
 
 ### 播放动画
