@@ -744,7 +744,9 @@ class AniBarChart {
     this.updateCtlText();
   }
   updateCtlText() {
-    this.ctlText.text(`${this.currentFrame + 1} / ${this.totalFrames}`);
+    let b = this.totalFrames.toString().length;
+    let f = d3.format(`0${b},d`);
+    this.ctlText.text(`${f(this.currentFrame + 1)} / ${f(this.totalFrames)}`);
   }
 }
 export default AniBarChart;
