@@ -2,6 +2,12 @@
 
 轻松地制作数据可视化动画视频。
 
+## 示例
+
+<p align="center">
+    <img src="https://github.com/Jannchie/anichart.js/blob/master/public/image/anichart.js.png?raw=true"><br/>
+</p>
+
 ## 简介
 
 这是一个更好的可视化模板。
@@ -65,7 +71,7 @@ Cake47,2020-01-11,4,生活,other
 ### 载入数据
 
 ```js
-let a = new anichart.Bar(data);
+let a = new anichart.Bar();
 let a = a.loadCsv(path);
 ```
 
