@@ -317,13 +317,21 @@ class AniBarChart {
             break;
           case "out":
             int = d3.interpolateNumber(lValue, 0);
-            // // console.log(lValue, 0);
+            offsetInt = d3
+              .scaleLinear()
+              .domain([0, 1])
+              .range([0, 1])
+              .clamp(true);
             aint = d3.interpolateNumber(1, -2);
             break;
           case "in":
             int = d3.interpolateNumber(rValue * 0.2, rValue);
             aint = d3.interpolateNumber(0, 3);
-            offsetInt = d3.interpolateNumber(1, -2);
+            offsetInt = d3
+              .scaleLinear()
+              .domain([0, 1])
+              .range([1, 0])
+              .clamp(true);
             break;
           default:
             break;
@@ -342,18 +350,16 @@ class AniBarChart {
           let alpha = aint(d3.easePolyOut(r));
           if (alpha == 0) continue;
           let offset = offsetInt(d3.easePolyOut(r));
-          if (r != 0 || i == 0) {
-            let fd = {
-              ...lData,
-              color: this.colorData[this.getColorKey(lData)],
-              value: val,
-              alpha: alpha < 0 ? 0 : alpha,
-              state: state,
-              pos: offset < 0 ? 0 : offset,
-            };
+          let fd = {
+            ...lData,
+            color: this.colorData[this.getColorKey(lData)],
+            value: val,
+            alpha: alpha < 0 ? 0 : alpha,
+            state: state,
+            pos: offset < -1 ? -1 : offset,
+          };
 
-            frameData[f].push(fd);
-          }
+          frameData[f].push(fd);
           // 全局最大值
           if (val > this.maxValue) {
             this.maxValue = val;
