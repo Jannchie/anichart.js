@@ -670,6 +670,7 @@ class AniBarChart {
       try {
         if (this.currentFrame == len - 1) {
           this.player.stop();
+          btn.text(btn.text() == "STOP" ? "PLAY" : "STOP");
           if (this.output) {
             let blob = video.compile();
             this.downloadBlob(blob);
