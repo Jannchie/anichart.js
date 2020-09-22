@@ -1,4 +1,13 @@
-# anichart.js
+<h1 align="center">
+anichart.js
+</h1>
+
+<p align="center">
+    <img src="https://data.jsdelivr.com/v1/package/npm/anichart/badge">
+    <img alt="NPM" src="https://img.shields.io/npm/l/anichart?style=flat-square">
+    <img alt="npm" src="https://img.shields.io/npm/v/anichart?style=flat-square">
+    <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/Jannchie/anichart.js?style=flat-square">
+</p>
 
 轻松地制作数据可视化动画视频。
 
@@ -38,7 +47,7 @@ npm i anichart
 ### 标签导入
 
 ```html
-<script src="./anichart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/anichart@1.0.6/dist/anichart.min.js"></script>
 ```
 
 ## 用法
