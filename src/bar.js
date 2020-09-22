@@ -94,36 +94,39 @@ class AniBarChart {
 
     csvData.forEach((d) => {
       if (d.id == undefined) d.id = d.name;
+      d.date = +d3.timeParse(dateFormat)(d.date);
+      d.value = +d.value;
     });
 
     let temp = d3.group(
       csvData,
       (d) => d.id,
-      (d) => +d3.timeParse(dateFormat)(d.date)
+      (d) => d.date
     );
     for (let [id, data] of temp) {
-      let dtList = [...data.keys()];
-      let valList = [...data.values()].map((d) => d[0]);
+      let dtList = [...data.keys()].sort((a, b) => a - b);
+      let valList = [...data.values()]
+        .map((d) => d[0])
+        .sort((a, b) => a.date - b.date);
       let scale = d3
         .scaleLinear()
         .domain(dtList)
-        .range(valList.map((d) => Number(d.value)));
-      let obj;
+        .range(valList.map((d) => d.value));
+      let obj = valList[0];
+      console.log(valList);
       for (let i = 0; i < tsList.length; i++) {
         let ct = tsList[i];
         let cData = data.get(ct);
         if (cData != undefined) {
           obj = { ...cData[0] };
-          obj.value = Number(cData[0].value);
+          obj.value = cData[0].value;
           obj.date = ct;
-        } else if (obj == undefined) {
-          continue;
         } else {
           obj = { ...obj };
-          obj.value = scale(Number(ct));
+          obj.value = dtList[0] > ct ? NaN : scale(Number(ct));
           obj.date = ct;
         }
-        if (obj.value == obj.value) this.data.push(obj);
+        this.data.push(obj);
       }
     }
     this.keyFramesCount = tsList.length;
@@ -199,6 +202,8 @@ class AniBarChart {
       name,
       alpha = 1
     ) => {
+      this.ctx.fillStyle = "#999";
+
       let width = xScale(value);
       let r = this.barRedius > width / 2 ? width / 2 : this.barRedius;
       let imgPandding = this.imageData[name] == undefined ? 0 : this.barHeight;
@@ -284,13 +289,16 @@ class AniBarChart {
     let idMap = d3.group(data, (d) => d.id);
     for (let [id, dataList] of idMap) {
       nameSet.add(id);
-
+      console.log(dataList);
+      console.log(this.tsList);
       // 对每个数据区间
       for (let i = 0; i < dataList.length - 1; i++) {
         const lData = dataList[i];
         const rData = dataList[i + 1];
         const lValue = lData.value;
         const rValue = rData.value;
+        const lDate = lData.date;
+        const rDate = rData.date;
         let state = "normal";
         if (lValue != lValue && rValue != rValue) {
           state = "null";
@@ -320,8 +328,6 @@ class AniBarChart {
           default:
             break;
         }
-        const lDate = lData.date;
-        const rDate = rData.date;
         // 对每一帧
         // f: 帧号
         for (let f of d3.range(this.tsToFi(lDate), this.tsToFi(rDate))) {
@@ -487,6 +493,7 @@ class AniBarChart {
   }
   getKeyFrame(i) {
     let idx = i / (this.interval * this.frameRate);
+    console.log(idx);
     let idx1 = Math.floor(idx); // 下限
     let idx2 = Math.ceil(idx);
     return [idx1, idx2];
@@ -518,10 +525,11 @@ class AniBarChart {
     });
   }
   drawAxis(n, cData) {
+    console.log(n, cData);
     let xScale = cData.xScale;
-
     let idx = n / (this.interval * this.frameRate);
     let [idx1, idx2] = this.getKeyFrame(n);
+    if (idx2 >= this.tickArrays.length) idx2 = idx1;
     let a = d3.easePolyOut.exponent(10)(idx % 1);
     let mainTicks = this.tickArrays[idx1];
     let secondTicks = this.tickArrays[idx2];
@@ -539,7 +547,6 @@ class AniBarChart {
         this.axisTextSize
       );
     });
-
     this.ctx.globalAlpha = 1 - a;
     mainTicks.forEach((val) => {
       this.drawTick(xScale, val);
@@ -575,7 +582,6 @@ class AniBarChart {
 
   drawFrame(n) {
     this.ctx.clearRect(0, 0, this.width, this.height);
-
     let cData = this.frameData[n];
     this.drawBackground();
     this.drawWatermark();
@@ -647,20 +653,20 @@ class AniBarChart {
       await this.readyToDraw();
     }
     var video = new Whammy.Video(this.frameRate);
-    let frame = 1;
+    let frame = 0;
     let len = this.frameData.length;
     let t = d3.timer(() => {
       try {
-        if (this.output) {
-          video.add(this.ctx);
-        }
-        this.drawFrame(frame++);
-        if (frame >= len) {
+        if (frame == len - 1) {
           t.stop();
           if (this.output) {
             let blob = video.compile();
             this.downloadBlob(blob);
           }
+        }
+        this.drawFrame(frame++);
+        if (this.output) {
+          video.add(this.ctx);
         }
       } catch (e) {
         // console.log(e);
@@ -677,15 +683,13 @@ class AniBarChart {
   }
   async readyToDraw() {
     this.initCanvas();
-
-    // <input type="range" id="slider" min="0" max="1000" step="1" value="0" οnchange="print()" />
     let slider = d3.select("body").append("input");
     this.slider = slider.node();
     slider
       .attr("type", "range")
       .attr("style", `width: ${this.width}px`)
       .attr("min", 0)
-      .attr("max", 1000)
+      .attr("max", this.totalFrames - 1)
       .attr("step", 1)
       .attr("value", 0)
       .on("input", () => {
