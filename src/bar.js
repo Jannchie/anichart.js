@@ -52,7 +52,7 @@ class AniBarChart {
 
     this.colorData = {};
 
-    this.getColorKey = (d) => d[this.colorKey];
+    this.getColorKey = (d) => this.metaData[d.name].channel;
 
     this.ready = false;
     this.innerMargin = {
@@ -66,12 +66,16 @@ class AniBarChart {
   setOptions(options) {}
   async LoadMetaData(path) {
     let metaData = await d3.csv(path);
+    metaData = metaData.reduce((pv, cv) => {
+      pv[cv.name] = { ...cv };
+      return pv;
+    }, {});
+    this.metaData = metaData;
   }
   async LoadCsv(path) {
     this.data = [];
     let dateFormat = this.dateFormat;
     let csvData = await d3.csv(path);
-    console.log(csvData);
     let tsList = [...d3.group(csvData, (d) => d.date).keys()]
       .map((d) => +d3.timeParse(dateFormat)(d))
       .sort();
@@ -307,10 +311,6 @@ class AniBarChart {
         const rData = dataList[i + 1];
         const lValue = lData.value == undefined ? NaN : lData.value;
         const rValue = rData.value == undefined ? NaN : rData.value;
-        if (id == "Uzi") {
-          console.log(lValue, rValue);
-          console.log(lData, rData);
-        }
         const lDate = lData.date;
         const rDate = rData.date;
         let state = "normal";
@@ -437,20 +437,29 @@ class AniBarChart {
   }
 
   async preRender() {
-    this.hintText("Loading Images", this);
-    for (let k in this.imageData) {
-      this.imageData[k] = await d3.image(this.imageData[k]);
-      this.imageData[k].setAttribute("crossOrigin", "Anonymous");
-    }
     this.hintText("Loading Layout", this);
 
     this.innerMargin.top += this.axisTextSize;
-    this.barHeight =
+    this.barHeight = Math.round(
       ((this.height - this.innerMargin.top - this.innerMargin.bottom) /
         this.itemCount) *
-      0.8;
-    // TODO: ?
-
+        0.8
+    );
+    let all = Object.entries(this.metaData).length;
+    let c = 0;
+    for (let m of Object.entries(this.metaData).map((d) => d[1])) {
+      this.hintText(`Loading Images  ${c++} / ${all}`, this);
+      try {
+        this.imageData[m.name] = await d3.image(
+          `${m.image}@${this.barHeight}w_${this.barHeight}h.webp`
+        );
+        this.imageData[m.name].setAttribute("crossOrigin", "Anonymous");
+      } catch (e) {
+        console.log(e);
+        console.log(m.name);
+        console.log(m.image);
+      }
+    }
     this.ctx.font = `${this.barHeight}px Sarasa Mono SC`;
 
     this.innerMargin.left += this.labelPandding;
@@ -608,8 +617,6 @@ class AniBarChart {
   drawFrame(n) {
     this.ctx.clearRect(0, 0, this.width, this.height);
     let cData = this.frameData[n];
-    // console.log(cData);
-
     this.drawBackground();
     this.drawWatermark();
     this.drawAxis(n, cData);
