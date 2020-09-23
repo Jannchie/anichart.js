@@ -5,22 +5,23 @@ window.d3 = d3;
 class AniBarChart {
   constructor(data = {}, setting = {}) {
     this.data = data;
-    this.width = 1000;
-    this.height = 300;
+    this.width = 1366;
+    this.height = 768;
     this.outerMargin = { left: 10, right: 10, top: 10, bottom: 10 };
     this.background = "#1D1F21";
     this.frameRate = 60;
-    this.interval = 10;
+    this.interval = 1;
     this.barRedius = 4;
-    this.itemCount = 6;
+    this.itemCount = 20;
     this.labelPandding = 10;
     this.axisTextSize = 20;
     this.tickNumber = 4;
-    this.getValueText = (value) => `pts ${value}M`;
     this.output = false;
-    this.valueFormat = d3.format(",.2f");
+    this.valueFormat = (d) => `${d3.format("+,.2f")(d / 10000)}万粉/月`;
     this.keyDateDelta = 0;
     this.colorKey = "channel";
+
+    this.dateFormat = "%Y-%m-%d %H:%M";
     this.colorSchame = {
       background: "#1D1F21",
       colors: [
@@ -63,12 +64,14 @@ class AniBarChart {
   }
 
   setOptions(options) {}
-
+  async LoadMetaData(path) {
+    let metaData = await d3.csv(path);
+  }
   async LoadCsv(path) {
     this.data = [];
-    let dateFormat = "%Y-%m-%d";
+    let dateFormat = this.dateFormat;
     let csvData = await d3.csv(path);
-
+    console.log(csvData);
     let tsList = [...d3.group(csvData, (d) => d.date).keys()]
       .map((d) => +d3.timeParse(dateFormat)(d))
       .sort();
@@ -84,7 +87,6 @@ class AniBarChart {
     let firstTs = tsList[0];
     let lastTs = tsList[tsList.length - 1];
     tsList = d3.range(firstTs, lastTs + 1, delta);
-
     let frameCount = this.frameRate * this.interval * (tsList.length - 1);
 
     this.getCurrentDate = d3
@@ -94,7 +96,7 @@ class AniBarChart {
 
     csvData.forEach((d) => {
       if (d.id == undefined) d.id = d.name;
-      d.date = +d3.timeParse(dateFormat)(d.date);
+      d.date = +d3.timeParse(this.dateFormat)(d.date);
       d.value = +d.value;
     });
 
@@ -103,6 +105,7 @@ class AniBarChart {
       (d) => d.id,
       (d) => d.date
     );
+    // 对每一个项目
     for (let [id, data] of temp) {
       let dtList = [...data.keys()].sort((a, b) => a - b);
       let valList = [...data.values()]
@@ -113,19 +116,30 @@ class AniBarChart {
         .domain(dtList)
         .range(valList.map((d) => d.value));
       let obj = valList[0];
+      // 对每一个关键帧
       for (let i = 0; i < tsList.length; i++) {
         let ct = tsList[i];
-        let cData = data.get(ct);
-        if (cData != undefined) {
-          obj = { ...cData[0] };
-          obj.value = cData[0].value;
+        if (ct <= dtList[dtList.length - 1] && ct >= dtList[0]) {
+          // 在区间内
+          obj = { ...obj };
+          obj.value = scale(Number(ct));
           obj.date = ct;
         } else {
-          obj = { ...obj };
-          obj.value = dtList[0] > ct ? NaN : scale(Number(ct));
-          obj.date = ct;
+          continue;
         }
         this.data.push(obj);
+        if (-1 == dtList.indexOf(ct - delta)) {
+          obj = { ...obj };
+          obj.value = NaN;
+          obj.date = ct - delta;
+          this.data.push(obj);
+        }
+        if (-1 == dtList.indexOf(ct + delta)) {
+          obj = { ...obj };
+          obj.value = NaN;
+          obj.date = ct + delta;
+          this.data.push(obj);
+        }
       }
     }
     this.keyFramesCount = tsList.length;
@@ -220,7 +234,7 @@ class AniBarChart {
       // draw bar value text
       this.ctx.textAlign = "left";
       this.ctx.fillText(
-        this.getValueText(this.valueFormat(value)),
+        this.valueFormat(value),
         width + this.innerMargin.left + this.labelPandding,
         y + height * 0.88
       );
@@ -287,11 +301,16 @@ class AniBarChart {
     for (let [id, dataList] of idMap) {
       nameSet.add(id);
       // 对每个数据区间
+      dataList.sort((a, b) => a.date - b.date);
       for (let i = 0; i < dataList.length - 1; i++) {
         const lData = dataList[i];
         const rData = dataList[i + 1];
-        const lValue = lData.value;
-        const rValue = rData.value;
+        const lValue = lData.value == undefined ? NaN : lData.value;
+        const rValue = rData.value == undefined ? NaN : rData.value;
+        if (id == "Uzi") {
+          console.log(lValue, rValue);
+          console.log(lData, rData);
+        }
         const lDate = lData.date;
         const rDate = rData.date;
         let state = "normal";
@@ -302,7 +321,11 @@ class AniBarChart {
         } else if (lValue == lValue && rValue != rValue) {
           state = "out";
         }
-        let int = d3.interpolateNumber(lValue, rValue);
+        let int = d3
+          .scaleLinear()
+          .range([lValue, rValue])
+          .domain([0, 1])
+          .clamp(true);
         let aint = d3.interpolateNumber(1, 1);
         let offsetInt = () => 0;
         switch (state) {
@@ -311,20 +334,20 @@ class AniBarChart {
             aint = d3.interpolateNumber(0, 0);
             break;
           case "out":
-            int = d3.interpolateNumber(lValue, 0);
+            int = d3.interpolateNumber(lValue, lValue * 0.47);
             offsetInt = d3
               .scaleLinear()
-              .domain([0, 1])
+              .domain([0, 0.4])
               .range([0, 1])
               .clamp(true);
-            aint = d3.interpolateNumber(1, -2);
+            aint = d3.scaleLinear().domain([0, 0.4]).range([1, 0]).clamp(true);
             break;
           case "in":
-            int = d3.interpolateNumber(rValue * 0.2, rValue);
-            aint = d3.interpolateNumber(0, 3);
+            int = d3.interpolateNumber(rValue * 0.95, rValue);
+            aint = d3.scaleLinear().domain([0, 0.4]).range([0, 1]).clamp(true);
             offsetInt = d3
               .scaleLinear()
-              .domain([0, 1])
+              .domain([0, 0.4])
               .range([1, 0])
               .clamp(true);
             break;
@@ -352,7 +375,6 @@ class AniBarChart {
           let alpha = aint(d3.easePolyOut(r));
           if (alpha == 0) continue;
           let offset = offsetInt(d3.easePolyOut(r));
-
           let fd = {
             ...lData,
             color: this.colorData[this.getColorKey(lData)],
@@ -361,7 +383,6 @@ class AniBarChart {
             state: state,
             pos: offset < -1 ? -1 : offset,
           };
-
           frameData[f].push(fd);
           // 全局最大值
           if (val > this.maxValue) {
@@ -391,7 +412,6 @@ class AniBarChart {
         d.rank = i;
       });
     });
-
     this.frameData = frameData;
     this.nameSet = nameSet;
   }
@@ -435,7 +455,7 @@ class AniBarChart {
 
     this.innerMargin.left += this.labelPandding;
     this.innerMargin.right += this.ctx.measureText(
-      this.getValueText(this.valueFormat(this.maxValue))
+      this.valueFormat(this.maxValue)
     ).width;
     this.innerMargin.right += this.labelPandding;
 
@@ -535,7 +555,7 @@ class AniBarChart {
     let idx = n / (this.interval * this.frameRate);
     let [idx1, idx2] = this.getKeyFrame(n);
     if (idx2 >= this.tickArrays.length) idx2 = idx1;
-    let a = d3.easePolyOut.exponent(10)(idx % 1);
+    let a = d3.easePolyInOut.exponent(10)(idx % 1);
     let mainTicks = this.tickArrays[idx1];
     let secondTicks = this.tickArrays[idx2];
     this.ctx.globalAlpha = a;
@@ -615,7 +635,7 @@ class AniBarChart {
 
     this.ctx.fillStyle = "#fff4";
     this.ctx.fillText(
-      d3.timeFormat("%Y-%m-%d %H:%M")(new Date(timestamp)),
+      d3.timeFormat(this.dateFormat)(new Date(timestamp)),
       this.width - this.outerMargin.left,
       this.height - this.outerMargin.bottom - 20
     );

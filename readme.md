@@ -62,6 +62,8 @@ import * as anichart from "anichart";
 
 ### 准备数据
 
+以CSV文件为例。
+
 ``` csv
 name,date,value,channel,other
 Jannchie,2020-01-01,1,科技,other
@@ -77,11 +79,16 @@ Cake47,2020-01-09,3,生活,other
 Cake47,2020-01-11,4,生活,other
 ```
 
-### 载入数据
+### 创建对象
 
 ```js
 let a = new anichart.Bar();
-let a = a.loadCsv(path);
+```
+
+### 载入数据
+
+```js
+a.loadCsv(path);
 ```
 
 ### 播放动画
