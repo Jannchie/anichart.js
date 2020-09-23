@@ -26,6 +26,7 @@ class AniBarChart {
       background: "#1D1F21",
       colors: [
         "#D25252",
+        "#B4282D",
         "#569CD6",
         "#4EC9B0",
         "#EFC090",
@@ -50,7 +51,17 @@ class AniBarChart {
       }
     })(this.colorSchame);
 
-    this.colorData = {};
+    this.colorData = {
+      生活: "#569CD6",
+      游戏: "#A4282D",
+      美食: "#D25252",
+      动画: "#FB9FB1",
+      国创: "#CC342B",
+      音乐: "#8cc9c0",
+      时尚: "#FBA922",
+      鬼畜: "#b167a9",
+      知识: "#348DBB",
+    };
 
     this.getColorKey = (d) => this.metaData[d.name].channel;
 
@@ -447,19 +458,25 @@ class AniBarChart {
     );
     let all = Object.entries(this.metaData).length;
     let c = 0;
+    let ps = [];
     for (let m of Object.entries(this.metaData).map((d) => d[1])) {
-      this.hintText(`Loading Images  ${c++} / ${all}`, this);
       try {
-        this.imageData[m.name] = await d3.image(
-          `${m.image}@${this.barHeight}w_${this.barHeight}h.webp`
+        ps.push(
+          (async () => {
+            this.imageData[m.name] = await d3.image(
+              `${m.image}@${this.barHeight}w_${this.barHeight}h.webp`
+            );
+            this.imageData[m.name].setAttribute("crossOrigin", "Anonymous");
+            this.hintText(`Loading Images  ${++c}/ ${all}`, this);
+          })()
         );
-        this.imageData[m.name].setAttribute("crossOrigin", "Anonymous");
       } catch (e) {
         console.log(e);
         console.log(m.name);
         console.log(m.image);
       }
     }
+    await Promise.all(ps);
     this.ctx.font = `${this.barHeight}px Sarasa Mono SC`;
 
     this.innerMargin.left += this.labelPandding;
