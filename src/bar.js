@@ -15,9 +15,11 @@ class AniBarChart {
     this.itemCount = 20;
     this.labelPandding = 10;
     this.axisTextSize = 20;
-    this.tickNumber = 4;
+    this.tickNumber = 6;
     this.output = false;
+    this.getBarInfo = (name) => `${this.metaData[name].channel}-${name}`;
     this.valueFormat = (d) => `${d3.format("+,.2f")(d / 10000)}万粉/月`;
+    this.tickFormat = ",d";
     this.keyDateDelta = 0;
     this.colorKey = "channel";
 
@@ -26,15 +28,15 @@ class AniBarChart {
       background: "#1D1F21",
       colors: [
         "#D25252",
-        "#B4282D",
-        "#569CD6",
+        "#2472C8",
         "#4EC9B0",
         "#EFC090",
-        "#608B4E",
+        "#20C38B",
+        "#d42732",
         "#C5C8C6",
         "#FBA922",
         "#D197D9",
-        "#198844",
+        "#46733F",
         "#F92672",
         "#00AD9C",
         "#FB9FB1",
@@ -52,15 +54,18 @@ class AniBarChart {
     })(this.colorSchame);
 
     this.colorData = {
-      生活: "#569CD6",
-      游戏: "#A4282D",
-      美食: "#D25252",
+      生活: "#2AF",
+      游戏: "#c02c38",
+      美食: "#F7BD0B",
       动画: "#FB9FB1",
       国创: "#CC342B",
-      音乐: "#8cc9c0",
-      时尚: "#FBA922",
+      音乐: "#20C38B",
+      舞蹈: "#20C38B",
+      时尚: "#FB7922",
+      娱乐: "#FB7922",
       鬼畜: "#b167a9",
-      知识: "#348DBB",
+      知识: "#2472C8",
+      数码: "#2472C8",
     };
 
     this.getColorKey = (d) => this.metaData[d.name].channel;
@@ -268,7 +273,7 @@ class AniBarChart {
       this.ctx.fillStyle = this.background;
       this.ctx.font = `${height}px Sarasa Mono SC black`;
       this.ctx.fillText(
-        name,
+        this.getBarInfo(name),
         xScale(value) +
           this.innerMargin.left -
           this.labelPandding -
@@ -388,7 +393,6 @@ class AniBarChart {
           let offset = offsetInt(d3.easePolyOut(r));
           let fd = {
             ...lData,
-            color: this.colorData[this.getColorKey(lData)],
             value: val,
             alpha: alpha < 0 ? 0 : alpha,
             state: state,
@@ -584,7 +588,7 @@ class AniBarChart {
     let a = d3.easePolyInOut.exponent(10)(idx % 1);
     let mainTicks = this.tickArrays[idx1];
     let secondTicks = this.tickArrays[idx2];
-    this.ctx.globalAlpha = a;
+    this.ctx.globalAlpha = d3.max(mainTicks) == d3.max(secondTicks) ? 1 : a;
     this.ctx.font = `${this.axisTextSize}px Sarasa Mono SC`;
     this.ctx.fillStyle = "#888";
     this.ctx.strokeStyle = "#888";
@@ -593,16 +597,16 @@ class AniBarChart {
     secondTicks.forEach((val) => {
       this.drawTick(xScale, val);
       this.ctx.fillText(
-        d3.format(",.1f")(val),
+        d3.format(this.tickFormat)(val),
         this.innerMargin.left + xScale(val),
         this.axisTextSize
       );
     });
-    this.ctx.globalAlpha = 1 - a;
+    this.ctx.globalAlpha = d3.max(mainTicks) == d3.max(secondTicks) ? 1 : 1 - a;
     mainTicks.forEach((val) => {
       this.drawTick(xScale, val);
       this.ctx.fillText(
-        d3.format(",.1f")(val),
+        d3.format(this.tickFormat)(val),
         this.innerMargin.left + xScale(val),
         this.axisTextSize
       );
@@ -645,7 +649,7 @@ class AniBarChart {
         cData.yScale(e.pos),
         e.value,
         this.barHeight,
-        e.color,
+        this.colorData[this.getColorKey(e)],
         e.name,
         e.alpha
       );
@@ -709,10 +713,9 @@ class AniBarChart {
       await this.readyToDraw();
     }
     var video = new Whammy.Video(this.frameRate);
-    let len = this.frameData.length;
     this.player = d3.timer(() => {
       try {
-        if (this.currentFrame == len - 1) {
+        if (this.currentFrame == this.totalFrames) {
           this.player.stop();
           btn.text(btn.text() == "STOP" ? "PLAY" : "STOP");
           if (this.output) {
