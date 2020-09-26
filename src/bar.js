@@ -175,7 +175,9 @@ class AniBarChart {
       .range(d3.extent(tsList))
       .domain([0, this.totalFrames]);
   }
-
+  getColor(data) {
+    return this.colorData[this.getColorKey(data)];
+  }
   initCanvas() {
     const canvas = d3
       .select("body")
@@ -226,39 +228,36 @@ class AniBarChart {
       this.ctx.closePath();
       this.ctx.fill();
     };
-    this.ctx.drawBar = (
-      xScale,
-      x,
-      y,
-      value,
-      height,
-      fillColor,
-      name,
-      alpha = 1
-    ) => {
+    this.ctx.drawBar = (data, series) => {
       this.ctx.fillStyle = "#999";
-
-      let width = xScale(value);
-      let r = this.barRedius > width / 2 ? width / 2 : this.barRedius;
-      let imgPandding = this.imageData[name] == undefined ? 0 : this.barHeight;
-      this.ctx.globalAlpha = alpha;
-
+      let fillColor = this.getColor(data);
+      let barWidth = series.xScale(data.value);
+      let r = this.barRedius > barWidth / 2 ? barWidth / 2 : this.barRedius;
+      let imgPandding =
+        this.imageData[data.name] == undefined ? 0 : this.barHeight;
+      this.ctx.globalAlpha = data.alpha;
+      let x = this.innerMargin.left;
+      let y = series.yScale(data.pos);
       // draw rect
       this.ctx.fillStyle = fillColor;
-      this.ctx.radiusRect(x, y, width, height, r, name);
+      this.ctx.radiusRect(x, y, barWidth, this.barHeight, r);
 
       // draw bar label text
       this.ctx.fillStyle = fillColor;
-      this.ctx.font = `${height}px Sarasa Mono SC black`;
+      this.ctx.font = `${this.barHeight}px Sarasa Mono SC black`;
       this.ctx.textAlign = "right";
-      this.ctx.fillText(name, x - this.labelPandding, y + height * 0.88);
+      this.ctx.fillText(
+        data.name,
+        x - this.labelPandding,
+        y + this.barHeight * 0.88
+      );
 
       // draw bar value text
       this.ctx.textAlign = "left";
       this.ctx.fillText(
-        this.valueFormatter(value),
-        width + this.innerMargin.left + this.labelPandding,
-        y + height * 0.88
+        this.valueFormatter(data.value),
+        barWidth + x + this.labelPandding,
+        y + this.barHeight * 0.88
       );
 
       // draw bar info
@@ -266,26 +265,23 @@ class AniBarChart {
 
       // clip bar info
       this.ctx.beginPath();
-      this.ctx.radiusArea(x, y, width, height, r);
+      this.ctx.radiusArea(x, y, barWidth, this.barHeight, r);
       this.ctx.clip(); //call the clip method so the next render is clipped in last path
       this.ctx.closePath();
 
       // draw bar text
       this.ctx.textAlign = "right";
       this.ctx.fillStyle = this.background;
-      this.ctx.font = `${height}px Sarasa Mono SC black`;
+      this.ctx.font = `${this.barHeight}px Sarasa Mono SC black`;
       this.ctx.fillText(
-        this.getBarInfo(name),
-        xScale(value) +
-          this.innerMargin.left -
-          this.labelPandding -
-          imgPandding,
-        y + height * 0.88
+        this.getBarInfo(data.name),
+        barWidth + x - this.labelPandding - imgPandding,
+        y + this.barHeight * 0.88
       );
       // draw bar img
       this.ctx.drawClipedImg(
-        this.imageData[name],
-        x + xScale(value) - this.barHeight,
+        this.imageData[data.name],
+        x + series.xScale(data.value) - this.barHeight,
         y,
         this.barHeight,
         this.barHeight,
@@ -645,16 +641,7 @@ class AniBarChart {
     this.drawAxis(n, cData);
     this.drawDate(n);
     cData.forEach((e) => {
-      this.ctx.drawBar(
-        cData.xScale,
-        this.innerMargin.left,
-        cData.yScale(e.pos),
-        e.value,
-        this.barHeight,
-        this.colorData[this.getColorKey(e)],
-        e.name,
-        e.alpha
-      );
+      this.ctx.drawBar(e, cData);
     });
   }
 
