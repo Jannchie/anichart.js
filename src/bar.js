@@ -12,7 +12,7 @@ class AniBarChart {
     this.frameRate = 60;
     this.interval = 1;
     this.barRedius = 4;
-    this.itemCount = 20;
+    this.itemCount = 18;
     this.labelPandding = 10;
     this.axisTextSize = 20;
     this.tickNumber = 6;
@@ -236,6 +236,7 @@ class AniBarChart {
       let imgPandding =
         this.imageData[data.name] == undefined ? 0 : this.barHeight;
       this.ctx.globalAlpha = data.alpha;
+
       let x = this.innerMargin.left;
       let y = series.yScale(data.pos);
       // draw rect
@@ -340,6 +341,7 @@ class AniBarChart {
           .range([lValue, rValue])
           .domain([0, 1])
           .clamp(true);
+
         let aint = d3.interpolateNumber(1, 1);
         let offsetInt = () => 0;
         switch (state) {
@@ -348,26 +350,27 @@ class AniBarChart {
             aint = d3.interpolateNumber(0, 0);
             break;
           case "out":
-            int = d3.interpolateNumber(lValue, lValue * 0.47);
+            int = d3.interpolateNumber(lValue, lValue * 0.8);
             offsetInt = d3
               .scaleLinear()
-              .domain([0, 0.4])
+              .domain([0.8, 1])
               .range([0, 1])
               .clamp(true);
-            aint = d3.scaleLinear().domain([0, 0.4]).range([1, 0]).clamp(true);
+            aint = d3.scaleLinear().domain([0.4, 1]).range([1, 0]).clamp(true);
             break;
           case "in":
-            int = d3.interpolateNumber(rValue * 0.95, rValue);
-            aint = d3.scaleLinear().domain([0, 0.4]).range([0, 1]).clamp(true);
+            int = d3.interpolateNumber(rValue * 0.8, rValue);
+            aint = d3.scaleLinear().domain([0, 0.2]).range([0, 1]).clamp(true);
             offsetInt = d3
               .scaleLinear()
-              .domain([0, 0.4])
+              .domain([0.2, 1])
               .range([1, 0])
               .clamp(true);
             break;
           default:
             break;
         }
+
         if (this.colorData[this.getColorKey(lData)] == undefined) {
           this.colorData[
             this.getColorKey(lData)
@@ -392,9 +395,9 @@ class AniBarChart {
           let fd = {
             ...lData,
             value: val,
-            alpha: alpha < 0 ? 0 : alpha,
+            alpha: alpha,
             state: state,
-            pos: offset < -1 ? -1 : offset,
+            pos: offset,
           };
           frameData[f].push(fd);
           // 全局最大值
@@ -730,6 +733,19 @@ class AniBarChart {
       fd.forEach((bd, j) => {});
     });
   }
+  async fixAlpha() {
+    for (let fd of this.frameData) {
+      for (let data of fd) {
+        if (data.pos > this.itemCount - 1) {
+          data.alpha = d3
+            .scaleLinear()
+            .domain([0, 1])
+            .range([1, 0])
+            .clamp(true)(data.pos - this.itemCount + 1);
+        }
+      }
+    }
+  }
   async readyToDraw() {
     this.initCanvas();
     this.hintText("Loading Data", this);
@@ -738,6 +754,7 @@ class AniBarChart {
     // 计算x轴坐标
     await this.preRender();
     this.calPosition(this.nameSet, this.frameData);
+    this.fixAlpha(this.frameData);
     this.calRenderSort();
     this.calScale();
     // this.calAxis();
