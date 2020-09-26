@@ -1,10 +1,10 @@
 import * as d3 from "d3";
-import { interrupt } from "d3";
 import { Whammy } from "./whammy";
 window.d3 = d3;
 class AniBarChart {
-  constructor(data = {}, setting = {}) {
+  constructor(data = {}, options = {}) {
     this.data = data;
+    this.language = "zh-CN";
     this.width = 1366;
     this.height = 768;
     this.outerMargin = { left: 10, right: 10, top: 10, bottom: 10 };
@@ -20,12 +20,13 @@ class AniBarChart {
     this.getBarInfo = (name) => `${this.metaData[name].channel}-${name}`;
     this.valueFormatter = (d) => `${d3.format("+,.2f")(d / 10000)}万粉/月`;
     this.tickFormatter = (val) =>
-      new Intl.NumberFormat("zh-CN", { notation: "compact" }).format(val);
+      new Intl.NumberFormat(this.language, { notation: "compact" }).format(val);
     this.tickFormat = ",d";
     this.keyDateDelta = 0;
     this.colorKey = "channel";
-
     this.dateFormat = "%Y-%m-%d %H:%M";
+    this.dateFormatForLoad = "%Y-%m-%d %H:%M";
+
     this.colorSchame = {
       background: "#1D1F21",
       colors: [
@@ -91,7 +92,7 @@ class AniBarChart {
   }
   async LoadCsv(path) {
     this.data = [];
-    let dateFormat = this.dateFormat;
+    let dateFormat = this.dateFormatForLoad;
     let csvData = await d3.csv(path);
     let tsList = [...d3.group(csvData, (d) => d.date).keys()]
       .map((d) => +d3.timeParse(dateFormat)(d))
