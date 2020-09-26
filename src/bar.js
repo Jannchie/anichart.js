@@ -18,7 +18,9 @@ class AniBarChart {
     this.tickNumber = 6;
     this.output = false;
     this.getBarInfo = (name) => `${this.metaData[name].channel}-${name}`;
-    this.valueFormat = (d) => `${d3.format("+,.2f")(d / 10000)}万粉/月`;
+    this.valueFormatter = (d) => `${d3.format("+,.2f")(d / 10000)}万粉/月`;
+    this.tickFormatter = (val) =>
+      new Intl.NumberFormat("zh-CN", { notation: "compact" }).format(val);
     this.tickFormat = ",d";
     this.keyDateDelta = 0;
     this.colorKey = "channel";
@@ -27,21 +29,19 @@ class AniBarChart {
     this.colorSchame = {
       background: "#1D1F21",
       colors: [
-        "#D25252",
-        "#2472C8",
-        "#4EC9B0",
-        "#EFC090",
-        "#20C38B",
-        "#d42732",
-        "#C5C8C6",
-        "#FBA922",
-        "#D197D9",
-        "#46733F",
-        "#F92672",
-        "#00AD9C",
-        "#FB9FB1",
-        "#8BC34A",
-        "#CC342B",
+        "#27C",
+        "#FB0",
+        "#FFF",
+        "#2C8",
+        "#D23",
+        "#0CE",
+        "#F72",
+        "#C8C",
+        "#C86",
+        "#F8B",
+        "#DDA",
+        "#BCA",
+        "#F27",
       ],
     };
     this.useCtl = true;
@@ -54,7 +54,8 @@ class AniBarChart {
     })(this.colorSchame);
 
     this.colorData = {
-      生活: "#2AF",
+      生活: "#FFF",
+      资讯: "#0CE",
       游戏: "#c02c38",
       美食: "#F7BD0B",
       动画: "#FB9FB1",
@@ -254,7 +255,7 @@ class AniBarChart {
       // draw bar value text
       this.ctx.textAlign = "left";
       this.ctx.fillText(
-        this.valueFormat(value),
+        this.valueFormatter(value),
         width + this.innerMargin.left + this.labelPandding,
         y + height * 0.88
       );
@@ -485,7 +486,7 @@ class AniBarChart {
 
     this.innerMargin.left += this.labelPandding;
     this.innerMargin.right += this.ctx.measureText(
-      this.valueFormat(this.maxValue)
+      this.valueFormatter(this.maxValue)
     ).width;
     this.innerMargin.right += this.labelPandding;
 
@@ -527,7 +528,7 @@ class AniBarChart {
 
       let tmpList = [];
       for (let i = 0; i < rankList.length; i++) {
-        let frames = (this.frameRate * this.interval) / 20;
+        let frames = (this.frameRate * this.interval) / 7;
         let tmpArray = rankList.slice(
           i - frames > 0 ? i - frames : 0,
           i + frames
@@ -597,7 +598,7 @@ class AniBarChart {
     secondTicks.forEach((val) => {
       this.drawTick(xScale, val);
       this.ctx.fillText(
-        d3.format(this.tickFormat)(val),
+        this.tickFormatter(val),
         this.innerMargin.left + xScale(val),
         this.axisTextSize
       );
@@ -606,7 +607,7 @@ class AniBarChart {
     mainTicks.forEach((val) => {
       this.drawTick(xScale, val);
       this.ctx.fillText(
-        d3.format(this.tickFormat)(val),
+        this.tickFormatter(val),
         this.innerMargin.left + xScale(val),
         this.axisTextSize
       );
@@ -713,7 +714,7 @@ class AniBarChart {
       await this.readyToDraw();
     }
     var video = new Whammy.Video(this.frameRate);
-    this.player = d3.timer(() => {
+    this.player = d3.interval(() => {
       try {
         if (this.currentFrame == this.totalFrames) {
           this.player.stop();
@@ -734,7 +735,7 @@ class AniBarChart {
       } catch (e) {
         this.player.stop();
       }
-    });
+    }, 1000 / this.frameRate);
   }
   postProcessData() {
     this.frameData.forEach((fd, i) => {
