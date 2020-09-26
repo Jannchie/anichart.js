@@ -12,12 +12,14 @@ class AniBarChart {
     this.frameRate = 60;
     this.interval = 1;
     this.barRedius = 4;
-    this.itemCount = 18;
+    this.itemCount = 22;
     this.labelPandding = 10;
     this.axisTextSize = 20;
     this.tickNumber = 6;
     this.output = false;
-    this.getBarInfo = (name) => `${this.metaData[name].channel}-${name}`;
+    this.getLabel = (data) => ``;
+    this.getBarInfo = (data) =>
+      `${this.metaData[data.name].channel}-${data.name}`;
     this.valueFormatter = (d) => `${d3.format("+,.2f")(d / 10000)}万粉/月`;
     this.tickFormatter = (val) =>
       new Intl.NumberFormat(this.language, { notation: "compact" }).format(val);
@@ -79,6 +81,11 @@ class AniBarChart {
       top: this.outerMargin.top,
       bottom: this.outerMargin.bottom,
     };
+
+    this.innerMargin.right += 108;
+
+    this.drawBarExt = () => {};
+    this.drawExt = () => {};
   }
 
   setOptions(options) {}
@@ -248,7 +255,7 @@ class AniBarChart {
       this.ctx.font = `${this.barHeight}px Sarasa Mono SC black`;
       this.ctx.textAlign = "right";
       this.ctx.fillText(
-        data.name,
+        this.getLabel(data),
         x - this.labelPandding,
         y + this.barHeight * 0.88
       );
@@ -275,7 +282,7 @@ class AniBarChart {
       this.ctx.fillStyle = this.background;
       this.ctx.font = `${this.barHeight}px Sarasa Mono SC black`;
       this.ctx.fillText(
-        this.getBarInfo(data.name),
+        this.getBarInfo(data),
         barWidth + x - this.labelPandding - imgPandding,
         y + this.barHeight * 0.88
       );
@@ -290,6 +297,8 @@ class AniBarChart {
       );
 
       this.ctx.restore();
+
+      this.drawBarExt(this.ctx, data, series);
 
       this.ctx.globalAlpha = 1;
     };
@@ -356,7 +365,7 @@ class AniBarChart {
               .domain([0.8, 1])
               .range([0, 1])
               .clamp(true);
-            aint = d3.scaleLinear().domain([0.4, 1]).range([1, 0]).clamp(true);
+            aint = d3.scaleLinear().domain([0, 0.4]).range([1, 0]).clamp(true);
             break;
           case "in":
             int = d3.interpolateNumber(rValue * 0.8, rValue);
@@ -454,7 +463,6 @@ class AniBarChart {
 
   async preRender() {
     this.hintText("Loading Layout", this);
-
     this.innerMargin.top += this.axisTextSize;
     this.barHeight = Math.round(
       ((this.height - this.innerMargin.top - this.innerMargin.bottom) /
@@ -490,9 +498,9 @@ class AniBarChart {
     ).width;
     this.innerMargin.right += this.labelPandding;
 
-    let maxTextWidth = d3.max([...this.nameSet], (name) => {
-      return this.ctx.measureText(name).width;
-    });
+    let maxTextWidth = d3.max(this.frameData, (fd) =>
+      d3.max(fd, (d) => this.ctx.measureText(this.getLabel(d)).width)
+    );
     this.innerMargin.left += maxTextWidth;
     this.currentFrame = 0;
   }
@@ -646,6 +654,7 @@ class AniBarChart {
     cData.forEach((e) => {
       this.ctx.drawBar(e, cData);
     });
+    this.drawExt(this.ctx, cData);
   }
 
   drawDate(n) {
@@ -737,11 +746,12 @@ class AniBarChart {
     for (let fd of this.frameData) {
       for (let data of fd) {
         if (data.pos > this.itemCount - 1) {
-          data.alpha = d3
+          let newAlpha = d3
             .scaleLinear()
             .domain([0, 1])
             .range([1, 0])
             .clamp(true)(data.pos - this.itemCount + 1);
+          if (data.alpha > newAlpha) data.alpha = newAlpha;
         }
       }
     }
@@ -774,13 +784,11 @@ class AniBarChart {
       .style("display", "flex");
     ctl
       .append("button")
-
       .attr("id", "play-btn")
       .style("font-family", "Sarasa Mono SC")
       .text("PLAY")
       .on("click", () => {
         let btn = d3.select("#play-btn");
-        let text = btn.text();
         let next = btn.text() == "STOP" ? "PLAY" : "STOP";
         this.play();
         d3.select("#play-btn").text(next);
