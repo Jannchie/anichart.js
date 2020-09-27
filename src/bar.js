@@ -1,3 +1,4 @@
+import _ from "lodash";
 import * as d3 from "d3";
 import { Whammy } from "./whammy";
 window.d3 = d3;
@@ -10,6 +11,7 @@ class AniBarChart {
     this.outerMargin = { left: 10, right: 10, top: 10, bottom: 10 };
     this.background = "#1D1F21";
     this.frameRate = 60;
+    this.freeze = 300;
     this.interval = 1;
     this.barRedius = 4;
     this.itemCount = 22;
@@ -125,7 +127,8 @@ class AniBarChart {
     this.getCurrentDate = d3
       .scaleLinear()
       .domain([0, frameCount - 1])
-      .range([firstTs, lastTs]);
+      .range([firstTs, lastTs])
+      .clamp(true);
 
     csvData.forEach((d) => {
       if (this.id == undefined) this.id = d.name;
@@ -328,7 +331,6 @@ class AniBarChart {
     let idSet = new Set();
     this.maxValue = 0;
 
-    d3.group(data);
     // 对每组数据
     let idMap = d3.group(data, (d) => this.getId(d));
     for (let [id, dataList] of idMap) {
@@ -523,6 +525,10 @@ class AniBarChart {
    * @param {List} frameData
    */
   calPosition(idSet, frameData) {
+    for (let i of d3.range(300)) {
+      frameData.push(_.cloneDeep(frameData[this.totalFrames - 1]));
+      frameData[frameData.length - 1].max = frameData[this.totalFrames - 1].max;
+    }
     let tempDict = [...idSet].reduce((dict, id) => {
       let rankList = frameData.map((dList) => {
         for (let d of dList) {
@@ -598,6 +604,7 @@ class AniBarChart {
     let xScale = cData.xScale;
     let idx = n / (this.interval * this.frameRate);
     let [idx1, idx2] = this.getKeyFrame(n);
+    while (idx1 >= this.tickArrays.length) idx1 -= 1;
     if (idx2 >= this.tickArrays.length) idx2 = idx1;
     let a = d3.easePolyInOut.exponent(10)(idx % 1);
     let mainTicks = this.tickArrays[idx1];
@@ -718,16 +725,20 @@ class AniBarChart {
     if (!this.ready) {
       await this.readyToDraw();
     }
-    var video = new Whammy.Video(this.frameRate);
+    this.video = new Whammy.Video(this.frameRate);
+    let delay = this.output ? 0 : 1000 / this.frameRate;
     this.player = d3.interval(() => {
       try {
-        if (this.currentFrame == this.totalFrames) {
+        if (this.currentFrame == this.totalFrames + 300) {
           this.player.stop();
+          let btn = d3.select("#play-btn");
           btn.text(btn.text() == "STOP" ? "PLAY" : "STOP");
           if (this.output) {
-            let blob = video.compile();
+            let blob = this.video.compile();
+            console.log(blob);
             this.downloadBlob(blob);
           }
+          return;
         }
         if (this.useCtl) {
           this.slider.value = this.currentFrame;
@@ -735,12 +746,13 @@ class AniBarChart {
         }
         this.drawFrame(this.currentFrame++);
         if (this.output) {
-          video.add(this.ctx);
+          this.video.add(this.ctx);
         }
       } catch (e) {
+        console.error(e);
         this.player.stop();
       }
-    }, 1000 / this.frameRate);
+    }, delay);
   }
   postProcessData() {
     this.frameData.forEach((fd, i) => {
@@ -765,10 +777,10 @@ class AniBarChart {
     this.initCanvas();
     this.hintText("Loading Data", this);
     this.calculateFrameData(this.data);
+    this.calPosition(this.idSet, this.frameData);
 
     // 计算x轴坐标
     await this.preRender();
-    this.calPosition(this.idSet, this.frameData);
     this.fixAlpha(this.frameData);
     this.calRenderSort();
     this.calScale();
@@ -804,7 +816,7 @@ class AniBarChart {
       .style("flex-grow", 1)
       .attr("type", "range")
       .attr("min", 0)
-      .attr("max", this.totalFrames - 1)
+      .attr("max", this.totalFrames - 1 + 300)
       .attr("step", 1)
       .attr("value", 0)
       .on("input", () => {
@@ -822,7 +834,7 @@ class AniBarChart {
         let val = +d3.select("#c-frame").node().value;
         if (val < 1) {
           val = 1;
-        } else if (val > this.totalFrames) {
+        } else if (val > this.totalFrames + 300) {
           val = this.totalFrames;
         } else if (isNaN(val)) {
           val = 1;
@@ -831,7 +843,7 @@ class AniBarChart {
         this.slider.value = this.currentFrame;
         this.drawFrame(this.currentFrame);
       });
-    ctl.append("text").text(` / ${d3.format(",d")(this.totalFrames)}`);
+    ctl.append("text").text(` / ${d3.format(",d")(this.totalFrames + 300)}`);
     this.updatectlCurrentFrame();
     this.slider = slider.node();
   }
