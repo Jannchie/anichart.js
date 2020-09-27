@@ -1,5 +1,5 @@
 import * as anichart from "../src/index.js";
-import d from "./data/test.csv";
+import d from "./data/test-data.csv";
 import m from "./data/test-meta.csv";
 
 export default async () => {
