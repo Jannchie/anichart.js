@@ -1,6 +1,6 @@
 import * as anichart from "../src/index.js";
-import d from "./data/fans_data_final.csv";
-import m from "./data/fans_data_meta.csv";
+import d from "./data/test.csv";
+import m from "./data/test-meta.csv";
 
 export default async () => {
   let a = new anichart.Bar();
