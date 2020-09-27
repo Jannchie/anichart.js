@@ -17,9 +17,10 @@ class AniBarChart {
     this.axisTextSize = 20;
     this.tickNumber = 6;
     this.output = false;
+    this.getId = (data) => data.mid;
     this.getLabel = (data) => ``;
     this.getBarInfo = (data) =>
-      `${this.metaData[data.name].channel}-${data.name}`;
+      `${this.metaData[this.getId(data)].channel}-${data.name}`;
     this.valueFormatter = (d) => `${d3.format("+,.2f")(d / 10000)}万粉/月`;
     this.tickFormatter = (val) =>
       new Intl.NumberFormat(this.language, { notation: "compact" }).format(val);
@@ -27,7 +28,7 @@ class AniBarChart {
     this.keyDateDelta = 0;
     this.colorKey = "channel";
     this.dateFormat = "%Y-%m-%d %H:%M";
-    this.dateFormatForLoad = "%Y-%m-%d %H:%M";
+    this.dateFormatForLoad = "%Y-%m-%d";
 
     this.colorSchame = {
       background: "#1D1F21",
@@ -72,7 +73,7 @@ class AniBarChart {
       数码: "#2472C8",
     };
 
-    this.getColorKey = (d) => this.metaData[d.name].channel;
+    this.getColorKey = (d) => this.metaData[this.getId(d)].channel;
 
     this.ready = false;
     this.innerMargin = {
@@ -89,14 +90,16 @@ class AniBarChart {
   }
 
   setOptions(options) {}
+
   async LoadMetaData(path) {
     let metaData = await d3.csv(path);
     metaData = metaData.reduce((pv, cv) => {
-      pv[cv.name] = { ...cv };
+      pv[this.getId(cv)] = { ...cv };
       return pv;
     }, {});
     this.metaData = metaData;
   }
+
   async LoadCsv(path) {
     this.data = [];
     let dateFormat = this.dateFormatForLoad;
@@ -104,6 +107,7 @@ class AniBarChart {
     let tsList = [...d3.group(csvData, (d) => d.date).keys()]
       .map((d) => +d3.timeParse(dateFormat)(d))
       .sort();
+
     let delta = (() => {
       let d = Infinity;
       for (let i = 1; i < tsList.length; i++) {
@@ -124,14 +128,13 @@ class AniBarChart {
       .range([firstTs, lastTs]);
 
     csvData.forEach((d) => {
-      if (d.id == undefined) d.id = d.name;
-      d.date = +d3.timeParse(this.dateFormat)(d.date);
+      if (this.id == undefined) this.id = d.name;
+      d.date = +d3.timeParse(dateFormat)(d.date);
       d.value = +d.value;
     });
-
     let temp = d3.group(
       csvData,
-      (d) => d.id,
+      (d) => this.getId(d),
       (d) => d.date
     );
     // 对每一个项目
@@ -176,11 +179,13 @@ class AniBarChart {
     this.tsToFi = d3
       .scaleLinear()
       .domain(d3.extent(tsList))
-      .range([0, this.totalFrames]);
+      .range([0, this.totalFrames])
+      .clamp(true);
     this.fiToTs = d3
       .scaleLinear()
       .range(d3.extent(tsList))
-      .domain([0, this.totalFrames]);
+      .domain([0, this.totalFrames])
+      .clamp(true);
   }
   getColor(data) {
     return this.colorData[this.getColorKey(data)];
@@ -320,14 +325,14 @@ class AniBarChart {
   calculateFrameData(data) {
     let frameData = [];
     this.imageData = {};
-    let nameSet = new Set();
+    let idSet = new Set();
     this.maxValue = 0;
 
     d3.group(data);
     // 对每组数据
-    let idMap = d3.group(data, (d) => d.id);
+    let idMap = d3.group(data, (d) => this.getId(d));
     for (let [id, dataList] of idMap) {
-      nameSet.add(id);
+      idSet.add(id);
       // 对每个数据区间
       dataList.sort((a, b) => a.date - b.date);
       for (let i = 0; i < dataList.length - 1; i++) {
@@ -438,7 +443,7 @@ class AniBarChart {
       });
     });
     this.frameData = frameData;
-    this.nameSet = nameSet;
+    this.idSet = idSet;
   }
 
   setKeyFramesInfo() {
@@ -514,14 +519,14 @@ class AniBarChart {
   /**
    * Convolution 卷积
    *
-   * @param {Set} nameSet
+   * @param {Set} idSet
    * @param {List} frameData
    */
-  calPosition(nameSet, frameData) {
-    let tempDict = [...nameSet].reduce((dict, name) => {
+  calPosition(idSet, frameData) {
+    let tempDict = [...idSet].reduce((dict, id) => {
       let rankList = frameData.map((dList) => {
         for (let d of dList) {
-          if (d.name != name) {
+          if (this.getId(d) != id) {
             continue;
           }
           return d.rank;
@@ -546,14 +551,14 @@ class AniBarChart {
         tmpList[i] =
           d3.easePolyInOut.exponent(1.5)(mean % 1) + Math.floor(mean);
       }
-      dict[name] = tmpList;
+      dict[id] = tmpList;
       return dict;
     }, {});
     for (let i = 0; i < frameData.length; i++) {
       const e = frameData[i];
       for (let j = 0; j < e.length; j++) {
         const d = e[j];
-        d.pos += tempDict[d.name][i];
+        d.pos += tempDict[this.getId(d)][i];
       }
     }
   }
@@ -763,7 +768,7 @@ class AniBarChart {
 
     // 计算x轴坐标
     await this.preRender();
-    this.calPosition(this.nameSet, this.frameData);
+    this.calPosition(this.idSet, this.frameData);
     this.fixAlpha(this.frameData);
     this.calRenderSort();
     this.calScale();
