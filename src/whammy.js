@@ -388,7 +388,7 @@ var Whammy = (function () {
     // a more abstract-ish API
     this.frames = [];
     this.duration = 1000 / speed;
-    this.quality = quality || 1;
+    this.quality = quality || 0.8;
   }
 
   WhammyVideo.prototype.add = function (frame, duration) {
