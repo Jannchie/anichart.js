@@ -9,6 +9,9 @@ module.exports = {
     libraryTarget: "umd",
   },
   plugins: [new CleanWebpackPlugin()],
+  node: {
+    fs: "empty",
+  },
   module: {
     rules: [
       {

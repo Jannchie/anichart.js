@@ -894,7 +894,7 @@ class AniBarChart {
     // strip off the data: url prefix to get just the base64-encoded bytes
     var data = img.replace(/^data:image\/\w+;base64,/, "");
     var buf = new Buffer.from(data, "base64");
-    await fs.writeFileSync(`../image/${name}-${n}.png`, buf);
+    fs.writeFileSync(`../image/${name}-${n}.png`, buf);
   }
 }
 module.exports = AniBarChart;
