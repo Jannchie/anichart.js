@@ -23,6 +23,7 @@ anichart.js
 
 相较于它的[前身](https://github.com/Jannchie/Historical-ranking-data-visualization-based-on-d3.js)，主要优势在于：
 
+- 双端制作: 整合了前端和后端的优势。前端（浏览器端）可以便利地进行浏览和调试，后端（服务器端）结合FFmpeg， 可以导出高质量的视频。
 - 高效绘图：采用Canvas而不是Svg，更加节能。
 - 直出视频：可以直接通过每一帧的图像渲染视频，无需借助任何录屏工具。
 - 帧率可控：逐帧绘图，导出视频而不会掉帧。

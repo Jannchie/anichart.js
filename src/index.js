@@ -1,2 +1,1 @@
-import Bar from "./bar";
-export { Bar };
+module.exports = { Bar: require("./bar") };

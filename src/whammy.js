@@ -438,4 +438,4 @@ var Whammy = (function () {
   };
 })();
 
-export { Whammy };
+module.exports = { Whammy };
