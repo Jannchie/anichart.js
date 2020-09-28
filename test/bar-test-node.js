@@ -2,7 +2,6 @@ const anichart = require("../src/index.js");
 const d = "http://localhost:8080/test-data.csv";
 const m = "http://localhost:8080/test-meta.csv";
 (async () => {
-  console.log(anichart);
   let a = new anichart.Bar();
   a.node = true;
   a.drawBarExt = function (ctx, data, series) {
@@ -29,6 +28,9 @@ const m = "http://localhost:8080/test-meta.csv";
   await a.LoadCsv(d);
   await a.LoadMetaData(m);
   await a.readyToDraw();
-
-  await outputPng(2, "test");
+  await a.outputPng(200, "test");
+  await a.outputPng(300, "test");
+  await a.outputPng(400, "test");
+  await a.outputPng(500, "test");
+  return;
 })();
