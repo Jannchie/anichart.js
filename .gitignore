@@ -116,3 +116,4 @@ dist
 .pnp.*
 
 .vscode/**
+*.png
