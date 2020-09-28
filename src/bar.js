@@ -1,9 +1,15 @@
-import _ from "lodash";
-import * as d3 from "d3";
-import { Whammy } from "./whammy";
-window.d3 = d3;
+if (typeof fetch !== "function") {
+  global.fetch = require("node-fetch-polyfill");
+}
+const _ = require("lodash");
+const async = require("async");
+const d3 = require("d3");
+const { Whammy } = require("./whammy");
+let { createCanvas, loadImage, registerFont } = require("canvas");
+// window.d3 = d3;
 class AniBarChart {
   constructor(data = {}, options = {}) {
+    this.node = false;
     this.data = data;
     this.language = "zh-CN";
     this.width = 1366;
@@ -75,7 +81,9 @@ class AniBarChart {
       数码: "#2472C8",
     };
 
-    this.getColorKey = (d) => this.metaData[this.getId(d)].channel;
+    this.getColorKey = (d) => {
+      return this.metaData[this.getId(d)].channel;
+    };
 
     this.ready = false;
     this.innerMargin = {
@@ -105,6 +113,7 @@ class AniBarChart {
   async LoadCsv(path) {
     this.data = [];
     let dateFormat = this.dateFormatForLoad;
+    console.log(d3.csv);
     let csvData = await d3.csv(path);
     let tsList = [...d3.group(csvData, (d) => d.date).keys()]
       .map((d) => +d3.timeParse(dateFormat)(d))
@@ -194,13 +203,18 @@ class AniBarChart {
     return this.colorData[this.getColorKey(data)];
   }
   initCanvas() {
-    const canvas = d3
-      .select("body")
-      .append("canvas")
-      .attr("width", this.width)
-      .attr("height", this.height)
-      .node();
-    this.ctx = canvas.getContext("2d");
+    this.canvas;
+    if (!this.node) {
+      this.canvas = d3
+        .select("body")
+        .append("canvas")
+        .attr("width", this.width)
+        .attr("height", this.height)
+        .node();
+    } else {
+      this.canvas = createCanvas(this.width, this.height);
+    }
+    this.ctx = this.canvas.getContext("2d");
     this.ctx.drawClipedImg = (
       img,
       x = 0,
@@ -260,7 +274,7 @@ class AniBarChart {
 
       // draw bar label text
       this.ctx.fillStyle = fillColor;
-      this.ctx.font = `${this.barHeight}px Sarasa Mono SC black`;
+      this.ctx.font = `900 ${this.barHeight}px Sarasa Mono SC`;
       this.ctx.textAlign = "right";
       this.ctx.fillText(
         this.getLabel(data),
@@ -288,7 +302,7 @@ class AniBarChart {
       // draw bar text
       this.ctx.textAlign = "right";
       this.ctx.fillStyle = this.background;
-      this.ctx.font = `${this.barHeight}px Sarasa Mono SC black`;
+      this.ctx.font = `900 ${this.barHeight}px Sarasa Mono SC`;
       this.ctx.fillText(
         this.getBarInfo(data),
         barWidth + x - this.labelPandding - imgPandding,
@@ -459,6 +473,7 @@ class AniBarChart {
   }
 
   hintText(txt, self) {
+    console.log(txt);
     self.ctx.textAlign = "left";
     self.ctx.fillStyle = self.background;
     self.ctx.fillRect(0, 0, self.width, self.height);
@@ -479,24 +494,30 @@ class AniBarChart {
     let all = Object.entries(this.metaData).length;
     let c = 0;
     let ps = [];
-    for (let m of Object.entries(this.metaData).map((d) => d[1])) {
-      try {
-        ps.push(
-          (async () => {
-            this.imageData[m.name] = await d3.image(
-              `${m.image}@${this.barHeight}w_${this.barHeight}h.webp`
-            );
-            this.imageData[m.name].setAttribute("crossOrigin", "Anonymous");
-            this.hintText(`Loading Images  ${++c}/ ${all}`, this);
-          })()
-        );
-      } catch (e) {
-        console.log(e);
-        console.log(m.name);
-        console.log(m.image);
-      }
+    if (!this.node) {
+      loadImage = d3.image;
     }
-    await Promise.all(ps);
+    let list = Object.entries(this.metaData).map((d) => d[1]);
+    console.log(list.length);
+    try {
+      this.loadImgPromise = async.eachOfLimit(list, 16, async (m) => {
+        try {
+          this.hintText(`Loading Images  ${++c}/ ${all}`, this);
+          this.imageData[m.name] = await loadImage(
+            `${m.image}@${this.barHeight}w_${this.barHeight}h.png`
+          );
+          if (!this.node)
+            this.imageData[m.name].setAttribute("crossOrigin", "Anonymous");
+        } catch (e) {
+          console.log(m.name);
+          console.log(`${m.image}@${this.barHeight}w_${this.barHeight}h.png`);
+          console.error(e);
+          this.imageData[m.name] = undefined;
+        }
+      });
+    } catch (e) {
+      console.log(e);
+    }
     this.ctx.font = `${this.barHeight}px Sarasa Mono SC`;
 
     this.innerMargin.left += this.labelPandding;
@@ -646,11 +667,12 @@ class AniBarChart {
 
   drawWatermark() {
     this.ctx.textAlign = "right";
-    this.ctx.font = `20px Sarasa Mono SC thin`;
+    this.ctx.font = `20px Sarasa Mono SC`;
 
     this.ctx.fillStyle = "#fff4";
     this.ctx.fillText(
-      window.atob("UE9XRVIgQlkgSkFOTkNISUU="),
+      "By Jannchie",
+      // window.atob("UE9XRVIgQlkgSkFOTkNISUU="),
       this.width - this.outerMargin.left,
       this.height - this.outerMargin.bottom
     );
@@ -672,7 +694,7 @@ class AniBarChart {
   drawDate(n) {
     let timestamp = this.getCurrentDate(n);
     this.ctx.textAlign = "right";
-    this.ctx.font = `20px Sarasa Mono SC thin`;
+    this.ctx.font = `20px Sarasa Mono SC`;
 
     this.ctx.fillStyle = "#fff4";
     this.ctx.fillText(
@@ -781,14 +803,19 @@ class AniBarChart {
 
     // 计算x轴坐标
     await this.preRender();
-    this.fixAlpha(this.frameData);
+    await this.fixAlpha(this.frameData);
     this.calRenderSort();
     this.calScale();
     // this.calAxis();
     this.postProcessData();
+    if (this.node) {
+      this.useCtl = false;
+    }
+
     if (this.useCtl) {
       this.addCtl();
     }
+    await this.loadImgPromise;
     this.ready = true;
   }
   addCtl() {
@@ -856,5 +883,18 @@ class AniBarChart {
     let f = d3.format(`0${b},d`);
     this.ctlCurrentFrame.node().value = `${this.currentFrame + 1}`;
   }
+  async outputPng(n, name) {
+    a.drawFrame(n);
+    a.canvas;
+    // window.a = a;
+    console.log(`output frame:${n}, name: ${name}`);
+    const fs = require("fs");
+    // string generated by canvas.toDataURL()
+    var img = this.canvas.toDataURL();
+    // strip off the data: url prefix to get just the base64-encoded bytes
+    var data = img.replace(/^data:image\/\w+;base64,/, "");
+    var buf = new Buffer.from(data, "base64");
+    await fs.writeFileSync(`../image/${name}-${n}.png`, buf);
+  }
 }
-export default AniBarChart;
+module.exports = AniBarChart;

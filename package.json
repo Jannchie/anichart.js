@@ -33,9 +33,12 @@
     "webpack-merge": "^5.1.4"
   },
   "dependencies": {
+    "async": "^3.2.0",
+    "canvas": "^2.6.1",
     "d3": "^6.1.1",
     "ffmpeg.js": "^4.2.9003",
-    "lodash": "^4.17.20"
+    "lodash": "^4.17.20",
+    "node-fetch-polyfill": "^2.0.6"
   },
   "keywords": [
     "animation",
