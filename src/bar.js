@@ -18,15 +18,20 @@ class AniBarChart {
     this.outerMargin = { left: 10, right: 10, top: 10, bottom: 10 };
     this.background = "#1D1F21";
     this.frameRate = 60;
-    this.freeze = 300;
+    this.freeze = 100;
     this.interval = 1;
     this.barRedius = 4;
     this.itemCount = 22;
     this.labelPandding = 10;
     this.axisTextSize = 20;
     this.tickNumber = 6;
+    this.dateLabelSize = 48;
+    this.slogenSize = 20;
     this.output = false;
-    this.getId = (data) => data.mid;
+
+    this.idField = "mid";
+
+    this.getId = (data) => data[this.idField];
     this.getLabel = (data) => ``;
     this.getBarInfo = (data) =>
       `${this.metaData[this.getId(data)].channel}-${data.name}`;
@@ -83,8 +88,12 @@ class AniBarChart {
     };
 
     this.getColorKey = (d) => {
+      if (this.metaData[this.getId(d)] == undefined) {
+        return;
+      }
       return this.metaData[this.getId(d)].channel;
     };
+    this.numberKey = new Set();
 
     this.ready = false;
     this.innerMargin = {
@@ -155,6 +164,19 @@ class AniBarChart {
       let valList = [...data.values()]
         .map((d) => d[0])
         .sort((a, b) => a.date - b.date);
+      let scales = {};
+      _.keys(valList[0]).forEach((key) => {
+        if (
+          valList[0][key] != id &&
+          Number(valList[0][key]) == Number(valList[0][key])
+        ) {
+          this.numberKey.add(key);
+          scales[key] = d3
+            .scaleLinear()
+            .domain(dtList)
+            .range(valList.map((d) => d[key]));
+        }
+      });
       let scale = d3
         .scaleLinear()
         .domain(dtList)
@@ -162,11 +184,15 @@ class AniBarChart {
       let obj = valList[0];
       // 对每一个关键帧
       for (let i = 0; i < tsList.length; i++) {
+        if (valList[i] != undefined) obj = valList[i];
         let ct = tsList[i];
         if (ct <= dtList[dtList.length - 1] && ct >= dtList[0]) {
           // 在区间内
           obj = { ...obj };
-          obj.value = scale(Number(ct));
+          _.keys(scales).forEach((key) => {
+            obj[key] = scales[key](Number(ct));
+          });
+          // obj.value = scale(Number(ct));
           obj.date = ct;
         } else {
           continue;
@@ -354,6 +380,17 @@ class AniBarChart {
       for (let i = 0; i < dataList.length - 1; i++) {
         const lData = dataList[i];
         const rData = dataList[i + 1];
+        let ints = _.reduce(
+          [...this.numberKey],
+          (dict, key) => {
+            dict[key] = {
+              lValue: lData[key] == undefined ? NaN : lData[key],
+              rValue: rData[key] == undefined ? NaN : rData[key],
+            };
+            return dict;
+          },
+          {}
+        );
         const lValue = lData.value == undefined ? NaN : lData.value;
         const rValue = rData.value == undefined ? NaN : rData.value;
         const lDate = lData.date;
@@ -371,7 +408,13 @@ class AniBarChart {
           .range([lValue, rValue])
           .domain([0, 1])
           .clamp(true);
-
+        _.keys(ints).forEach((key) => {
+          ints[key].int = d3
+            .scaleLinear()
+            .range([ints[key].lValue, ints[key].rValue])
+            .domain([0, 1])
+            .clamp(true);
+        });
         let aint = d3.interpolateNumber(1, 1);
         let offsetInt = () => 0;
         switch (state) {
@@ -386,10 +429,22 @@ class AniBarChart {
               .domain([0.8, 1])
               .range([0, 1])
               .clamp(true);
+            _.keys(ints).forEach((key) => {
+              ints[key].int = d3.interpolateNumber(
+                ints[key].lValue,
+                ints[key].lValue * 0.8
+              );
+            });
             aint = d3.scaleLinear().domain([0, 0.4]).range([1, 0]).clamp(true);
             break;
           case "in":
             int = d3.interpolateNumber(rValue * 0.8, rValue);
+            _.keys(ints).forEach((key) => {
+              ints[key].int = d3.interpolateNumber(
+                ints[key].rValue * 0.8,
+                ints[key].rValue
+              );
+            });
             aint = d3.scaleLinear().domain([0, 0.2]).range([0, 1]).clamp(true);
             offsetInt = d3
               .scaleLinear()
@@ -429,6 +484,9 @@ class AniBarChart {
             state: state,
             pos: offset,
           };
+          _.keys(ints).forEach((key) => {
+            fd[key] = ints[key].int(r);
+          });
           frameData[f].push(fd);
           // 全局最大值
           if (val > this.maxValue) {
@@ -529,9 +587,9 @@ class AniBarChart {
           this.imageData[m.name].setAttribute("crossOrigin", "Anonymous");
         }
       } catch (error) {
+        console.log(m.name);
         console.error(error);
       }
-
       this.hintText(`Loading Images ${++c}/ ${all}`, this);
     });
 
@@ -684,11 +742,11 @@ class AniBarChart {
 
   drawWatermark() {
     this.ctx.textAlign = "right";
-    this.ctx.font = `20px Sarasa Mono SC`;
+    this.ctx.font = `${this.slogenSize}px Sarasa Mono SC`;
 
     this.ctx.fillStyle = "#fff4";
     this.ctx.fillText(
-      "By Jannchie",
+      "Made By Jannchie, Power by anichart.js",
       // window.atob("UE9XRVIgQlkgSkFOTkNISUU="),
       this.width - this.outerMargin.left,
       this.height - this.outerMargin.bottom
@@ -711,13 +769,12 @@ class AniBarChart {
   drawDate(n) {
     let timestamp = this.getCurrentDate(n);
     this.ctx.textAlign = "right";
-    this.ctx.font = `20px Sarasa Mono SC`;
-
+    this.ctx.font = `${this.dateLabelSize}px Sarasa Mono SC`;
     this.ctx.fillStyle = "#fff4";
     this.ctx.fillText(
       d3.timeFormat(this.dateFormat)(new Date(timestamp)),
       this.width - this.outerMargin.left,
-      this.height - this.outerMargin.bottom - 20
+      this.height - this.outerMargin.bottom - this.slogenSize - 4
     );
   }
 
@@ -768,7 +825,7 @@ class AniBarChart {
     let delay = this.output ? 0 : 1000 / this.frameRate;
     this.player = d3.interval(() => {
       try {
-        if (this.currentFrame == this.totalFrames + 300) {
+        if (this.currentFrame == this.totalFrames + this.freeze) {
           this.player.stop();
           let btn = d3.select("#play-btn");
           btn.text(btn.text() == "STOP" ? "PLAY" : "STOP");
@@ -783,6 +840,18 @@ class AniBarChart {
           this.slider.value = this.currentFrame;
           this.updatectlCurrentFrame();
         }
+
+        if (
+          this.output &&
+          this.currentFrame != 0 &&
+          this.currentFrame % (this.frameRate * 60) == 0
+        ) {
+          let blob = this.video.compile();
+          console.log(blob);
+          this.downloadBlob(blob);
+          this.video = new Whammy.Video(this.frameRate);
+        }
+
         this.drawFrame(this.currentFrame++);
         if (this.output) {
           this.video.add(this.ctx);
@@ -885,7 +954,9 @@ class AniBarChart {
         this.slider.value = this.currentFrame;
         this.drawFrame(this.currentFrame);
       });
-    ctl.append("text").text(` / ${d3.format(",d")(this.totalFrames + 300)}`);
+    ctl
+      .append("text")
+      .text(` / ${d3.format(",d")(this.totalFrames + this.freeze)}`);
     this.updatectlCurrentFrame();
     this.slider = slider.node();
   }
@@ -903,6 +974,8 @@ class AniBarChart {
       console.log("Cannot output png in browser!");
       return;
     } else {
+      let fs = require("fs");
+      let path = require("path");
       async function mkdirPath(pathStr) {
         var projectPath = path.join(process.cwd());
         var tempDirArray = pathStr.split("\\");
@@ -920,8 +993,6 @@ class AniBarChart {
         }
         return projectPath;
       }
-      const fs = require("fs");
-      const path = require("path");
       await mkdirPath("./image");
       this.drawFrame(n);
       // window.a = a;
@@ -931,7 +1002,7 @@ class AniBarChart {
       // strip off the data: url prefix to get just the base64-encoded bytes
       var data = img.replace(/^data:image\/\w+;base64,/, "");
       var buf = new Buffer.from(data, "base64");
-      fs.writeFileSync(`./image/${name}-${n}.png`, buf);
+      fs.writeFileSync(`./image/${name}-${n}.jpg`, buf);
     }
   }
 }
