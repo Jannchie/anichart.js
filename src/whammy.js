@@ -3,7 +3,6 @@
 	vid.add(canvas or data url)
 	vid.compile()
 */
-
 var Whammy = (function () {
   // in this case, frames has a very specific meaning, which will be
   // detailed once i finish writing the code
@@ -52,7 +51,7 @@ var Whammy = (function () {
             id: 0x1549a966, // Info
             data: [
               {
-                data: 1e6, //do things in millisecs (num of nanosecs for duration scale)
+                data: Math.round(1e6 * frames[0].duration), //do things in millisecs (num of nanosecs for duration scale)
                 id: 0x2ad7b1, // TimecodeScale
               },
               {
@@ -138,7 +137,8 @@ var Whammy = (function () {
                   trackNum: 1,
                   timecode: Math.round(counter),
                 });
-                counter += webp.duration;
+
+                counter += 1;
                 return {
                   data: block,
                   id: 0xa3,
@@ -157,7 +157,7 @@ var Whammy = (function () {
   function checkFrames(frames) {
     var width = frames[0].width,
       height = frames[0].height,
-      duration = frames[0].duration;
+      duration = 1;
     for (var i = 1; i < frames.length; i++) {
       if (frames[i].width != width)
         throw "Frame " + (i + 1) + " has a different width";
@@ -165,7 +165,7 @@ var Whammy = (function () {
         throw "Frame " + (i + 1) + " has a different height";
       if (frames[i].duration < 0)
         throw "Frame " + (i + 1) + " has a weird duration";
-      duration += frames[i].duration;
+      duration += 1;
     }
     return {
       duration: duration,
