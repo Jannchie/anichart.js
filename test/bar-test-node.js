@@ -8,7 +8,7 @@ const m = "http://localhost:8080/test-meta.csv";
   a.node = true;
   a.drawBarExt = function (ctx, data, series) {
     let p = 12;
-    let addWith = this.ctx.measureText(this.valueFormatter(data.value)).width;
+    let addWith = this.ctx.measureText(this.valueFormat(data.value)).width;
     let x = this.innerMargin.left + series.xScale(data.value) + addWith + p;
     let y = series.yScale(data.pos);
     ctx.beginPath();
