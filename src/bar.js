@@ -31,7 +31,7 @@ class AniBarChart {
     this.getId = (data) => {
       data[this.idField];
     };
-    this.getLabel = (data) => {
+    this.label = (data) => {
       if (data.name != undefined) {
         return data.name;
       } else {
@@ -50,14 +50,15 @@ class AniBarChart {
       }
     };
 
-    this.valueFormatter = (d) => `${d3.format("+,.2f")(d / 10000)}万粉/月`;
-    this.tickFormatter = (val) =>
+    this.valueFormat = (d) => {
+      if (String(newNum).indexOf(".") > -1) return `${d3.format(",.2f")(d)}`;
+      return `${d3.format(",d")(d)}`;
+    };
+
+    this.tickFormat = (val) =>
       new Intl.NumberFormat(this.language, { notation: "compact" }).format(val);
-    this.tickFormat = ",d";
-    this.keyDateDelta = 0;
 
     this.dateFormat = "%Y-%m-%d %H:%M";
-    this.dateFormatForLoad = "%Y-%m-%d";
 
     this.colorScheme = {
       background: "#1D1F21",
@@ -117,12 +118,13 @@ class AniBarChart {
 
   async LoadCsv(path) {
     this.data = [];
-    let dateFormat = this.dateFormatForLoad;
     let csvData = await d3.csv(path);
     let tsList = [...d3.group(csvData, (d) => d.date).keys()]
-      .map((d) => +d3.timeParse(dateFormat)(d))
+      .map(
+        (d) =>
+          new Date().getTimezoneOffset() * 60 * 1000 + new Date(d).getTime()
+      )
       .sort();
-
     let delta = (() => {
       let d = Infinity;
       for (let i = 1; i < tsList.length; i++) {
@@ -132,6 +134,8 @@ class AniBarChart {
       }
       return d;
     })();
+    if (this.keyFrameDeltaTime != undefined) delta = this.keyFrameDeltaTime;
+
     let firstTs = tsList[0];
     let lastTs = tsList[tsList.length - 1];
     tsList = d3.range(firstTs, lastTs + 1, delta);
@@ -145,7 +149,8 @@ class AniBarChart {
 
     csvData.forEach((d) => {
       if (this.id == undefined) this.id = d.name;
-      d.date = +d3.timeParse(dateFormat)(d.date);
+      d.date =
+        new Date().getTimezoneOffset() * 60 * 1000 + new Date(d.date).getTime();
       d.value = +d.value;
     });
     let temp = d3.group(
@@ -299,7 +304,7 @@ class AniBarChart {
       this.ctx.font = `900 ${this.barHeight}px Sarasa Mono SC`;
       this.ctx.textAlign = "right";
       this.ctx.fillText(
-        this.getLabel(data),
+        this.label(data, this.metaData, this),
         x - this.labelPandding,
         y + this.barHeight * 0.88
       );
@@ -307,7 +312,7 @@ class AniBarChart {
       // draw bar value text
       this.ctx.textAlign = "left";
       this.ctx.fillText(
-        this.valueFormatter(data.value),
+        this.valueFormat(data.value),
         barWidth + x + this.labelPandding,
         y + this.barHeight * 0.88
       );
@@ -577,12 +582,15 @@ class AniBarChart {
 
     this.innerMargin.left += this.labelPandding;
     this.innerMargin.right += this.ctx.measureText(
-      this.valueFormatter(this.maxValue)
+      this.valueFormat(this.maxValue)
     ).width;
     this.innerMargin.right += this.labelPandding;
 
     let maxTextWidth = d3.max(this.frameData, (fd) =>
-      d3.max(fd, (d) => this.ctx.measureText(this.getLabel(d)).width)
+      d3.max(
+        fd,
+        (d) => this.ctx.measureText(this.label(d, this.metaData, this)).width
+      )
     );
     this.innerMargin.left += maxTextWidth;
     this.currentFrame = 0;
@@ -688,7 +696,7 @@ class AniBarChart {
     secondTicks.forEach((val) => {
       this.drawTick(xScale, val);
       this.ctx.fillText(
-        this.tickFormatter(val),
+        this.tickFormat(val),
         this.innerMargin.left + xScale(val),
         this.axisTextSize
       );
@@ -697,7 +705,7 @@ class AniBarChart {
     mainTicks.forEach((val) => {
       this.drawTick(xScale, val);
       this.ctx.fillText(
-        this.tickFormatter(val),
+        this.tickFormat(val),
         this.innerMargin.left + xScale(val),
         this.axisTextSize
       );

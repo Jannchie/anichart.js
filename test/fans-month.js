@@ -1,6 +1,6 @@
 import * as anichart from "../src/index.js";
 import * as d3 from "d3";
-const _ = require("lodash");
+import _ from "lodash";
 import d from "./data/test-data.csv";
 import m from "./data/test-meta.csv";
 
@@ -37,6 +37,10 @@ let settings = {
 
   barInfo: (data, metaData, self) =>
     `${metaData[data.mid].channel}-${data.name}`,
+
+  label: () => ``,
+  valueFormat: (d) => `${d3.format("+,.2f")(d / 10000)}万粉/月`,
+
   outputName: "fans-increase",
 };
 
@@ -45,7 +49,7 @@ let a = new anichart.Bar(settings);
 (async () => {
   a.drawBarExt = function (ctx, data, series) {
     let p = 12;
-    let addWith = this.ctx.measureText(this.valueFormatter(data.value)).width;
+    let addWith = this.ctx.measureText(this.valueFormat(data.value)).width;
     let x = this.innerMargin.left + series.xScale(data.value) + addWith + p;
     let y = series.yScale(data.pos);
     // ctx.beginPath();
@@ -133,10 +137,8 @@ let a = new anichart.Bar(settings);
   await a.LoadCsv(d);
   await a.LoadMetaData(m);
   a.initCanvas();
-  console.log(a.barHeight);
   a.ctx.font = `900 ${a.barHeight}px Sarasa Mono SC`;
   a.innerMargin.right += a.ctx.measureText("[xxxx万粉]").width;
   a.readyToDraw();
-
-  module.exports = a;
 })();
+export default a;
