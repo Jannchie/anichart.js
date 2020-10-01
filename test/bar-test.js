@@ -1,32 +1,11 @@
 import * as anichart from "../src/index.js";
+import * as d3 from "d3";
+const _ = require("lodash");
 import d from "./data/test-data.csv";
 import m from "./data/test-meta.csv";
-
+import { timeFormat } from "d3";
+import a from "./fans-month";
 export default async () => {
-  let a = new anichart.Bar();
-  a.drawBarExt = function (ctx, data, series) {
-    let p = 12;
-    let addWith = this.ctx.measureText(this.valueFormatter(data.value)).width;
-    let x = this.innerMargin.left + series.xScale(data.value) + addWith + p;
-    let y = series.yScale(data.pos);
-    ctx.beginPath();
-    ctx.radiusArea(x, y, 100, this.barHeight, this.barHeight / 3);
-    ctx.closePath();
-    ctx.strokeStyle = this.getColor(data);
-    ctx.strokeWidth = 6;
-    ctx.stroke();
-    ctx.fillText("测试文字", x, y + this.barHeight * 0.88);
-  };
-  a.drawExt = function (ctx, series) {
-    ctx.fillStyle = "#FFF";
-    ctx.textAlign = "right";
-    let x = this.width - this.outerMargin.right;
-    let y = 600;
-    ctx.fillText("Hello, world", x, y);
-  };
-
-  await a.LoadCsv(d);
-  await a.LoadMetaData(m);
-  a.readyToDraw();
   window.a = a;
+  window.d3 = d3;
 };
