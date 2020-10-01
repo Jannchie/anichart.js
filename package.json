@@ -40,6 +40,7 @@
     "ffmpeg.js": "^4.2.9003",
     "images": "^3.2.3",
     "lodash": "^4.17.20",
+    "node-csv": "^0.1.2",
     "node-fetch-polyfill": "^2.0.6"
   },
   "keywords": [

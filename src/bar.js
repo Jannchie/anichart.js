@@ -9,15 +9,13 @@ const { Whammy } = require("./whammy");
 let { createCanvas, loadImage, registerFont } = require("canvas");
 // window.d3 = d3;
 class AniBarChart {
-  constructor(data = {}, options = {}) {
+  constructor(options = {}) {
     this.node = false;
-    this.data = data;
     this.language = "zh-CN";
     this.width = 1366;
     this.height = 768;
+    this.frameRate = 30;
     this.outerMargin = { left: 10, right: 10, top: 10, bottom: 10 };
-    this.background = "#1D1F21";
-    this.frameRate = 60;
     this.freeze = 100;
     this.interval = 1;
     this.barRedius = 4;
@@ -26,25 +24,42 @@ class AniBarChart {
     this.axisTextSize = 20;
     this.tickNumber = 6;
     this.dateLabelSize = 48;
-    this.slogenSize = 20;
+    this.slogenSize = 24;
     this.output = false;
+    this.output_name = "out";
+    this.idField = "id";
+    this.getId = (data) => {
+      data[this.idField];
+    };
+    this.getLabel = (data) => {
+      if (data.name != undefined) {
+        return data.name;
+      } else {
+        return data[this.idField];
+      }
+    };
+    this.barInfo = (data) => {
+      if (data.name != undefined) {
+        if (data.type != undefined) {
+          return `${data.type} - ${data.name}`;
+        } else {
+          return `${data.name}`;
+        }
+      } else {
+        return data[this.idField];
+      }
+    };
 
-    this.idField = "mid";
-
-    this.getId = (data) => data[this.idField];
-    this.getLabel = (data) => ``;
-    this.getBarInfo = (data) =>
-      `${this.metaData[this.getId(data)].channel}-${data.name}`;
     this.valueFormatter = (d) => `${d3.format("+,.2f")(d / 10000)}万粉/月`;
     this.tickFormatter = (val) =>
       new Intl.NumberFormat(this.language, { notation: "compact" }).format(val);
     this.tickFormat = ",d";
     this.keyDateDelta = 0;
-    this.colorKey = "channel";
+
     this.dateFormat = "%Y-%m-%d %H:%M";
     this.dateFormatForLoad = "%Y-%m-%d";
 
-    this.colorSchame = {
+    this.colorScheme = {
       background: "#1D1F21",
       colors: [
         "#27C",
@@ -62,6 +77,7 @@ class AniBarChart {
         "#F27",
       ],
     };
+
     this.useCtl = true;
 
     this.colorGener = (function* (cs) {
@@ -69,30 +85,8 @@ class AniBarChart {
       while (true) {
         yield cs.colors[i++ % cs.colors.length];
       }
-    })(this.colorSchame);
+    })(this.colorScheme);
 
-    this.colorData = {
-      生活: "#FFF",
-      资讯: "#0CE",
-      游戏: "#c02c38",
-      美食: "#F7BD0B",
-      动画: "#FB9FB1",
-      国创: "#CC342B",
-      音乐: "#20C38B",
-      舞蹈: "#20C38B",
-      时尚: "#FB7922",
-      娱乐: "#FB7922",
-      鬼畜: "#b167a9",
-      知识: "#2472C8",
-      数码: "#2472C8",
-    };
-
-    this.getColorKey = (d) => {
-      if (this.metaData[this.getId(d)] == undefined) {
-        return;
-      }
-      return this.metaData[this.getId(d)].channel;
-    };
     this.numberKey = new Set();
 
     this.ready = false;
@@ -103,18 +97,19 @@ class AniBarChart {
       bottom: this.outerMargin.bottom,
     };
 
-    this.innerMargin.right += 108;
-
     this.drawBarExt = () => {};
     this.drawExt = () => {};
+    this.setOptions(options);
   }
 
-  setOptions(options) {}
+  setOptions(options) {
+    _.merge(this, options);
+  }
 
   async LoadMetaData(path) {
     let metaData = await d3.csv(path);
     metaData = metaData.reduce((pv, cv) => {
-      pv[this.getId(cv)] = { ...cv };
+      pv[cv[this.idField]] = { ...cv };
       return pv;
     }, {});
     this.metaData = metaData;
@@ -155,7 +150,7 @@ class AniBarChart {
     });
     let temp = d3.group(
       csvData,
-      (d) => this.getId(d),
+      (d) => d[this.idField],
       (d) => d.date
     );
     // 对每一个项目
@@ -226,7 +221,7 @@ class AniBarChart {
       .clamp(true);
   }
   getColor(data) {
-    return this.colorData[this.getColorKey(data)];
+    return this.colorData[this.colorKey(data, this.metaData, this)];
   }
   initCanvas() {
     this.canvas;
@@ -271,6 +266,7 @@ class AniBarChart {
     };
 
     this.ctx.radiusArea = (left, top, w, h, r) => {
+      this.ctx.lineWidth = 0;
       const pi = Math.PI;
       this.ctx.arc(left + r, top + r, r, -pi, -pi / 2);
       this.ctx.arc(left + w - r, top + r, r, -pi / 2, 0);
@@ -327,10 +323,10 @@ class AniBarChart {
 
       // draw bar text
       this.ctx.textAlign = "right";
-      this.ctx.fillStyle = this.background;
+      this.ctx.fillStyle = this.colorScheme.background;
       this.ctx.font = `900 ${this.barHeight}px Sarasa Mono SC`;
       this.ctx.fillText(
-        this.getBarInfo(data),
+        this.barInfo(data, this.metaData, this),
         barWidth + x - this.labelPandding - imgPandding,
         y + this.barHeight * 0.88
       );
@@ -352,19 +348,6 @@ class AniBarChart {
     };
   }
 
-  getTickArray(max, min, count) {
-    var magic = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-    let mul = 100;
-    let delta = Math.ceil((max - min) / count);
-    // 最小刻度
-    let x = magic[0] * mul;
-    // 最大刻度
-    let y = magic[0] * mul + delta * (count - 1);
-
-    while (magic[0] * mul >= min) {
-      mul /= 10;
-    }
-  }
   calculateFrameData(data) {
     let frameData = [];
     this.imageData = {};
@@ -372,7 +355,7 @@ class AniBarChart {
     this.maxValue = 0;
 
     // 对每组数据
-    let idMap = d3.group(data, (d) => this.getId(d));
+    let idMap = d3.group(data, (d) => d[this.idField]);
     for (let [id, dataList] of idMap) {
       idSet.add(id);
       // 对每个数据区间
@@ -456,9 +439,11 @@ class AniBarChart {
             break;
         }
 
-        if (this.colorData[this.getColorKey(lData)] == undefined) {
+        if (
+          this.colorData[this.colorKey(lData, this.metaData, this)] == undefined
+        ) {
           this.colorData[
-            this.getColorKey(lData)
+            this.colorKey(lData, this.metaData, this)
           ] = this.colorGener.next().value;
         }
         // 对每一帧
@@ -533,7 +518,7 @@ class AniBarChart {
   hintText(txt, self) {
     console.log(txt);
     self.ctx.textAlign = "left";
-    self.ctx.fillStyle = self.background;
+    self.ctx.fillStyle = self.colorScheme.background;
     self.ctx.fillRect(0, 0, self.width, self.height);
     self.ctx.fillStyle = "#fff";
     self.ctx.font = `20px Sarasa Mono SC`;
@@ -559,11 +544,6 @@ class AniBarChart {
   async preRender() {
     this.hintText("Loading Layout", this);
     this.innerMargin.top += this.axisTextSize;
-    this.barHeight = Math.round(
-      ((this.height - this.innerMargin.top - this.innerMargin.bottom) /
-        this.itemCount) *
-        0.8
-    );
     let all = Object.entries(this.metaData).length;
     let c = 0;
     let list = Object.entries(this.metaData).map((d) => d[1]);
@@ -608,12 +588,6 @@ class AniBarChart {
     this.currentFrame = 0;
   }
 
-  // calAxis(axisRangeByFrames) {
-  //   for (let axisRange of axisRangeByFrames) {
-  //     // let [a, b] = this.getTickArray(...axisRange, 6);
-  //   }
-  // }
-
   /**
    * Convolution 卷积
    *
@@ -628,7 +602,7 @@ class AniBarChart {
     let tempDict = [...idSet].reduce((dict, id) => {
       let rankList = frameData.map((dList) => {
         for (let d of dList) {
-          if (this.getId(d) != id) {
+          if (d[this.idField] != id) {
             continue;
           }
           return d.rank;
@@ -660,7 +634,7 @@ class AniBarChart {
       const e = frameData[i];
       for (let j = 0; j < e.length; j++) {
         const d = e[j];
-        d.pos += tempDict[this.getId(d)][i];
+        d.pos += tempDict[d[this.idField]][i];
       }
     }
   }
@@ -729,6 +703,7 @@ class AniBarChart {
       );
     });
     this.ctx.globalAlpha = 1;
+    this.ctx.lineWidth = 0;
   }
   drawTick(xScale, val) {
     this.ctx.beginPath();
@@ -746,7 +721,7 @@ class AniBarChart {
 
     this.ctx.fillStyle = "#fff4";
     this.ctx.fillText(
-      "Made By Jannchie, Power by anichart.js",
+      "Powered by Jannchie Studio",
       // window.atob("UE9XRVIgQlkgSkFOTkNISUU="),
       this.width - this.outerMargin.left,
       this.height - this.outerMargin.bottom
@@ -779,17 +754,17 @@ class AniBarChart {
   }
 
   drawBackground() {
-    this.ctx.fillStyle = this.background;
+    this.ctx.fillStyle = this.colorScheme.background;
     this.ctx.fillRect(0, 0, this.width, this.height);
   }
 
-  downloadBlob(blob) {
+  downloadBlob(blob, name = "untitled") {
     var url = URL.createObjectURL(blob);
     var a = document.createElement("a");
     document.body.appendChild(a);
     a.style = "display: none";
     a.href = url;
-    a.download = "test.webm";
+    a.download = `${name}.webm`;
     a.click();
     window.URL.revokeObjectURL(url);
   }
@@ -832,7 +807,7 @@ class AniBarChart {
           if (this.output) {
             let blob = this.video.compile();
             console.log(blob);
-            this.downloadBlob(blob);
+            this.downloadBlob(blob, this.output_name);
           }
           return;
         }
@@ -848,7 +823,7 @@ class AniBarChart {
         ) {
           let blob = this.video.compile();
           console.log(blob);
-          this.downloadBlob(blob);
+          this.downloadBlob(blob, this.output_name);
           this.video = new Whammy.Video(this.frameRate);
         }
 
@@ -882,7 +857,12 @@ class AniBarChart {
     }
   }
   async readyToDraw() {
-    this.initCanvas();
+    this.barHeight = Math.round(
+      ((this.height - this.innerMargin.top - this.innerMargin.bottom) /
+        this.itemCount) *
+        0.8
+    );
+
     this.hintText("Loading Data", this);
     this.calculateFrameData(this.data);
     this.calPosition(this.idSet, this.frameData);
