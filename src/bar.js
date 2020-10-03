@@ -182,10 +182,7 @@ class AniBarChart {
             .range(valList.map((d) => d[key]));
         }
       });
-      let scale = d3
-        .scaleLinear()
-        .domain(dtList)
-        .range(valList.map((d) => d.value));
+
       let obj = valList[0];
       // 对每一个关键帧
       for (let i = 0; i < tsList.length; i++) {
@@ -197,10 +194,13 @@ class AniBarChart {
           _.keys(scales).forEach((key) => {
             obj[key] = scales[key](Number(ct));
           });
-          // obj.value = scale(Number(ct));
           obj.date = ct;
         } else {
-          continue;
+          obj = { ...obj };
+          _.keys(scales).forEach((key) => {
+            obj[key] = NaN;
+          });
+          obj.date = ct;
         }
         this.data.push(obj);
         // let last = _.last(_.filter(dtList, (d) => d.date < ct))
@@ -398,11 +398,6 @@ class AniBarChart {
         } else if (lValue == lValue && rValue != rValue) {
           state = "out";
         }
-        let int = d3
-          .scaleLinear()
-          .range([lValue, rValue])
-          .domain([0, 1])
-          .clamp(true);
         _.keys(ints).forEach((key) => {
           ints[key].int = d3
             .scaleLinear()
@@ -414,29 +409,26 @@ class AniBarChart {
         let offsetInt = () => 0;
         switch (state) {
           case "null":
-            int = () => undefined;
             aint = d3.interpolateNumber(0, 0);
             break;
           case "out":
-            int = d3.interpolateNumber(lValue, lValue * 0.8);
             offsetInt = d3
               .scaleLinear()
-              .domain([0.8, 1])
+              .domain([0, 1])
               .range([0, 1])
               .clamp(true);
             _.keys(ints).forEach((key) => {
               ints[key].int = d3.interpolateNumber(
                 ints[key].lValue,
-                ints[key].lValue * 0.8
+                ints[key].lValue * 0.1
               );
             });
             aint = d3.scaleLinear().domain([0, 0.4]).range([1, 0]).clamp(true);
             break;
           case "in":
-            int = d3.interpolateNumber(rValue * 0.8, rValue);
             _.keys(ints).forEach((key) => {
               ints[key].int = d3.interpolateNumber(
-                ints[key].rValue * 0.8,
+                ints[key].rValue * 0.3,
                 ints[key].rValue
               );
             });
@@ -470,13 +462,12 @@ class AniBarChart {
           let r =
             (f % (this.frameRate * this.interval)) /
             (this.frameRate * this.interval);
-          let val = int(r);
+          let val = ints.value.int(r);
           let alpha = aint(d3.easePolyOut(r));
           if (alpha == 0) continue;
           let offset = offsetInt(d3.easePolyOut(r));
           let fd = {
             ...lData,
-            value: val,
             alpha: alpha,
             state: state,
             pos: offset,
