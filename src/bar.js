@@ -28,6 +28,7 @@ class AniBarChart {
     this.output = false;
     this.output_name = "out";
     this.idField = "id";
+    this.keyFrameDeltaTime = undefined
     this.getId = (data) => {
       data[this.idField];
     };
@@ -59,6 +60,10 @@ class AniBarChart {
       new Intl.NumberFormat(this.language, { notation: "compact" }).format(val);
 
     this.dateFormat = "%Y-%m-%d %H:%M";
+
+    this.listImageSrc = () => [];
+
+
 
     this.colorScheme = {
       background: "#1D1F21",
@@ -98,8 +103,8 @@ class AniBarChart {
       bottom: this.outerMargin.bottom,
     };
 
-    this.drawBarExt = () => {};
-    this.drawExt = () => {};
+    this.drawBarExt = () => { };
+    this.drawExt = () => { };
     this.setOptions(options);
   }
 
@@ -134,7 +139,7 @@ class AniBarChart {
       }
       return d;
     })();
-    if (this.keyFrameDeltaTime != undefined) delta = this.keyFrameDeltaTime;
+    if (this.keyFrameDeltaTime != undefined) delta = this.keyFrameDeltaTime * 1000;
 
     let firstTs = tsList[0];
     let lastTs = tsList[tsList.length - 1];
@@ -198,18 +203,20 @@ class AniBarChart {
           continue;
         }
         this.data.push(obj);
-        if (-1 == dtList.indexOf(ct - delta)) {
-          obj = { ...obj };
-          obj.value = NaN;
-          obj.date = ct - delta;
-          this.data.push(obj);
-        }
-        if (-1 == dtList.indexOf(ct + delta)) {
-          obj = { ...obj };
-          obj.value = NaN;
-          obj.date = ct + delta;
-          this.data.push(obj);
-        }
+        // let last = _.last(_.filter(dtList, (d) => d.date < ct))
+        // let next = _.head(_.filter(dtList, (d) => d.date > ct))
+        // if (last == undefined || last.value != last.value) {
+        //   obj = { ...obj };
+        //   obj.value = NaN;
+        //   obj.date = ct - delta;
+        //   this.data.push(obj);
+        // }
+        // if (next == undefined || next.value != next.value) {
+        //   obj = { ...obj };
+        //   obj.value = NaN;
+        //   obj.date = ct + delta;
+        //   this.data.push(obj);
+        // }
       }
     }
     this.keyFramesCount = tsList.length;
@@ -290,7 +297,7 @@ class AniBarChart {
       let barWidth = series.xScale(data.value);
       let r = this.barRedius > barWidth / 2 ? barWidth / 2 : this.barRedius;
       let imgPandding =
-        this.imageData[data.name] == undefined ? 0 : this.barHeight;
+        this.imageData[data[this.idField]] == undefined ? 0 : this.barHeight;
       this.ctx.globalAlpha = data.alpha;
 
       let x = this.innerMargin.left;
@@ -337,7 +344,7 @@ class AniBarChart {
       );
       // draw bar img
       this.ctx.drawClipedImg(
-        this.imageData[data.name],
+        this.imageData[data[this.idField]],
         x + series.xScale(data.value) - this.barHeight,
         y,
         this.barHeight,
@@ -549,34 +556,7 @@ class AniBarChart {
   async preRender() {
     this.hintText("Loading Layout", this);
     this.innerMargin.top += this.axisTextSize;
-    let all = Object.entries(this.metaData).length;
-    let c = 0;
-    let list = Object.entries(this.metaData).map((d) => d[1]);
-    await async.eachOfLimit(list, 64, async (m) => {
-      try {
-        let src = `${m.image}@${this.barHeight}w_${this.barHeight}h.png`;
-        if (this.node) {
-          let img;
-          try {
-            img = await this.addImageProcess(src);
-          } catch {
-            try {
-              img = await this.addImageProcess(src);
-            } catch {
-              img = await this.addImageProcess(src);
-            }
-          }
-          this.imageData[m.name] = img;
-        } else {
-          this.imageData[m.name] = await loadImage(src);
-          this.imageData[m.name].setAttribute("crossOrigin", "Anonymous");
-        }
-      } catch (error) {
-        console.log(m.name);
-        console.error(error);
-      }
-      this.hintText(`Loading Images ${++c}/ ${all}`, this);
-    });
+    await this.loadImage();
 
     this.ctx.font = `${this.barHeight}px Sarasa Mono SC`;
 
@@ -595,6 +575,37 @@ class AniBarChart {
     this.innerMargin.left += maxTextWidth;
     this.currentFrame = 0;
   }
+
+  async loadImage() {
+    let all = Object.entries(this.metaData).length;
+    let c = 0;
+    let imgMap = this.mapImageSrc(this.metaData, this);
+    await async.mapValuesLimit(imgMap, 64, async (src, key) => {
+      try {
+        if (this.node) {
+          let img;
+          try {
+            img = await this.addImageProcess(src);
+          } catch {
+            try {
+              img = await this.addImageProcess(src);
+            } catch {
+              img = await this.addImageProcess(src);
+            }
+          }
+          this.imageData[key] = img;
+        } else {
+          this.imageData[key] = await loadImage(src);
+          this.imageData[key].setAttribute("crossOrigin", "Anonymous");
+        }
+      } catch (error) {
+        console.log(src);
+        console.error(error);
+      }
+      this.hintText(`Loading Images ${++c}/ ${all}`, this);
+    });
+  }
+
 
   /**
    * Convolution 卷积
@@ -814,7 +825,6 @@ class AniBarChart {
           btn.text(btn.text() == "STOP" ? "PLAY" : "STOP");
           if (this.output) {
             let blob = this.video.compile();
-            console.log(blob);
             this.downloadBlob(blob, this.output_name);
           }
           return;
@@ -830,7 +840,6 @@ class AniBarChart {
           this.currentFrame % (this.frameRate * 60) == 0
         ) {
           let blob = this.video.compile();
-          console.log(blob);
           this.downloadBlob(blob, this.output_name);
           this.video = new Whammy.Video(this.frameRate);
         }
@@ -847,7 +856,7 @@ class AniBarChart {
   }
   postProcessData() {
     this.frameData.forEach((fd, i) => {
-      fd.forEach((bd, j) => {});
+      fd.forEach((bd, j) => { });
     });
   }
   async fixAlpha() {
@@ -868,7 +877,7 @@ class AniBarChart {
     this.barHeight = Math.round(
       ((this.height - this.innerMargin.top - this.innerMargin.bottom) /
         this.itemCount) *
-        0.8
+      0.8
     );
 
     this.hintText("Loading Data", this);
