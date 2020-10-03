@@ -6,6 +6,7 @@ const _ = require("lodash");
 const async = require("async");
 const d3 = require("d3");
 const { Whammy } = require("./whammy");
+const Vibrant = require('node-vibrant')
 let { createCanvas, loadImage, registerFont } = require("canvas");
 // window.d3 = d3;
 class AniBarChart {
@@ -39,6 +40,11 @@ class AniBarChart {
         return data[this.idField];
       }
     };
+    this.colorKey = (data, metaData, self) => {
+      return data[this.idField]
+    }
+    this.colorData = []
+    this.imageDict = () => Object()
     this.barInfo = (data) => {
       if (data.name != undefined) {
         if (data.type != undefined) {
@@ -63,7 +69,7 @@ class AniBarChart {
 
     this.listImageSrc = () => [];
 
-
+    this.imageData = {}
 
     this.colorScheme = {
       background: "#1D1F21",
@@ -112,7 +118,7 @@ class AniBarChart {
     _.merge(this, options);
   }
 
-  async LoadMetaData(path) {
+  async loadMetaData(path) {
     let metaData = await d3.csv(path);
     metaData = metaData.reduce((pv, cv) => {
       pv[cv[this.idField]] = { ...cv };
@@ -121,7 +127,7 @@ class AniBarChart {
     this.metaData = metaData;
   }
 
-  async LoadCsv(path) {
+  async loadCsv(path) {
     this.data = [];
     let csvData = await d3.csv(path);
     let tsList = [...d3.group(csvData, (d) => d.date).keys()]
@@ -129,7 +135,7 @@ class AniBarChart {
         (d) =>
           new Date().getTimezoneOffset() * 60 * 1000 + new Date(d).getTime()
       )
-      .sort();
+      .sort((a, b) => a - b);
     let delta = (() => {
       let d = Infinity;
       for (let i = 1; i < tsList.length; i++) {
@@ -235,7 +241,7 @@ class AniBarChart {
   getColor(data) {
     return this.colorData[this.colorKey(data, this.metaData, this)];
   }
-  initCanvas() {
+  async initCanvas() {
     this.canvas;
     if (!this.node) {
       this.canvas = d3
@@ -362,7 +368,6 @@ class AniBarChart {
 
   calculateFrameData(data) {
     let frameData = [];
-    this.imageData = {};
     let idSet = new Set();
     this.maxValue = 0;
 
@@ -547,7 +552,7 @@ class AniBarChart {
   async preRender() {
     this.hintText("Loading Layout", this);
     this.innerMargin.top += this.axisTextSize;
-    await this.loadImage();
+
 
     this.ctx.font = `${this.barHeight}px Sarasa Mono SC`;
 
@@ -570,7 +575,7 @@ class AniBarChart {
   async loadImage() {
     let all = Object.entries(this.metaData).length;
     let c = 0;
-    let imgMap = this.mapImageSrc(this.metaData, this);
+    let imgMap = this.imageDict(this.metaData, this);
     await async.mapValuesLimit(imgMap, 64, async (src, key) => {
       try {
         if (this.node) {
@@ -587,8 +592,13 @@ class AniBarChart {
           this.imageData[key] = img;
         } else {
           this.imageData[key] = await loadImage(src);
-          this.imageData[key].setAttribute("crossOrigin", "Anonymous");
         }
+        let p = await new Vibrant(this.imageData[key], { colorCount: 6 }).getPalette();
+        let color = p.Vibrant.getHex();
+        if (this.colorData[key] == undefined) {
+          this.colorData[key] = color;
+        }
+        this.imageData[key].setAttribute("crossOrigin", "Anonymous");
       } catch (error) {
         console.log(src);
         console.error(error);
@@ -785,12 +795,12 @@ class AniBarChart {
       const e = this.frameData[i];
       let t = i == this.frameData.length - 1 ? i : i + 1;
       let afterDict = this.frameData[t].reduce((pv, cv) => {
-        pv[cv.name] = cv.pos;
+        pv[cv[this.idField]] = cv.pos;
         return pv;
       }, {});
       e.sort((a, b) => {
         // a上升
-        if (afterDict[a.name] - a.pos < 0 || afterDict[b.name] - b.pos > 0) {
+        if (afterDict[a[this.idField]] - a.pos < 0 || afterDict[b[this.idField]] - b.pos > 0) {
           return 1;
         }
         return -1;
@@ -845,11 +855,7 @@ class AniBarChart {
       }
     }, delay);
   }
-  postProcessData() {
-    this.frameData.forEach((fd, i) => {
-      fd.forEach((bd, j) => { });
-    });
-  }
+
   async fixAlpha() {
     for (let fd of this.frameData) {
       for (let data of fd) {
@@ -871,17 +877,16 @@ class AniBarChart {
       0.8
     );
 
+    await this.loadImage();
     this.hintText("Loading Data", this);
     this.calculateFrameData(this.data);
     this.calPosition(this.idSet, this.frameData);
 
-    // 计算x轴坐标
     await this.preRender();
     await this.fixAlpha(this.frameData);
-    this.calRenderSort();
     this.calScale();
-    // this.calAxis();
-    this.postProcessData();
+
+    this.calRenderSort();
     if (this.node) {
       this.useCtl = false;
     }
