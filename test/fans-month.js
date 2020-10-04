@@ -9,18 +9,17 @@ let settings = {
   height: 768,
   outerMargin: { left: 10, right: 10, top: 10, bottom: 10 },
   idField: "mid",
-  frameRate: 60,
+  frameRate: 24,
   freeze: 500,
-  keyFrameDeltaTime: 86400 * 7,
+  keyFrameDeltaTime: 86400 * 0.5,
 
-  mapImageSrc: (metaData, self) => {
+  imageDict: (metaData, self) => {
     let tmp = Object.entries(metaData).map((d) => d[1]);
     return _.reduce(tmp, (pv, cv) => {
       pv[cv[self.idField]] = `${cv.image}@${self.barHeight}w_${self.barHeight}h.png`;
       return pv;
     }, {})
   },
-
   colorData: {
     生活: "#FFF",
     资讯: "#0CE",
@@ -48,7 +47,7 @@ let settings = {
     `${metaData[data.mid].channel}-${data.name}`,
 
   label: () => ``,
-  valueFormat: (d) => `${d3.format("+,.2f")(d / 10000)}万粉/月`,
+  valueFormat: (d) => `${d3.format("+,.2f")(d.value / 10000)}万粉/月`,
 
   outputName: "fans-increase",
 };
@@ -58,16 +57,9 @@ let a = new anichart.Bar(settings);
 (async () => {
   a.drawBarExt = function (ctx, data, series) {
     let p = 12;
-    let addWith = this.ctx.measureText(this.valueFormat(data.value)).width;
+    let addWith = this.ctx.measureText(this.valueFormat(data)).width;
     let x = this.innerMargin.left + series.xScale(data.value) + addWith + p;
     let y = series.yScale(data.pos);
-    // ctx.beginPath();
-    // ctx.radiusArea(x, y, 100, this.barHeight, this.barHeight / 3);
-    // ctx.closePath();
-    // ctx.strokeStyle = this.getColor(data);
-    // ctx.strokeWidth = 6;
-    // ctx.stroke();
-
     ctx.fillStyle = "#777";
     ctx.fillText(
       `[${new Intl.NumberFormat(this.language, {
@@ -143,8 +135,8 @@ let a = new anichart.Bar(settings);
     );
   };
 
-  await a.LoadCsv(d);
-  await a.LoadMetaData(m);
+  await a.loadCsv(d);
+  await a.loadMetaData(m);
   a.initCanvas();
   a.ctx.font = `900 ${a.barHeight}px Sarasa Mono SC`;
   a.innerMargin.right += a.ctx.measureText("[xxxx万粉]").width;

@@ -8,16 +8,25 @@ const d3 = require("d3");
 const { Whammy } = require("./whammy");
 const Vibrant = require('node-vibrant')
 let { createCanvas, loadImage, registerFont } = require("canvas");
-// window.d3 = d3;
+const ColorThiefUmd = require('colorthief/dist/color-thief.umd.js');
+const colorThief = require('colorthief');
 class AniBarChart {
   constructor(options = {}) {
     this.node = false;
+    if (typeof window == 'undefined') {
+      this.node = true;
+    }
     this.language = "zh-CN";
     this.width = 1366;
     this.height = 768;
     this.frameRate = 30;
     this.outerMargin = { left: 10, right: 10, top: 10, bottom: 10 };
     this.freeze = 100;
+    if (this.node) {
+      this.colorThief = colorThief;
+    } else {
+      this.colorThief = new ColorThiefUmd();
+    }
     this.interval = 1;
     this.barRedius = 4;
     this.itemCount = 22;
@@ -58,8 +67,10 @@ class AniBarChart {
     };
 
     this.valueFormat = (d) => {
-      if (String(newNum).indexOf(".") > -1) return `${d3.format(",.2f")(d)}`;
-      return `${d3.format(",d")(d)}`;
+      let v = d.value;
+      if (v == undefined) v = d;
+      if (String(d).indexOf(".") > -1) return `${d3.format(",.2f")(v)}`;
+      return `${d3.format(",d")(v)}`;
     };
 
     this.tickFormat = (val) =>
@@ -116,6 +127,12 @@ class AniBarChart {
 
   setOptions(options) {
     _.merge(this, options);
+    this.innerMargin = {
+      left: this.outerMargin.left,
+      right: this.outerMargin.right,
+      top: this.outerMargin.top,
+      bottom: this.outerMargin.bottom,
+    };
   }
 
   async loadMetaData(path) {
@@ -279,6 +296,11 @@ class AniBarChart {
           imageWidth,
           imageHeight
         );
+
+        this.ctx.strokeStyle = this.colorScheme.background;
+        this.ctx.lineWidth = 1;
+        this.ctx.stroke();
+
         this.ctx.restore();
       }
     };
@@ -325,7 +347,7 @@ class AniBarChart {
       // draw bar value text
       this.ctx.textAlign = "left";
       this.ctx.fillText(
-        this.valueFormat(data.value),
+        this.valueFormat(data),
         barWidth + x + this.labelPandding,
         y + this.barHeight * 0.88
       );
@@ -360,7 +382,7 @@ class AniBarChart {
 
       this.ctx.restore();
 
-      this.drawBarExt(this.ctx, data, series);
+      this.drawBarExt(this.ctx, data, series, this);
 
       this.ctx.globalAlpha = 1;
     };
@@ -484,6 +506,7 @@ class AniBarChart {
           // 全局最大值
           if (val > this.maxValue) {
             this.maxValue = val;
+            this.maxData = fd;
           }
           // 获取每一帧的最大值和最小值
           if (frameData[f].max == undefined) frameData[f].max = val;
@@ -558,7 +581,7 @@ class AniBarChart {
 
     this.innerMargin.left += this.labelPandding;
     this.innerMargin.right += this.ctx.measureText(
-      this.valueFormat(this.maxValue)
+      this.valueFormat(this.maxData)
     ).width;
     this.innerMargin.right += this.labelPandding;
 
@@ -593,10 +616,15 @@ class AniBarChart {
         } else {
           this.imageData[key] = await loadImage(src);
         }
-        let p = await new Vibrant(this.imageData[key], { colorCount: 6 }).getPalette();
-        let color = p.Vibrant.getHex();
+        const rgbToHex = (r, g, b) => '#' + [r, g, b].map(x => {
+          const hex = x.toString(16)
+          return hex.length === 1 ? '0' + hex : hex
+        }).join('');
+
+        let color = await this.colorThief.getColor(this.imageData[key]);
+
         if (this.colorData[key] == undefined) {
-          this.colorData[key] = color;
+          this.colorData[key] = rgbToHex(...color);
         }
         this.imageData[key].setAttribute("crossOrigin", "Anonymous");
       } catch (error) {
@@ -758,7 +786,7 @@ class AniBarChart {
     cData.forEach((e) => {
       this.ctx.drawBar(e, cData);
     });
-    this.drawExt(this.ctx, cData);
+    this.drawExt(this.ctx, cData, this);
   }
 
   drawDate(n) {
@@ -778,13 +806,13 @@ class AniBarChart {
     this.ctx.fillRect(0, 0, this.width, this.height);
   }
 
-  downloadBlob(blob, name = "untitled") {
+  downloadBlob(blob, name = "untitled.webm") {
     var url = URL.createObjectURL(blob);
     var a = document.createElement("a");
     document.body.appendChild(a);
     a.style = "display: none";
     a.href = url;
-    a.download = `${name}.webm`;
+    a.download = `${name}`;
     a.click();
     window.URL.revokeObjectURL(url);
   }
@@ -965,7 +993,9 @@ class AniBarChart {
   async outputPng(n, name) {
     if (!this.node) {
       console.log("Cannot output png in browser!");
-      return;
+      this.canvas.toBlob((b) =>
+        this.downloadBlob(b, `${name}.png`)
+      );
     } else {
       let fs = require("fs");
       let path = require("path");
