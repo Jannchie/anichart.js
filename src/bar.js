@@ -1,7 +1,5 @@
-if (typeof fetch !== "function") {
-  global.fetch = require("node-fetch-polyfill");
-}
 const { Image } = require("@canvas/image");
+
 const _ = require("lodash");
 const async = require("async");
 const d3 = require("d3");
@@ -10,6 +8,7 @@ const Vibrant = require('node-vibrant')
 let { createCanvas, loadImage, registerFont } = require("canvas");
 const ColorThiefUmd = require('colorthief/dist/color-thief.umd.js');
 const colorThief = require('colorthief');
+const fs = require('fs')
 class AniBarChart {
   constructor(options = {}) {
     this.node = false;
@@ -136,7 +135,7 @@ class AniBarChart {
   }
 
   async loadMetaData(path) {
-    let metaData = await d3.csv(path);
+    let metaData = await this.readCsv(path);
     metaData = metaData.reduce((pv, cv) => {
       pv[cv[this.idField]] = { ...cv };
       return pv;
@@ -144,9 +143,17 @@ class AniBarChart {
     this.metaData = metaData;
   }
 
+  async readCsv(path) {
+    if (this.node) {
+      return d3.csvParse(fs.readFileSync(path).toString());
+    } else {
+      return await d3.csv(path);
+    }
+  }
+
   async loadCsv(path) {
     this.data = [];
-    let csvData = await d3.csv(path);
+    let csvData = await this.readCsv(path);
     let tsList = [...d3.group(csvData, (d) => d.date).keys()]
       .map(
         (d) =>
