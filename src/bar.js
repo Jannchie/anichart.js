@@ -583,17 +583,18 @@ class AniBarChart {
   addImageProcess(src) {
     function timeout(ms, callback) {
       return new Promise(function (resolve, reject) {
-        // Set up the real work
         callback(resolve, reject);
-
-        // Set up the timeout
         setTimeout(function () {
           reject("Promise timed out after " + ms + " ms");
         }, ms);
       });
     }
-    return timeout(5000, async (resolve, reject) => {
-      resolve(await this.loadImage(src));
+    return timeout(3000, async (resolve, reject) => {
+      try {
+        resolve(this.loadImage(src));
+      } catch {
+        console.log(src);
+      }
     });
   }
   async preRender() {
@@ -623,52 +624,43 @@ class AniBarChart {
     let all = Object.entries(this.metaData).length;
     let c = 0;
     let imgMap = this.imageDict(this.metaData, this);
-    await async.mapValuesLimit(imgMap, 32, async (src, key) => {
-      try {
-        if (this.node) {
-          let img;
-          try {
-            img = await this.addImageProcess(src);
-          } catch {
-            try {
-              img = await this.addImageProcess(src);
-            } catch {
-              img = await this.addImageProcess(src);
-            }
-          }
-          this.imageData[key] = img;
-        } else {
-          this.imageData[key] = await this.loadImage(src);
-          this.imageData[key].setAttribute("crossOrigin", "Anonymous");
-        }
-        const rgbToHex = (r, g, b) => '#' + [r, g, b].map(x => {
-          const hex = x.toString(16)
-          return hex.length === 1 ? '0' + hex : hex
-        }).join('');
-        if (this.colorData[key] == undefined) {
-          if (this.node) {
-            let color = await this.colorThief.getColor(src);
-            this.colorData[key] = rgbToHex(...color);
-          } else {
-            if (this.imageData[key].complete) {
-              let color = this.colorThief.getColor(this.imageData[key]);
-              this.colorData[key] = rgbToHex(...color);
-            } else {
-              this.imageData[key].addEventListener('load', () => {
-                let color = this.colorThief.getColor(this.imageData[key]);
-                this.colorData[key] = rgbToHex(...color);
-              });
-            }
-          }
-        }
-      } catch (error) {
-        console.log(src);
-        console.error(error);
-      }
-      await this.hintText(`Loading Images ${++c}/ ${all}`, this);
-    });
+    for (let key in imgMap) {
+      let src = imgMap[key];
+      await this.loadImageFromSrcAndKey(src, key);
+      this.hintText(`Loading Images ${++c}/ ${all}`, this);
+    }
+    let imgs = Object.values(this.imageData)
+    await Promise.all(imgs)
+    console.log("image Loaded")
   }
 
+
+  async loadImageFromSrcAndKey(src, key) {
+    this.imageData[key] = await this.loadImage(src);
+  }
+
+  async autoGetColorFromImage(key, src) {
+    const rgbToHex = (r, g, b) => '#' + [r, g, b].map(x => {
+      const hex = x.toString(16);
+      return hex.length === 1 ? '0' + hex : hex;
+    }).join('');
+    if (this.colorData[key] == undefined) {
+      if (this.node) {
+        let color = await this.colorThief.getColor(src);
+        this.colorData[key] = rgbToHex(...color);
+      } else {
+        if (this.imageData[key].complete) {
+          let color = this.colorThief.getColor(this.imageData[key]);
+          this.colorData[key] = rgbToHex(...color);
+        } else {
+          this.imageData[key].addEventListener('load', () => {
+            let color = this.colorThief.getColor(this.imageData[key]);
+            this.colorData[key] = rgbToHex(...color);
+          });
+        }
+      }
+    }
+  }
 
   /**
    * Convolution 卷积
