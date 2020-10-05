@@ -1,8 +1,13 @@
-import * as anichart from "../src/index.js";
-import * as d3 from "d3";
-import _ from "lodash";
-import d from "./data/test-data.csv";
-import m from "./data/test-meta.csv";
+const anichart = require("../src/index.js");
+const d3 = require("d3");
+const path = require("path")
+const _ = require("lodash");
+let d = path.join(__dirname, "./data/test-data.csv")
+let m = path.join(__dirname, "./data/test-meta.csv")
+if (typeof window != 'undefined') {
+  d = require("./data/test-data.csv");
+  m = require("./data/test-meta.csv");
+}
 
 let settings = {
   width: 1366,
@@ -55,14 +60,14 @@ let settings = {
 let a = new anichart.Bar(settings);
 
 (async () => {
-  a.drawBarExt = function (ctx, data, series) {
+  a.drawBarExt = function (ctx, data, series, self) {
     let p = 12;
     let addWith = this.ctx.measureText(this.valueFormat(data)).width;
     let x = this.innerMargin.left + series.xScale(data.value) + addWith + p;
     let y = series.yScale(data.pos);
     ctx.fillStyle = "#777";
     ctx.fillText(
-      `[${new Intl.NumberFormat(this.language, {
+      `[${new Intl.NumberFormat(self.language, {
         notation: "compact",
       }).format(data.total)}粉]`,
       x,
@@ -137,9 +142,14 @@ let a = new anichart.Bar(settings);
 
   await a.loadCsv(d);
   await a.loadMetaData(m);
-  a.initCanvas();
+  await a.initCanvas();
   a.ctx.font = `900 ${a.barHeight}px Sarasa Mono SC`;
   a.innerMargin.right += a.ctx.measureText("[xxxx万粉]").width;
-  a.readyToDraw();
+  await a.readyToDraw();
+  if (a.node) {
+    for (let f in d3.range(a.frameData.length)) {
+      a.outputPng(f);
+    }
+  }
 })();
-export default a;
+module.exports = a;

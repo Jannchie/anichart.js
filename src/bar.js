@@ -306,18 +306,21 @@ class AniBarChart {
         this.ctx.radiusArea(x, y, imageWidth, imageHeight, r);
         this.ctx.clip(); //call the clip method so the next render is clipped in last path
         this.ctx.closePath();
-        this.ctx.drawImage(
-          img,
-          0,
-          0,
-          img.width,
-          img.height,
-          x,
-          y,
-          imageWidth,
-          imageHeight
-        );
-
+        try {
+          this.ctx.drawImage(
+            img,
+            0,
+            0,
+            img.width,
+            img.height,
+            x,
+            y,
+            imageWidth,
+            imageHeight
+          );
+        } catch (error) {
+          console.log(error)
+        }
         this.ctx.strokeStyle = this.colorScheme.background;
         this.ctx.lineWidth = 1;
         this.ctx.stroke();
