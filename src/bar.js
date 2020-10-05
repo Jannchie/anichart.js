@@ -8,12 +8,23 @@ const Vibrant = require('node-vibrant')
 let { createCanvas, loadImage, registerFont } = require("canvas");
 const ColorThiefUmd = require('colorthief/dist/color-thief.umd.js');
 const colorThief = require('colorthief');
-const fs = require('fs')
+const fs = require('fs');
 class AniBarChart {
   constructor(options = {}) {
     this.node = false;
     if (typeof window == 'undefined') {
       this.node = true;
+      this.loadImage = loadImage;
+    } else {
+      this.loadImage = function (url) {
+        return new Promise(resolve => {
+          const image = new Image();
+          image.onload = () => {
+            resolve(image);
+          };
+          image.src = url;
+        });
+      }
     }
     this.language = "zh-CN";
     this.width = 1366;
@@ -147,6 +158,9 @@ class AniBarChart {
     if (this.node) {
       return d3.csvParse(fs.readFileSync(path).toString());
     } else {
+      if ('object' == typeof path) {
+        return d3.csv(path.default)
+      }
       return await d3.csv(path);
     }
   }
@@ -553,7 +567,7 @@ class AniBarChart {
     );
   }
 
-  hintText(txt, self) {
+  async hintText(txt, self) {
     console.log(txt);
     self.ctx.textAlign = "left";
     self.ctx.fillStyle = self.colorScheme.background;
@@ -576,11 +590,11 @@ class AniBarChart {
       });
     }
     return timeout(5000, async (resolve, reject) => {
-      resolve(await loadImage(src));
+      resolve(await this.loadImage(src));
     });
   }
   async preRender() {
-    this.hintText("Loading Layout", this);
+    await this.hintText("Loading Layout", this);
     this.innerMargin.top += this.axisTextSize;
 
 
@@ -602,11 +616,11 @@ class AniBarChart {
     this.currentFrame = 0;
   }
 
-  async loadImage() {
+  async loadImages() {
     let all = Object.entries(this.metaData).length;
     let c = 0;
     let imgMap = this.imageDict(this.metaData, this);
-    await async.mapValuesLimit(imgMap, 64, async (src, key) => {
+    await async.mapValuesLimit(imgMap, 32, async (src, key) => {
       try {
         if (this.node) {
           let img;
@@ -621,24 +635,34 @@ class AniBarChart {
           }
           this.imageData[key] = img;
         } else {
-          this.imageData[key] = await loadImage(src);
+          this.imageData[key] = await this.loadImage(src);
+          this.imageData[key].setAttribute("crossOrigin", "Anonymous");
         }
         const rgbToHex = (r, g, b) => '#' + [r, g, b].map(x => {
           const hex = x.toString(16)
           return hex.length === 1 ? '0' + hex : hex
         }).join('');
-
-        let color = await this.colorThief.getColor(this.imageData[key]);
-
         if (this.colorData[key] == undefined) {
-          this.colorData[key] = rgbToHex(...color);
+          if (this.node) {
+            let color = await this.colorThief.getColor(src);
+            this.colorData[key] = rgbToHex(...color);
+          } else {
+            if (this.imageData[key].complete) {
+              let color = this.colorThief.getColor(this.imageData[key]);
+              this.colorData[key] = rgbToHex(...color);
+            } else {
+              this.imageData[key].addEventListener('load', () => {
+                let color = this.colorThief.getColor(this.imageData[key]);
+                this.colorData[key] = rgbToHex(...color);
+              });
+            }
+          }
         }
-        this.imageData[key].setAttribute("crossOrigin", "Anonymous");
       } catch (error) {
         console.log(src);
         console.error(error);
       }
-      this.hintText(`Loading Images ${++c}/ ${all}`, this);
+      await this.hintText(`Loading Images ${++c}/ ${all}`, this);
     });
   }
 
@@ -912,8 +936,8 @@ class AniBarChart {
       0.8
     );
 
-    await this.loadImage();
-    this.hintText("Loading Data", this);
+    await this.loadImages();
+    await this.hintText("Loading Data", this);
     this.calculateFrameData(this.data);
     this.calPosition(this.idSet, this.frameData);
 
@@ -1032,7 +1056,7 @@ class AniBarChart {
       // strip off the data: url prefix to get just the base64-encoded bytes
       var data = img.replace(/^data:image\/\w+;base64,/, "");
       var buf = new Buffer.from(data, "base64");
-      fs.writeFileSync(`./image/${name}-${n}.jpg`, buf);
+      fs.writeFileSync(`./image/${name}-${n}.png`, buf);
     }
   }
 }
