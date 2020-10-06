@@ -624,19 +624,25 @@ class AniBarChart {
     let all = Object.entries(this.metaData).length;
     let c = 0;
     let imgMap = this.imageDict(this.metaData, this);
-    for (let key in imgMap) {
-      let src = imgMap[key];
-      await this.loadImageFromSrcAndKey(src, key);
-      this.hintText(`Loading Images ${++c}/ ${all}`, this);
-    }
-    let imgs = Object.values(this.imageData)
-    await Promise.all(imgs)
+    await async.mapValues(imgMap, async (src, key) => {
+      this.loadImageFromSrcAndKey(src, key);
+    })
     console.log("image Loaded")
+    let ps = []
+    for (let key of Object.keys(this.imageData)) {
+      let p = this.imageData[key].then(res => {
+        this.imageData[key] = res;
+      })
+      this.hintText(`Loading Images ${++c}/ ${all}`, this);
+      ps.push(p)
+    }
+    var wait = ms => new Promise(resolve => setTimeout(resolve, ms));
+    await Promise.race([Promise.all(ps), wait(15000)])
   }
 
 
   async loadImageFromSrcAndKey(src, key) {
-    this.imageData[key] = await this.loadImage(src);
+    this.imageData[key] = this.loadImage(src);
   }
 
   async autoGetColorFromImage(key, src) {
