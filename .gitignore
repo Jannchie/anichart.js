@@ -117,3 +117,4 @@ dist
 
 .vscode/**
 *.png
+test/data/country-meta.csv
