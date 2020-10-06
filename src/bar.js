@@ -14,6 +14,7 @@ class AniBarChart {
   constructor(options = {}) {
     this.pngToMp4 = pngToMp4;
     this.imagePath = "./image/"
+    this.outputPath = "./out.mp4"
     this.node = false;
     if (typeof window == 'undefined') {
       this.node = true;
@@ -961,7 +962,7 @@ class AniBarChart {
       for (let f in d3.range(this.frameData.length)) {
         this.outputPng(f, this.outputName);
       }
-      await this.pngToMp4(this.imagePath, this.outputName, "./o.mp4")
+      await this.pngToMp4(this.imagePath, this.outputName, this.outputPath, this.frameRate)
     }
   }
   addCtl() {

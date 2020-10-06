@@ -23,7 +23,9 @@ anichart.js
 
 目前正在开发中，虽然该有的功能已经实现了，但是没有提供友好的接口，想要做出自己的作品需要阅读源代码并了解JavaScript编程。
 
-目前前端直接导出视频只支持webp格式。并且由于浏览器限制（也可能是自身技术限制）导出视频时需要在内存中载入整个Blob，如果直出较高帧率且时长较长的视频，很可能会爆内存（1分钟60帧的视频约需要2GB内存），因此目前只能分割导出。期待各位大佬提交PR。
+目前后端导出视频内置FFmpeg。能够直接导出MP4。
+
+前端直接导出视频只支持webp格式。并且由于浏览器限制（也可能是自身技术限制）导出视频时需要在内存中载入整个Blob，如果直出较高帧率且时长较长的视频，很可能会爆内存（1分钟60帧的视频约需要2GB内存），因此目前只能分割导出。期待各位大佬提交PR。
 
 如果你不满意上述操作，你也可以尝试脱离浏览器环境，在node.js环境下导出png序列，然后再整合成任意格式的视频。这个项目支持浏览器和node.js两种环境。但是还有很多坑没有解决，并且没有实现自动化。
 
@@ -80,6 +82,12 @@ npm i anichart
 如果使用标签导入可以跳过这一步，如果使用npm或者Yarn需要通过以下代码引入包：
 
 ``` js
+const anichart require("anichart");
+```
+
+或者
+
+``` js
 import * as anichart from "anichart";
 ```
 
@@ -112,7 +120,6 @@ let a = new anichart.Bar();
 
 ```js
 await a.loadCsv(pathData);
-await a.LoadMetaData(pathMeta);
 a.initCanvas();
 a.readyToDraw();
 
@@ -122,6 +129,12 @@ a.readyToDraw();
 
 ```js
 a.play();
+```
+
+### 测试
+
+```bash
+node --experimental-wasm-threads --experimental-wasm-bulk-memory ./test/fans-month.js
 ```
 
 ### 待完成事项
