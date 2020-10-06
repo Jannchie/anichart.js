@@ -628,25 +628,29 @@ class AniBarChart {
     let all = Object.entries(this.metaData).length;
     let c = 0;
     let imgMap = this.imageDict(this.metaData, this);
+    var wait = ms => new Promise((reslove, reject) => setTimeout(reject, ms));
     await async.mapValues(imgMap, async (src, key) => {
-      this.loadImageFromSrcAndKey(src, key);
+      let count = 0
+      while (true) {
+        try {
+          await Promise.race([this.loadImageFromSrcAndKey(src, key), wait(10000)]);
+          break;
+        } catch {
+          if (++count >= 5) {
+            console.log("Over the number of retries! ");
+            break;
+          }
+          console.log(`Timeout! Reload Image..times:${count}`);
+        }
+      }
+      this.hintText(`Loading Images ${++c}/ ${all}`, this);
     })
     console.log("image Loaded")
-    let ps = []
-    for (let key of Object.keys(this.imageData)) {
-      let p = this.imageData[key].then(res => {
-        this.imageData[key] = res;
-      })
-      this.hintText(`Loading Images ${++c}/ ${all}`, this);
-      ps.push(p)
-    }
-    var wait = ms => new Promise(resolve => setTimeout(resolve, ms));
-    await Promise.race([Promise.all(ps), wait(15000)])
   }
 
 
   async loadImageFromSrcAndKey(src, key) {
-    this.imageData[key] = this.loadImage(src);
+    this.imageData[key] = await this.loadImage(src);
   }
 
   async autoGetColorFromImage(key, src) {
