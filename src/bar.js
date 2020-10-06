@@ -46,7 +46,7 @@ class AniBarChart {
     this.dateLabelSize = 48;
     this.slogenSize = 24;
     this.output = false;
-    this.output_name = "out";
+    this.outputName = "out";
     this.idField = "id";
     this.keyFrameDeltaTime = undefined
     this.getId = (data) => {
@@ -954,6 +954,11 @@ class AniBarChart {
       this.addCtl();
     }
     this.ready = true;
+    if (this.node) {
+      for (let f in d3.range(this.frameData.length)) {
+        this.outputPng(f, this.outputName);
+      }
+    }
   }
   addCtl() {
     let ctl = d3

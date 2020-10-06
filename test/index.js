@@ -1,1 +1,1 @@
-import runBartest from "./bar-test";
+import runBartest from "./fans-month";
