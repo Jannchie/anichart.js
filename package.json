@@ -34,6 +34,7 @@
   },
   "dependencies": {
     "@canvas/image": "^1.0.1",
+    "@ffmpeg/ffmpeg": "^0.8.3",
     "async": "^3.2.0",
     "canvas": "2.5.0",
     "colorthief": "^2.3.2",
