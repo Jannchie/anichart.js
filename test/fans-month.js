@@ -21,6 +21,9 @@ let settings = {
   imageDict: (metaData, self) => {
     let tmp = Object.entries(metaData).map((d) => d[1]);
     return _.reduce(tmp, (pv, cv) => {
+      if (['jpg', 'png'].indexOf(cv.image.split('.')[3]) == -1) {
+        return pv
+      }
       pv[cv[self.idField]] = `${cv.image}@${self.barHeight}w_${self.barHeight}h.png`;
       return pv;
     }, {})
@@ -146,10 +149,6 @@ let a = new anichart.Bar(settings);
   a.ctx.font = `900 ${a.barHeight}px Sarasa Mono SC`;
   a.innerMargin.right += a.ctx.measureText("[xxxx万粉]").width;
   await a.readyToDraw();
-  if (a.node) {
-    for (let f in d3.range(a.frameData.length)) {
-      a.outputPng(f);
-    }
-  }
+
 })();
 module.exports = a;
