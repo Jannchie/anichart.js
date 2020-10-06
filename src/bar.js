@@ -8,9 +8,12 @@ const Vibrant = require('node-vibrant')
 let { createCanvas, loadImage, registerFont } = require("canvas");
 const ColorThiefUmd = require('colorthief/dist/color-thief.umd.js');
 const colorThief = require('colorthief');
+const pngToMp4 = require('./ffmpeg');
 const fs = require('fs');
 class AniBarChart {
   constructor(options = {}) {
+    this.pngToMp4 = pngToMp4;
+    this.imagePath = "./image/"
     this.node = false;
     if (typeof window == 'undefined') {
       this.node = true;
@@ -958,6 +961,7 @@ class AniBarChart {
       for (let f in d3.range(this.frameData.length)) {
         this.outputPng(f, this.outputName);
       }
+      await this.pngToMp4(this.imagePath, this.outputName, "./o.mp4")
     }
   }
   addCtl() {
@@ -1053,7 +1057,7 @@ class AniBarChart {
         }
         return projectPath;
       }
-      await mkdirPath("./image");
+      await mkdirPath(this.imagePath);
       this.drawFrame(n);
       // window.a = a;
       console.log(`output frame:${n}, name: ${name}`);
@@ -1062,7 +1066,7 @@ class AniBarChart {
       // strip off the data: url prefix to get just the base64-encoded bytes
       var data = img.replace(/^data:image\/\w+;base64,/, "");
       var buf = new Buffer.from(data, "base64");
-      fs.writeFileSync(`./image/${name}-${n}.png`, buf);
+      fs.writeFileSync(`${this.imagePath}${name}-${n}.png`, buf);
     }
   }
 }
