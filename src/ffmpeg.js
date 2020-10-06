@@ -2,9 +2,7 @@ const fs = require('fs');
 const { createFFmpeg } = require('@ffmpeg/ffmpeg');
 
 const ffmpeg = createFFmpeg({
-  log: true,
-  logger: ({ message }) => console.log(message),
-  process: p => console.log(p)
+  log: true
 });
 
 async function pngToMp4(pngPath, name, outPathAndName, fps, thread = 8) {
@@ -18,4 +16,4 @@ async function pngToMp4(pngPath, name, outPathAndName, fps, thread = 8) {
   fs.writeFileSync(outPathAndName, data)
   process.exit(0);
 }
-module.exports = pngToMp4;
+module.exports = { ffmpeg, pngToMp4 };

@@ -8,10 +8,12 @@ const Vibrant = require('node-vibrant')
 let { createCanvas, loadImage, registerFont } = require("canvas");
 const ColorThiefUmd = require('colorthief/dist/color-thief.umd.js');
 const colorThief = require('colorthief');
-const pngToMp4 = require('./ffmpeg');
+const { ffmpeg, pngToMp4 } = require('./ffmpeg');
 const fs = require('fs');
+const { blob } = require("d3");
 class AniBarChart {
   constructor(options = {}) {
+    this.ffmpeg = ffmpeg;
     this.pngToMp4 = pngToMp4;
     this.imagePath = "./image/"
     this.outputPath = "./out.mp4"
@@ -651,6 +653,9 @@ class AniBarChart {
 
   async loadImageFromSrcAndKey(src, key) {
     this.imageData[key] = await this.loadImage(src);
+    if (!this.node) {
+      this.imageData[key].setAttribute("crossOrigin", "Anonymous");
+    }
   }
 
   async autoGetColorFromImage(key, src) {
@@ -816,7 +821,7 @@ class AniBarChart {
     );
   }
 
-  drawFrame(n) {
+  async drawFrame(n) {
     this.ctx.clearRect(0, 0, this.width, this.height);
     let cData = this.frameData[n];
     this.drawBackground();
@@ -846,7 +851,7 @@ class AniBarChart {
     this.ctx.fillRect(0, 0, this.width, this.height);
   }
 
-  downloadBlob(blob, name = "untitled.webm") {
+  downloadBlob(blob, name = "untitled.mp4") {
     var url = URL.createObjectURL(blob);
     var a = document.createElement("a");
     document.body.appendChild(a);
@@ -884,17 +889,21 @@ class AniBarChart {
     if (!this.ready) {
       await this.readyToDraw();
     }
-    this.video = new Whammy.Video(this.frameRate);
+    if (this.output) {
+      await ffmpeg.load();
+    }
+
     let delay = this.output ? 0 : 1000 / this.frameRate;
-    this.player = d3.interval(() => {
+    this.player = d3.interval(async () => {
       try {
         if (this.currentFrame == this.totalFrames + this.freeze) {
           this.player.stop();
           let btn = d3.select("#play-btn");
           btn.text(btn.text() == "STOP" ? "PLAY" : "STOP");
           if (this.output) {
-            let blob = this.video.compile();
-            this.downloadBlob(blob, this.output_name);
+            await this.ffmpeg.run(`-r ${this.frameRate} -threads ${8} -i ${this.outputName}-%d.png out.mp4`)
+            let data = await ffmpeg.read("./out.mp4");
+            this.downloadBlob(new Blob([data.buffer], { type: 'video/mp4' }), this.outputName)
           }
           return;
         }
@@ -902,20 +911,9 @@ class AniBarChart {
           this.slider.value = this.currentFrame;
           this.updatectlCurrentFrame();
         }
-
-        if (
-          this.output &&
-          this.currentFrame != 0 &&
-          this.currentFrame % (this.frameRate * 60) == 0
-        ) {
-          let blob = this.video.compile();
-          this.downloadBlob(blob, this.output_name);
-          this.video = new Whammy.Video(this.frameRate);
-        }
-
-        this.drawFrame(this.currentFrame++);
+        await this.drawFrame(this.currentFrame++);
         if (this.output) {
-          this.video.add(this.ctx);
+          await ffmpeg.write(`${this.outputName}-${this.currentFrame}.png`, this.canvas.toDataURL('image/png', 1));
         }
       } catch (e) {
         console.error(e);
@@ -994,7 +992,7 @@ class AniBarChart {
       .style("flex-grow", 1)
       .attr("type", "range")
       .attr("min", 0)
-      .attr("max", this.totalFrames - 1 + 300)
+      .attr("max", this.totalFrames - 1 + this.freeze)
       .attr("step", 1)
       .attr("value", 0)
       .on("input", () => {

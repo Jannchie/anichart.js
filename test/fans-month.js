@@ -10,12 +10,13 @@ if (typeof window != 'undefined') {
 }
 
 let settings = {
+  output: true,
   width: 1366,
   height: 768,
   outerMargin: { left: 10, right: 10, top: 10, bottom: 10 },
   idField: "mid",
   frameRate: 24,
-  freeze: 500,
+  freeze: 20,
   keyFrameDeltaTime: 86400 * 0.5,
 
   imageDict: (metaData, self) => {
@@ -151,4 +152,8 @@ let a = new anichart.Bar(settings);
   await a.readyToDraw();
 
 })();
+
+if (typeof window != 'undefined') {
+  window.a = a;
+}
 module.exports = a;
