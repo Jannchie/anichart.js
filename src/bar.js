@@ -3,14 +3,11 @@ const { Image } = require("@canvas/image");
 const _ = require("lodash");
 const async = require("async");
 const d3 = require("d3");
-const { Whammy } = require("./whammy");
-const Vibrant = require('node-vibrant')
-let { createCanvas, loadImage, registerFont } = require("canvas");
+let { createCanvas, loadImage } = require("canvas");
 const ColorThiefUmd = require('colorthief/dist/color-thief.umd.js');
 const colorThief = require('colorthief');
 const { ffmpeg, pngToMp4 } = require('./ffmpeg');
 const fs = require('fs');
-const { blob } = require("d3");
 class AniBarChart {
   constructor(options = {}) {
     this.ffmpeg = ffmpeg;
