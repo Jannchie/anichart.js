@@ -282,11 +282,11 @@ class AniBarChart {
   getColor(data) {
     return this.colorData[this.colorKey(data, this.metaData, this)];
   }
-  async initCanvas() {
+  async initCanvas(parent = "body") {
     this.canvas;
     if (!this.node) {
       this.canvas = d3
-        .select("body")
+        .select(parent)
         .append("canvas")
         .attr("width", this.width)
         .attr("height", this.height)
