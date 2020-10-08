@@ -3,7 +3,8 @@ const { Image } = require("@canvas/image");
 const _ = require("lodash");
 const async = require("async");
 const d3 = require("d3");
-let { createCanvas, loadImage } = require("canvas");
+let { createCanvas } = require("canvas");
+const loadImages = require("./image");
 const ColorThiefUmd = require('colorthief/dist/color-thief.umd.js');
 const colorThief = require('colorthief');
 const { ffmpeg, pngToMp4 } = require('./ffmpeg');
@@ -137,6 +138,12 @@ class AniBarChart {
     this.drawBarExt = () => { };
     this.drawExt = () => { };
     this.setOptions(options);
+
+    this.barHeight = Math.round(
+      ((this.height - this.innerMargin.top - this.innerMargin.bottom) /
+        this.itemCount) *
+      0.8
+    );
   }
 
   setOptions(options) {
@@ -419,7 +426,7 @@ class AniBarChart {
   calculateFrameData(data) {
     let frameData = [];
     let idSet = new Set();
-    this.maxValue = 0;
+    this.maxValue = -Infinity;
 
     // 对每组数据
     let idMap = d3.group(data, (d) => d[this.idField]);
@@ -574,7 +581,7 @@ class AniBarChart {
     );
   }
 
-  async hintText(txt, self) {
+  async hintText(txt, self = this) {
     console.log(txt);
     self.ctx.textAlign = "left";
     self.ctx.fillStyle = self.colorScheme.background;
@@ -582,7 +589,7 @@ class AniBarChart {
     self.ctx.fillStyle = "#fff";
     self.ctx.font = `20px Sarasa Mono SC`;
     self.ctx.fillText(txt, 20, 30);
-    this.drawWatermark();
+    self.drawWatermark();
   }
   addImageProcess(src) {
     function timeout(ms, callback) {
@@ -622,38 +629,6 @@ class AniBarChart {
     );
     this.innerMargin.left += maxTextWidth;
     this.currentFrame = 0;
-  }
-
-  async loadImages() {
-    let all = Object.entries(this.metaData).length;
-    let c = 0;
-    let imgMap = this.imageDict(this.metaData, this);
-    var wait = ms => new Promise((reslove, reject) => setTimeout(reject, ms));
-    await async.mapValues(imgMap, async (src, key) => {
-      let count = 0
-      while (true) {
-        try {
-          await Promise.race([this.loadImageFromSrcAndKey(src, key), wait(10000)]);
-          break;
-        } catch {
-          if (++count >= 5) {
-            console.log("Over the number of retries! ");
-            break;
-          }
-          console.log(`Timeout! Reload Image..times:${count}`);
-        }
-      }
-      this.hintText(`Loading Images ${++c}/ ${all}`, this);
-    })
-    console.log("image Loaded")
-  }
-
-
-  async loadImageFromSrcAndKey(src, key) {
-    this.imageData[key] = await this.loadImage(src);
-    if (!this.node) {
-      this.imageData[key].setAttribute("crossOrigin", "Anonymous");
-    }
   }
 
   async autoGetColorFromImage(key, src) {
@@ -935,13 +910,8 @@ class AniBarChart {
     }
   }
   async readyToDraw() {
-    this.barHeight = Math.round(
-      ((this.height - this.innerMargin.top - this.innerMargin.bottom) /
-        this.itemCount) *
-      0.8
-    );
 
-    await this.loadImages();
+    await loadImages(this.metaData, this.imageDict, this.imageData, this);
     await this.hintText("Loading Data", this);
     this.calculateFrameData(this.data);
     this.calPosition(this.idSet, this.frameData);
