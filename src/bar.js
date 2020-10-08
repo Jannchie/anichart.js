@@ -8,6 +8,7 @@ const ColorThiefUmd = require('colorthief/dist/color-thief.umd.js');
 const colorThief = require('colorthief');
 const { ffmpeg, pngToMp4 } = require('./ffmpeg');
 const fs = require('fs');
+const Ctl = require("./ctl");
 class AniBarChart {
   constructor(options = {}) {
     this.ffmpeg = ffmpeg;
@@ -905,8 +906,8 @@ class AniBarChart {
           return;
         }
         if (this.useCtl) {
-          this.slider.value = this.currentFrame;
-          this.updatectlCurrentFrame();
+          this.ctl.slider.value = this.currentFrame;
+          this.ctl.updatectlCurrentFrame(this);
         }
         await this.drawFrame(this.currentFrame++);
         if (this.output) {
@@ -954,7 +955,8 @@ class AniBarChart {
       this.useCtl = false;
     }
     if (this.useCtl) {
-      this.addCtl();
+      this.ctl = new Ctl();
+      this.ctl.addCtl(this);
     }
     this.ready = true;
     if (this.node) {
@@ -963,73 +965,6 @@ class AniBarChart {
       }
       await this.pngToMp4(this.imagePath, this.outputName, this.outputPath, this.frameRate)
     }
-  }
-  addCtl() {
-    let ctl = d3
-      .select("body")
-      .append("div")
-      .style("font-family", "Sarasa Mono SC")
-      .attr("class", "ctl")
-      .style("width", `${this.width}px`)
-      .style("display", "flex");
-    ctl
-      .append("button")
-      .attr("id", "play-btn")
-      .style("font-family", "Sarasa Mono SC")
-      .text("PLAY")
-      .on("click", () => {
-        let btn = d3.select("#play-btn");
-        let next = btn.text() == "STOP" ? "PLAY" : "STOP";
-        this.play();
-        d3.select("#play-btn").text(next);
-      });
-
-    let slider = ctl.append("input");
-    slider
-      .style("flex-grow", 1)
-      .attr("type", "range")
-      .attr("min", 0)
-      .attr("max", this.totalFrames - 1 + this.freeze)
-      .attr("step", 1)
-      .attr("value", 0)
-      .on("input", () => {
-        this.currentFrame = +this.slider.value;
-        this.updatectlCurrentFrame();
-        this.drawFrame(this.currentFrame);
-      });
-    this.ctlCurrentFrame = ctl
-      .append("input")
-      .attr("id", "c-frame")
-      .attr("type", "text")
-      .style("font-family", "Sarasa Mono SC")
-      .attr("size", this.totalFrames.toString().length)
-      .on("input", () => {
-        let val = +d3.select("#c-frame").node().value;
-        if (val < 1) {
-          val = 1;
-        } else if (val > this.totalFrames + 300) {
-          val = this.totalFrames;
-        } else if (isNaN(val)) {
-          val = 1;
-        }
-        this.currentFrame = val - 1;
-        this.slider.value = this.currentFrame;
-        this.drawFrame(this.currentFrame);
-      });
-    ctl
-      .append("text")
-      .text(` / ${d3.format(",d")(this.totalFrames + this.freeze)}`);
-    this.updatectlCurrentFrame();
-    this.slider = slider.node();
-  }
-  updateCtl() {
-    this.slider.value = n;
-    this.updatectlCurrentFrame();
-  }
-  updatectlCurrentFrame() {
-    let b = this.totalFrames.toString().length;
-    let f = d3.format(`0${b},d`);
-    this.ctlCurrentFrame.node().value = `${this.currentFrame + 1}`;
   }
   async outputPng(n, name) {
     if (!this.node) {
