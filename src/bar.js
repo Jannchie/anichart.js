@@ -80,7 +80,7 @@ class AniBarChart {
         return data[this.idField];
       }
     };
-
+    this.xDomain = (series) => [0, series.max]
     this.valueFormat = (d) => {
       let v = d.value;
       if (v == undefined) v = d;
@@ -548,6 +548,10 @@ class AniBarChart {
           if (frameData[f].max < val) {
             frameData[f].max = val;
           }
+          if (frameData[f].min == undefined) frameData[f].min = val;
+          if (frameData[f].min > val) {
+            frameData[f].min = val;
+          }
         }
       }
     }
@@ -715,7 +719,7 @@ class AniBarChart {
     this.tickArrays = this.keyFrames.map((f) => {
       let scale = d3
         .scaleLinear()
-        .domain([0, this.frameData[f].max])
+        .domain(this.xDomain(this.frameData[f]))
         .range([
           0,
           this.width - this.innerMargin.left - this.innerMargin.right,
@@ -729,7 +733,7 @@ class AniBarChart {
         .range([this.innerMargin.top, this.height - this.innerMargin.bottom]);
       f.xScale = d3
         .scaleLinear()
-        .domain([0, f.max])
+        .domain(this.xDomain(f))
         .range([
           0,
           this.width - this.innerMargin.left - this.innerMargin.right,
