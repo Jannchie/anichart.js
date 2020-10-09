@@ -1,10 +1,10 @@
-const { Image } = require("@canvas/image");
 let { loadImage } = require("canvas");
 const async = require("async");
 
 if (typeof window == 'undefined') {
   loadImage = loadImage;
 } else {
+  const { Image } = require("@canvas/image");
   loadImage = function (url) {
     return new Promise(resolve => {
       const image = new Image();
@@ -34,6 +34,7 @@ async function loadImages(metaData, imageDict, imageData, anichart) {
           break;
         }
         console.log(`Timeout! Reload Image..times:${count}`);
+        console.log(e);
       }
     }
     anichart.hintText(`Loading Images ${++c}/ ${all}`);
@@ -44,7 +45,7 @@ async function loadImages(metaData, imageDict, imageData, anichart) {
 
 async function loadImageFromSrcAndKey(src, key, imageData) {
   imageData[key] = await loadImage(src);
-  if (!this.node) {
+  if (typeof window != "undefined") {
     imageData[key].setAttribute("crossOrigin", "Anonymous");
   }
 }
