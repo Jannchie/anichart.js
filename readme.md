@@ -7,6 +7,7 @@ anichart.js
     <img alt="NPM" src="https://img.shields.io/npm/l/anichart?style=flat-square">
     <img alt="npm" src="https://img.shields.io/npm/v/anichart?style=flat-square">
     <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/Jannchie/anichart.js?style=flat-square">
+    <a href="https://lgtm.com/projects/g/Jannchie/anichart.js/context:javascript"><img alt="Language grade: JavaScript" src="https://img.shields.io/lgtm/grade/javascript/g/Jannchie/anichart.js.svg?style=flat-square&logo=lgtm&logoWidth=18"/></a>
 </p>
 
 轻松地制作数据可视化动画视频。
