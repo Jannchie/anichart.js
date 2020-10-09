@@ -80,7 +80,8 @@ class AniBarChart {
         return data[this.idField];
       }
     };
-
+    this.xDomain = (series) => [0, series.max]
+    this.sort = 1;
     this.valueFormat = (d) => {
       let v = d.value;
       if (v == undefined) v = d;
@@ -427,6 +428,7 @@ class AniBarChart {
     let frameData = [];
     let idSet = new Set();
     this.maxValue = -Infinity;
+    this.minValue = Infinity;
 
     // 对每组数据
     let idMap = d3.group(data, (d) => d[this.idField]);
@@ -543,10 +545,19 @@ class AniBarChart {
             this.maxValue = val;
             this.maxData = fd;
           }
+          // 全局最小值
+          if (val < this.maxValue) {
+            this.minValue = val;
+            this.minData = fd;
+          }
           // 获取每一帧的最大值和最小值
           if (frameData[f].max == undefined) frameData[f].max = val;
           if (frameData[f].max < val) {
             frameData[f].max = val;
+          }
+          if (frameData[f].min == undefined) frameData[f].min = val;
+          if (frameData[f].min > val) {
+            frameData[f].min = val;
           }
         }
       }
@@ -558,7 +569,7 @@ class AniBarChart {
           return 1;
         if (b.value == undefined || b.state == "out" || b.state == "null")
           return -1;
-        return b.value - a.value;
+        return (this.sort) * (b.value - a.value);
       });
       e.forEach((d, i, e) => {
         if (d.state == "out" || d.state == "null") {
@@ -616,9 +627,13 @@ class AniBarChart {
     this.ctx.font = `${this.barHeight}px Sarasa Mono SC`;
 
     this.innerMargin.left += this.labelPandding;
-    this.innerMargin.right += this.ctx.measureText(
+    let w1 = this.ctx.measureText(
       this.valueFormat(this.maxData)
     ).width;
+    let w2 = this.ctx.measureText(
+      this.valueFormat(this.minData)
+    ).width;
+    this.innerMargin.right += d3.max([w1, w2]);
     this.innerMargin.right += this.labelPandding;
 
     let maxTextWidth = d3.max(this.frameData, (fd) =>
@@ -664,6 +679,7 @@ class AniBarChart {
     for (let i of d3.range(300)) {
       frameData.push(_.cloneDeep(frameData[this.totalFrames - 1]));
       frameData[frameData.length - 1].max = frameData[this.totalFrames - 1].max;
+      frameData[frameData.length - 1].min = frameData[this.totalFrames - 1].min;
     }
     let tempDict = [...idSet].reduce((dict, id) => {
       let rankList = frameData.map((dList) => {
@@ -715,7 +731,7 @@ class AniBarChart {
     this.tickArrays = this.keyFrames.map((f) => {
       let scale = d3
         .scaleLinear()
-        .domain([0, this.frameData[f].max])
+        .domain(this.xDomain(this.frameData[f]))
         .range([
           0,
           this.width - this.innerMargin.left - this.innerMargin.right,
@@ -729,7 +745,7 @@ class AniBarChart {
         .range([this.innerMargin.top, this.height - this.innerMargin.bottom]);
       f.xScale = d3
         .scaleLinear()
-        .domain([0, f.max])
+        .domain(this.xDomain(f))
         .range([
           0,
           this.width - this.innerMargin.left - this.innerMargin.right,
