@@ -10,9 +10,6 @@ module.exports = {
     globalObject: "this"
   },
   plugins: [new CleanWebpackPlugin()],
-  node: {
-    fs: "empty",
-  },
   module: {
     rules: [
       {
@@ -24,4 +21,8 @@ module.exports = {
       },
     ],
   },
+  externals: {
+    fs: "fs",
+    canvas: "canvas",
+  }
 };

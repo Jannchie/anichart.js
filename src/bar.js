@@ -1,4 +1,3 @@
-const { Image } = require("@canvas/image");
 
 const _ = require("lodash");
 const async = require("async");
@@ -14,30 +13,15 @@ class AniBarChart {
   constructor(options = {}) {
     this.ffmpeg = ffmpeg;
     this.pngToMp4 = pngToMp4;
-    this.imagePath = "./image/"
-    this.outputPath = "./out.mp4"
-    this.node = false;
-    if (typeof window == 'undefined') {
-      this.node = true;
-      this.loadImage = loadImage;
-    } else {
-      this.loadImage = function (url) {
-        return new Promise(resolve => {
-          const image = new Image();
-          image.onload = () => {
-            resolve(image);
-          };
-          image.src = url;
-        });
-      }
-    }
+    this.imagePath = "image/"
+    this.outputPath = "out.mp4"
     this.language = "zh-CN";
     this.width = 1366;
     this.height = 768;
     this.frameRate = 30;
     this.outerMargin = { left: 10, right: 10, top: 10, bottom: 10 };
     this.freeze = 100;
-    if (this.node) {
+    if (typeof window == 'undefined') {
       this.colorThief = colorThief;
     } else {
       this.colorThief = new ColorThiefUmd();
@@ -64,7 +48,7 @@ class AniBarChart {
         return data[this.idField];
       }
     };
-    this.colorKey = (data, metaData, self) => {
+    this.colorKey = (data) => {
       return data[this.idField]
     }
     this.colorData = []
@@ -167,7 +151,8 @@ class AniBarChart {
   }
 
   async readCsv(path) {
-    if (this.node) {
+    if (typeof window == 'undefined') {
+      console.log(fs);
       return d3.csvParse(fs.readFileSync(path).toString());
     } else {
       if ('object' == typeof path) {
@@ -293,7 +278,7 @@ class AniBarChart {
   }
   async initCanvas(parent = "body") {
     this.canvas;
-    if (!this.node) {
+    if (typeof window != 'undefined') {
       this.canvas = d3
         .select(parent)
         .append("canvas")
@@ -652,7 +637,7 @@ class AniBarChart {
       return hex.length === 1 ? '0' + hex : hex;
     }).join('');
     if (this.colorData[key] == undefined) {
-      if (this.node) {
+      if (typeof window == 'undefined') {
         let color = await this.colorThief.getColor(src);
         this.colorData[key] = rgbToHex(...color);
       } else {
@@ -937,7 +922,7 @@ class AniBarChart {
     this.calScale();
 
     this.calRenderSort();
-    if (this.node) {
+    if (typeof window == 'undefined') {
       this.useCtl = false;
     }
     if (this.useCtl) {
@@ -945,7 +930,7 @@ class AniBarChart {
       this.ctl.addCtl(this);
     }
     this.ready = true;
-    if (this.node) {
+    if (typeof window == 'undefined') {
       for (let f in d3.range(this.frameData.length)) {
         this.outputPng(f, this.outputName);
       }
@@ -953,7 +938,7 @@ class AniBarChart {
     }
   }
   async outputPng(n, name) {
-    if (!this.node) {
+    if (typeof window != 'undefined') {
       console.log("Cannot output png in browser!");
       this.canvas.toBlob((b) =>
         this.downloadBlob(b, `${name}.png`)
