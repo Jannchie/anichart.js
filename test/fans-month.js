@@ -1,4 +1,4 @@
-const anichart = require("../src/index.js");
+const anichart = require("../dist/anichart.js");
 const d3 = require("d3");
 const path = require("path")
 const _ = require("lodash");
