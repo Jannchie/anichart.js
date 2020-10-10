@@ -1,5 +1,5 @@
-const AniChart = require("./bar")
-const d3 = require("d3")
+const AniChart = require("./bar");
+const d3 = require("d3");
 class Ctl {
   addCtl(aniChart) {
     let ctl = d3

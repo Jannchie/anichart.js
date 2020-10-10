@@ -1,27 +1,26 @@
-
 const _ = require("lodash");
 const async = require("async");
 const d3 = require("d3");
 let { createCanvas } = require("canvas");
 const loadImages = require("./image");
-const ColorThiefUmd = require('colorthief/dist/color-thief.umd.js');
-const colorThief = require('colorthief');
-const { ffmpeg, pngToMp4 } = require('./ffmpeg');
-const fs = require('fs');
+const ColorThiefUmd = require("colorthief/dist/color-thief.umd.js");
+const colorThief = require("colorthief");
+const { ffmpeg, pngToMp4 } = require("./ffmpeg");
+const fs = require("fs");
 const Ctl = require("./ctl");
 class AniBarChart {
   constructor(options = {}) {
     this.ffmpeg = ffmpeg;
     this.pngToMp4 = pngToMp4;
-    this.imagePath = "image/"
-    this.outputPath = "out.mp4"
+    this.imagePath = "image/";
+    this.outputPath = "out.mp4";
     this.language = "zh-CN";
     this.width = 1366;
     this.height = 768;
     this.frameRate = 30;
     this.outerMargin = { left: 10, right: 10, top: 10, bottom: 10 };
     this.freeze = 100;
-    if (typeof window == 'undefined') {
+    if (typeof window == "undefined") {
       this.colorThief = colorThief;
     } else {
       this.colorThief = new ColorThiefUmd();
@@ -37,10 +36,7 @@ class AniBarChart {
     this.output = false;
     this.outputName = "out";
     this.idField = "id";
-    this.keyFrameDeltaTime = undefined
-    this.getId = (data) => {
-      data[this.idField];
-    };
+    this.keyFrameDeltaTime = undefined;
     this.label = (data) => {
       if (data.name != undefined) {
         return data.name;
@@ -49,10 +45,10 @@ class AniBarChart {
       }
     };
     this.colorKey = (data) => {
-      return data[this.idField]
-    }
-    this.colorData = []
-    this.imageDict = () => Object()
+      return data[this.idField];
+    };
+    this.colorData = [];
+    this.imageDict = () => Object();
     this.barInfo = (data) => {
       if (data.name != undefined) {
         if (data.type != undefined) {
@@ -64,7 +60,7 @@ class AniBarChart {
         return data[this.idField];
       }
     };
-    this.xDomain = (series) => [0, series.max]
+    this.xDomain = (series) => [0, series.max];
     this.sort = 1;
     this.valueFormat = (d) => {
       let v = d.value;
@@ -80,7 +76,7 @@ class AniBarChart {
 
     this.listImageSrc = () => [];
 
-    this.imageData = {}
+    this.imageData = {};
 
     this.colorScheme = {
       background: "#1D1F21",
@@ -120,14 +116,14 @@ class AniBarChart {
       bottom: this.outerMargin.bottom,
     };
 
-    this.drawBarExt = () => { };
-    this.drawExt = () => { };
+    this.drawBarExt = () => {};
+    this.drawExt = () => {};
     this.setOptions(options);
 
     this.barHeight = Math.round(
       ((this.height - this.innerMargin.top - this.innerMargin.bottom) /
         this.itemCount) *
-      0.8
+        0.8
     );
   }
 
@@ -151,12 +147,12 @@ class AniBarChart {
   }
 
   async readCsv(path) {
-    if (typeof window == 'undefined') {
+    if (typeof window == "undefined") {
       console.log(fs);
       return d3.csvParse(fs.readFileSync(path).toString());
     } else {
-      if ('object' == typeof path) {
-        return d3.csv(path.default)
+      if ("object" == typeof path) {
+        return d3.csv(path.default);
       }
       return await d3.csv(path);
     }
@@ -180,7 +176,8 @@ class AniBarChart {
       }
       return d;
     })();
-    if (this.keyFrameDeltaTime != undefined) delta = this.keyFrameDeltaTime * 1000;
+    if (this.keyFrameDeltaTime != undefined)
+      delta = this.keyFrameDeltaTime * 1000;
 
     let firstTs = tsList[0];
     let lastTs = tsList[tsList.length - 1];
@@ -278,7 +275,7 @@ class AniBarChart {
   }
   async initCanvas(parent = "body") {
     this.canvas;
-    if (typeof window != 'undefined') {
+    if (typeof window != "undefined") {
       this.canvas = d3
         .select(parent)
         .append("canvas")
@@ -316,7 +313,7 @@ class AniBarChart {
             imageHeight
           );
         } catch (error) {
-          console.log(error)
+          console.log(error);
         }
         this.ctx.strokeStyle = this.colorScheme.background;
         this.ctx.lineWidth = 1;
@@ -554,7 +551,7 @@ class AniBarChart {
           return 1;
         if (b.value == undefined || b.state == "out" || b.state == "null")
           return -1;
-        return (this.sort) * (b.value - a.value);
+        return this.sort * (b.value - a.value);
       });
       e.forEach((d, i, e) => {
         if (d.state == "out" || d.state == "null") {
@@ -608,16 +605,11 @@ class AniBarChart {
     await this.hintText("Loading Layout", this);
     this.innerMargin.top += this.axisTextSize;
 
-
     this.ctx.font = `${this.barHeight}px Sarasa Mono SC`;
 
     this.innerMargin.left += this.labelPandding;
-    let w1 = this.ctx.measureText(
-      this.valueFormat(this.maxData)
-    ).width;
-    let w2 = this.ctx.measureText(
-      this.valueFormat(this.minData)
-    ).width;
+    let w1 = this.ctx.measureText(this.valueFormat(this.maxData)).width;
+    let w2 = this.ctx.measureText(this.valueFormat(this.minData)).width;
     this.innerMargin.right += d3.max([w1, w2]);
     this.innerMargin.right += this.labelPandding;
 
@@ -632,12 +624,16 @@ class AniBarChart {
   }
 
   async autoGetColorFromImage(key, src) {
-    const rgbToHex = (r, g, b) => '#' + [r, g, b].map(x => {
-      const hex = x.toString(16);
-      return hex.length === 1 ? '0' + hex : hex;
-    }).join('');
+    const rgbToHex = (r, g, b) =>
+      "#" +
+      [r, g, b]
+        .map((x) => {
+          const hex = x.toString(16);
+          return hex.length === 1 ? "0" + hex : hex;
+        })
+        .join("");
     if (this.colorData[key] == undefined) {
-      if (typeof window == 'undefined') {
+      if (typeof window == "undefined") {
         let color = await this.colorThief.getColor(src);
         this.colorData[key] = rgbToHex(...color);
       } else {
@@ -645,7 +641,7 @@ class AniBarChart {
           let color = this.colorThief.getColor(this.imageData[key]);
           this.colorData[key] = rgbToHex(...color);
         } else {
-          this.imageData[key].addEventListener('load', () => {
+          this.imageData[key].addEventListener("load", () => {
             let color = this.colorThief.getColor(this.imageData[key]);
             this.colorData[key] = rgbToHex(...color);
           });
@@ -847,7 +843,10 @@ class AniBarChart {
       }, {});
       e.sort((a, b) => {
         // a上升
-        if (afterDict[a[this.idField]] - a.pos < 0 || afterDict[b[this.idField]] - b.pos > 0) {
+        if (
+          afterDict[a[this.idField]] - a.pos < 0 ||
+          afterDict[b[this.idField]] - b.pos > 0
+        ) {
           return 1;
         }
         return -1;
@@ -875,9 +874,16 @@ class AniBarChart {
           let btn = d3.select("#play-btn");
           btn.text(btn.text() == "STOP" ? "PLAY" : "STOP");
           if (this.output) {
-            await this.ffmpeg.run(`-r ${this.frameRate} -threads ${8} -i ${this.outputName}-%d.png out.mp4`)
+            await this.ffmpeg.run(
+              `-r ${this.frameRate} -threads ${8} -i ${
+                this.outputName
+              }-%d.png out.mp4`
+            );
             let data = await ffmpeg.read("./out.mp4");
-            this.downloadBlob(new Blob([data.buffer], { type: 'video/mp4' }), this.outputName)
+            this.downloadBlob(
+              new Blob([data.buffer], { type: "video/mp4" }),
+              this.outputName
+            );
           }
           return;
         }
@@ -887,7 +893,10 @@ class AniBarChart {
         }
         await this.drawFrame(this.currentFrame++);
         if (this.output) {
-          await ffmpeg.write(`${this.outputName}-${this.currentFrame}.png`, this.canvas.toDataURL('image/png', 1));
+          await ffmpeg.write(
+            `${this.outputName}-${this.currentFrame}.png`,
+            this.canvas.toDataURL("image/png", 1)
+          );
         }
       } catch (e) {
         console.error(e);
@@ -911,7 +920,6 @@ class AniBarChart {
     }
   }
   async readyToDraw() {
-
     await loadImages(this.metaData, this.imageDict, this.imageData, this);
     await this.hintText("Loading Data", this);
     this.calculateFrameData(this.data);
@@ -922,7 +930,7 @@ class AniBarChart {
     this.calScale();
 
     this.calRenderSort();
-    if (typeof window == 'undefined') {
+    if (typeof window == "undefined") {
       this.useCtl = false;
     }
     if (this.useCtl) {
@@ -930,19 +938,22 @@ class AniBarChart {
       this.ctl.addCtl(this);
     }
     this.ready = true;
-    if (typeof window == 'undefined') {
+    if (typeof window == "undefined") {
       for (let f in d3.range(this.frameData.length)) {
         this.outputPng(f, this.outputName);
       }
-      await this.pngToMp4(this.imagePath, this.outputName, this.outputPath, this.frameRate)
+      await this.pngToMp4(
+        this.imagePath,
+        this.outputName,
+        this.outputPath,
+        this.frameRate
+      );
     }
   }
   async outputPng(n, name) {
-    if (typeof window != 'undefined') {
+    if (typeof window != "undefined") {
       console.log("Cannot output png in browser!");
-      this.canvas.toBlob((b) =>
-        this.downloadBlob(b, `${name}.png`)
-      );
+      this.canvas.toBlob((b) => this.downloadBlob(b, `${name}.png`));
     } else {
       let fs = require("fs");
       let path = require("path");
