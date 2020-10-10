@@ -1,10 +1,10 @@
 const anichart = require("../dist/anichart.js");
 const d3 = require("d3");
-const path = require("path")
+const path = require("path");
 const _ = require("lodash");
-let d = path.join(__dirname, "./data/test-data.csv")
-let m = path.join(__dirname, "./data/test-meta.csv")
-if (typeof window != 'undefined') {
+let d = path.join(__dirname, "./data/test-data.csv");
+let m = path.join(__dirname, "./data/test-meta.csv");
+if (typeof window != "undefined") {
   d = require("./data/test-data.csv");
   m = require("./data/test-meta.csv");
 }
@@ -21,13 +21,19 @@ let settings = {
 
   imageDict: (metaData, self) => {
     let tmp = Object.entries(metaData).map((d) => d[1]);
-    return _.reduce(tmp, (pv, cv) => {
-      if (['jpg', 'png'].indexOf(cv.image.split('.')[3]) == -1) {
-        return pv
-      }
-      pv[cv[self.idField]] = `${cv.image}@${self.barHeight}w_${self.barHeight}h.png`;
-      return pv;
-    }, {})
+    return _.reduce(
+      tmp,
+      (pv, cv) => {
+        if (["jpg", "png"].indexOf(cv.image.split(".")[3]) == -1) {
+          return pv;
+        }
+        pv[
+          cv[self.idField]
+        ] = `${cv.image}@${self.barHeight}w_${self.barHeight}h.png`;
+        return pv;
+      },
+      {}
+    );
   },
   colorData: {
     生活: "#FFF",
@@ -150,10 +156,9 @@ let a = new anichart.Bar(settings);
   a.ctx.font = `900 ${a.barHeight}px Sarasa Mono SC`;
   a.innerMargin.right += a.ctx.measureText("[xxxx万粉]").width;
   await a.readyToDraw();
-
 })();
 
-if (typeof window != 'undefined') {
+if (typeof window != "undefined") {
   window.a = a;
 }
 module.exports = a;
