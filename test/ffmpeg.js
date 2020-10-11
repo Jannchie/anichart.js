@@ -1,4 +1,1 @@
-let toMp4 = require("../src/ffmpeg");
-(async () => {
-  toMp4("./image/", "fans-increase", "./out.mp4", 24)
-})()
+// ffmpeg -r 60 -threads 8 -i ./image/name-%d.png -b:v 20M -vcodec png o.mov

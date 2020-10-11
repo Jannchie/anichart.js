@@ -1,5 +1,4 @@
 const _ = require("lodash");
-const async = require("async");
 const d3 = require("d3");
 let { createCanvas } = require("canvas");
 const loadImages = require("./image");
@@ -19,7 +18,7 @@ class AniBarChart {
     this.height = 768;
     this.frameRate = 30;
     this.outerMargin = { left: 10, right: 10, top: 10, bottom: 10 };
-    this.freeze = 100;
+    this.freeze = 0;
     if (typeof window == "undefined") {
       this.colorThief = colorThief;
     } else {
@@ -274,7 +273,6 @@ class AniBarChart {
     return this.colorData[this.colorKey(data, this.metaData, this)];
   }
   async initCanvas(parent = "body") {
-    this.canvas;
     if (typeof window != "undefined") {
       this.canvas = d3
         .select(parent)
@@ -556,8 +554,9 @@ class AniBarChart {
       e.forEach((d, i, e) => {
         if (d.state == "out" || d.state == "null") {
           d.rank = this.itemCount + 1;
+        } else {
+          d.rank = i;
         }
-        d.rank = i;
       });
     });
     this.frameData = frameData;
@@ -593,7 +592,7 @@ class AniBarChart {
         }, ms);
       });
     }
-    return timeout(3000, async (resolve, reject) => {
+    return timeout(10000, async (resolve, reject) => {
       try {
         resolve(this.loadImage(src));
       } catch {
@@ -657,7 +656,7 @@ class AniBarChart {
    * @param {List} frameData
    */
   calPosition(idSet, frameData) {
-    for (let i of d3.range(300)) {
+    for (let __ of d3.range(this.freeze + this.frameRate * this.interval)) {
       frameData.push(_.cloneDeep(frameData[this.totalFrames - 1]));
       frameData[frameData.length - 1].max = frameData[this.totalFrames - 1].max;
       frameData[frameData.length - 1].min = frameData[this.totalFrames - 1].min;
