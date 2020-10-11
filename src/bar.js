@@ -939,6 +939,7 @@ class AniBarChart {
     this.ready = true;
     if (typeof window == "undefined") {
       for (let f in d3.range(this.frameData.length)) {
+        this.currentFrame = f;
         this.outputPng(f, this.outputName);
       }
       await this.pngToMp4(
