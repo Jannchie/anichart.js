@@ -1,4 +1,3 @@
-const AniChart = require("./bar");
 const d3 = require("d3");
 class Ctl {
   addCtl(aniChart) {
@@ -66,7 +65,6 @@ class Ctl {
 
   updatectlCurrentFrame(aniChart) {
     let b = aniChart.totalFrames.toString().length;
-    let f = d3.format(`0${b},d`);
     this.ctlCurrentFrame.node().value = `${aniChart.currentFrame + 1}`;
   }
 }
