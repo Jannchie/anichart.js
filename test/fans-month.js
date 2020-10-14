@@ -1,4 +1,4 @@
-const anichart = require("../dist/anichart.js");
+const anichart = require("../src/index.js");
 const d3 = require("d3");
 const path = require("path");
 const _ = require("lodash");
@@ -10,7 +10,7 @@ if (typeof window != "undefined") {
 }
 
 let settings = {
-  output: true,
+  output: false,
   width: 1366,
   height: 768,
   outerMargin: { left: 10, right: 10, top: 10, bottom: 10 },
