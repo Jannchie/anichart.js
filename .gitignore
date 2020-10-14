@@ -117,3 +117,4 @@ out
 .vscode/**
 *.png
 test/data/country-meta.csv
+*.mov
