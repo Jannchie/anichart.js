@@ -64,7 +64,6 @@ class Ctl {
   }
 
   updatectlCurrentFrame(aniChart) {
-    let b = aniChart.totalFrames.toString().length;
     this.ctlCurrentFrame.node().value = `${aniChart.currentFrame + 1}`;
   }
 }
