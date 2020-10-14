@@ -7,7 +7,8 @@ const colorThief = require("colorthief");
 const { ffmpeg, pngToMp4 } = require("./ffmpeg");
 const fs = require("fs");
 const Ctl = require("./ctl");
-class AniBarChart {
+const Anichart = require("./anichart");
+class AniBarChart extends Anichart {
   constructor(options = {}) {
     this.ffmpeg = ffmpeg;
     this.pngToMp4 = pngToMp4;
