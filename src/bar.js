@@ -1,6 +1,6 @@
 const _ = require("lodash");
 const d3 = require("d3");
-let { createCanvas } = require("canvas");
+
 const loadImages = require("./image");
 const ColorThiefUmd = require("colorthief/dist/color-thief.umd.js");
 const colorThief = require("colorthief");
@@ -10,6 +10,7 @@ const Ctl = require("./ctl");
 const Anichart = require("./anichart");
 class AniBarChart extends Anichart {
   constructor(options = {}) {
+    super();
     this.ffmpeg = ffmpeg;
     this.pngToMp4 = pngToMp4;
     this.imagePath = "image/";
@@ -125,16 +126,6 @@ class AniBarChart extends Anichart {
         this.itemCount) *
         0.8
     );
-  }
-
-  setOptions(options) {
-    _.merge(this, options);
-    this.innerMargin = {
-      left: this.outerMargin.left,
-      right: this.outerMargin.right,
-      top: this.outerMargin.top,
-      bottom: this.outerMargin.bottom,
-    };
   }
 
   async loadMetaData(path) {
@@ -282,6 +273,7 @@ class AniBarChart extends Anichart {
         .attr("height", this.height)
         .node();
     } else {
+      const { createCanvas } = require("canvas");
       this.canvas = createCanvas(this.width, this.height);
     }
     this.ctx = this.canvas.getContext("2d");

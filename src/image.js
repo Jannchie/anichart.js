@@ -1,9 +1,9 @@
-let { loadImage } = require("canvas");
+let load;
 const async = require("async");
 
 if (typeof window != "undefined") {
   const { Image } = require("@canvas/image");
-  loadImage = function (url) {
+  load = function (url) {
     return new Promise((resolve) => {
       const image = new Image();
       image.onload = () => {
@@ -12,6 +12,9 @@ if (typeof window != "undefined") {
       image.src = url;
     });
   };
+} else {
+  let { loadImage } = require("canvas");
+  load = loadImage;
 }
 
 async function loadImages(metaData, imageDict, imageData, anichart) {
@@ -44,7 +47,7 @@ async function loadImages(metaData, imageDict, imageData, anichart) {
 }
 
 async function loadImageFromSrcAndKey(src, key, imageData) {
-  imageData[key] = await loadImage(src);
+  imageData[key] = await load(src);
   if (typeof window != "undefined") {
     imageData[key].setAttribute("crossOrigin", "Anonymous");
   }
