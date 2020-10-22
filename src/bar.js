@@ -354,7 +354,7 @@ class AniBarChart extends Anichart {
             (this.frameRate * this.interval);
           let val = ints.value.int(r);
           let alpha = aint(d3.easePolyOut(r));
-          if (alpha == 0) continue;
+          if (alpha == 0 && state != "out") continue;
           let offset = offsetInt(d3.easePolyOut(r));
           let fd = {
             ...lData,

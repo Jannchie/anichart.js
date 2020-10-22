@@ -200,11 +200,11 @@ class AniBarChart {
           btn.text(btn.text() == "STOP" ? "PLAY" : "STOP");
           if (this.output) {
             await this.ffmpeg.run(
-              `-r ${this.frameRate} -threads ${8} -i ${
+              `-r ${this.frameRate} -threads ${16} -i ${
                 this.outputName
-              }-%d.png out.mp4`
+              }-%d.png ${this.outputName}.mp4`
             );
-            let data = await ffmpeg.read("./out.mp4");
+            let data = await ffmpeg.read(`./${this.outputName}.mp4`);
             this.downloadBlob(
               new Blob([data.buffer], { type: "video/mp4" }),
               this.outputName
