@@ -128,7 +128,6 @@ class AniBarChart extends Anichart {
 
   async readCsv(path) {
     if (typeof window == "undefined") {
-      console.log(fs);
       return d3.csvParse(fs.readFileSync(path).toString());
     } else {
       if ("object" == typeof path) {
