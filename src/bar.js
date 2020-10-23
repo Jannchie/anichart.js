@@ -190,7 +190,7 @@ class AniBarChart extends Anichart {
         if (
           valList[0][key] != id &&
           Number(valList[0][key]) == Number(valList[0][key]) &&
-          valList[0][key] != ""
+          Number(valList[0][key]) != 0
         ) {
           this.numberKey.add(key);
           scales[key] = d3
