@@ -12,7 +12,6 @@ class AniBarChart extends Anichart {
     this.ffmpeg = ffmpeg;
     this.pngToMp4 = pngToMp4;
     this.imagePath = "image/";
-    this.outputPath = "out.mp4";
     this.language = "zh-CN";
     this.width = 1366;
     this.height = 768;
@@ -190,7 +189,8 @@ class AniBarChart extends Anichart {
       _.keys(valList[0]).forEach((key) => {
         if (
           valList[0][key] != id &&
-          Number(valList[0][key]) == Number(valList[0][key])
+          Number(valList[0][key]) == Number(valList[0][key]) &&
+          valList[0][key] != ""
         ) {
           this.numberKey.add(key);
           scales[key] = d3
@@ -199,7 +199,6 @@ class AniBarChart extends Anichart {
             .range(valList.map((d) => d[key]));
         }
       });
-
       let obj = valList[0];
       // 对每一个关键帧
       for (let i = 0; i < tsList.length; i++) {
@@ -220,20 +219,6 @@ class AniBarChart extends Anichart {
           obj.date = ct;
         }
         this.data.push(obj);
-        // let last = _.last(_.filter(dtList, (d) => d.date < ct))
-        // let next = _.head(_.filter(dtList, (d) => d.date > ct))
-        // if (last == undefined || last.value != last.value) {
-        //   obj = { ...obj };
-        //   obj.value = NaN;
-        //   obj.date = ct - delta;
-        //   this.data.push(obj);
-        // }
-        // if (next == undefined || next.value != next.value) {
-        //   obj = { ...obj };
-        //   obj.value = NaN;
-        //   obj.date = ct + delta;
-        //   this.data.push(obj);
-        // }
       }
     }
     this.keyFramesCount = tsList.length;
@@ -255,7 +240,6 @@ class AniBarChart extends Anichart {
     let idSet = new Set();
     this.maxValue = -Infinity;
     this.minValue = Infinity;
-
     // 对每组数据
     let idMap = d3.group(data, (d) => d[this.idField]);
     for (let [id, dataList] of idMap) {
@@ -397,7 +381,7 @@ class AniBarChart extends Anichart {
           return -1;
         return this.sort * (b.value - a.value);
       });
-      e.forEach((d, i, e) => {
+      e.forEach((d, i) => {
         if (d.state == "out" || d.state == "null") {
           d.rank = this.itemCount + 1;
         } else {
