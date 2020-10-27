@@ -93,7 +93,7 @@ import * as anichart from "anichart";
 以CSV文件为例。
 
 ``` csv
-name,date,value,channel,other
+id,date,value,channel,other
 Jannchie,2020-01-01,1,科技,other
 Jannchie,2020-01-03,6,科技,other
 Jannchie,2020-01-05,3,科技,other
