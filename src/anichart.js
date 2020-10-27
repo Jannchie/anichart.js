@@ -3,7 +3,10 @@ const loadImages = require("./image");
 const Ctl = require("./ctl");
 const _ = require("lodash");
 class AniBarChart {
-  constructor() {}
+  constructor() {
+    this.metaData = [];
+    this.data = [];
+  }
   setOptions(options) {
     _.merge(this, options);
     this.innerMargin = {
@@ -164,9 +167,6 @@ class AniBarChart {
       this.drawBarExt(this.ctx, data, series, this);
 
       this.ctx.globalAlpha = 1;
-
-      this.metaData = [];
-      this.data = [];
     };
   }
 
