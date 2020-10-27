@@ -79,7 +79,7 @@ npm i anichart
 如果使用标签导入可以跳过这一步，如果使用npm或者Yarn需要通过以下代码引入包：
 
 ``` js
-const anichart require("anichart");
+const anichart = require("anichart");
 ```
 
 或者

@@ -164,6 +164,8 @@ class AniBarChart {
       this.drawBarExt(this.ctx, data, series, this);
 
       this.ctx.globalAlpha = 1;
+
+      this.metaData = [];
     };
   }
 
