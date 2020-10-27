@@ -166,6 +166,7 @@ class AniBarChart {
       this.ctx.globalAlpha = 1;
 
       this.metaData = [];
+      this.data = [];
     };
   }
 

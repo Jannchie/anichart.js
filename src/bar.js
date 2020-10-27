@@ -122,7 +122,9 @@ class AniBarChart extends Anichart {
       pv[cv[this.idField]] = { ...cv };
       return pv;
     }, {});
-    this.metaData = metaData;
+    if (metaData != undefined) {
+      this.metaData = metaData;
+    }
   }
 
   async readCsv(path) {
