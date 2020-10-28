@@ -69,7 +69,7 @@ npm i anichart
 ### 标签导入
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/anichart@1.0.6/dist/anichart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/anichart@1.1.12/dist/anichart.min.js"></script>
 ```
 
 ## 用法
@@ -79,7 +79,7 @@ npm i anichart
 如果使用标签导入可以跳过这一步，如果使用npm或者Yarn需要通过以下代码引入包：
 
 ``` js
-const anichart = require("anichart");
+const anichart require("anichart");
 ```
 
 或者
@@ -93,7 +93,7 @@ import * as anichart from "anichart";
 以CSV文件为例。
 
 ``` csv
-id,date,value,channel,other
+name,date,value,channel,other
 Jannchie,2020-01-01,1,科技,other
 Jannchie,2020-01-03,6,科技,other
 Jannchie,2020-01-05,3,科技,other
@@ -116,6 +116,15 @@ let a = new anichart.Bar();
 ### 载入数据
 
 ```js
+// 回调语法
+b.loadCsv("./data.csv").then(() => {
+  b.initCanvas();
+  b.readyToDraw();
+});
+```
+
+```js
+// 你也可以使用 async 语法
 await a.loadCsv(pathData);
 a.initCanvas();
 a.readyToDraw();
@@ -124,8 +133,22 @@ a.readyToDraw();
 
 ### 播放动画
 
+默认情况下，在浏览器内会有一个类似进度条的组件用于控制播放。
+
+你也可以使用代码控制播放。
+
 ```js
+// 代码控制
 a.play();
+```
+
+### 导出视频
+
+内置了ffmpeg进行导出。输出信息会在console中打印。
+
+```js
+// 配置导出视频
+a.output = true;
 ```
 
 ### 测试
