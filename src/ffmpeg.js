@@ -5,7 +5,7 @@ const ffmpeg = createFFmpeg({
   log: true,
 });
 
-async function pngToMp4(pngPath, name, fps, thread = 0) {
+async function pngToMp4(pngPath, name, fps, thread = 16) {
   await ffmpeg.load();
   let out = "mp4";
   let nameList = fs.readdirSync(pngPath);

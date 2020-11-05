@@ -276,7 +276,7 @@ class AniBarChart {
       console.log("Do not out Mp4 from Pngs in browser!");
       return;
     }
-    await this.pngToMp4(this.imagePath, this.outpuStName, this.frameRate);
+    await this.pngToMp4(this.imagePath, this.outputName, this.frameRate);
   }
 
   async outputPng(n, name, fs, path) {
