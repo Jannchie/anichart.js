@@ -254,6 +254,8 @@ class AniBarChart {
     this.ready = true;
     if (typeof window == "undefined") {
       console.log(`Total Frames: ${this.frameData.length}`);
+      this.outputPngs();
+      this.outputMp4();
     }
   }
   async outputPngs() {
@@ -282,6 +284,21 @@ class AniBarChart {
       console.log("Cannot output png in browser!");
       this.canvas.toBlob((b) => this.downloadBlob(b, `${name}.png`));
     } else {
+      function delDir(path) {
+        let files = [];
+        if (fs.existsSync(path)) {
+          files = fs.readdirSync(path);
+          files.forEach((file, index) => {
+            let curPath = path + "/" + file;
+            if (fs.statSync(curPath).isDirectory()) {
+              delDir(curPath); //递归删除文件夹
+            } else {
+              fs.unlinkSync(curPath); //删除文件
+            }
+          });
+          fs.rmdirSync(path);
+        }
+      }
       async function mkdirPath(pathStr) {
         var projectPath = path.join(process.cwd());
         var tempDirArray = pathStr.split("\\");
@@ -298,6 +315,7 @@ class AniBarChart {
           }
         }
       }
+      delDir(this.imagePath);
       await mkdirPath(this.imagePath);
       this.drawFrame(n);
       this.currentFrame = n;

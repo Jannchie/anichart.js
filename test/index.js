@@ -1,1 +1,1 @@
-import runBartest from "./fans-month";
+let runBartest = require("./fans-month");
