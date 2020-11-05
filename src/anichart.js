@@ -2,10 +2,13 @@ const d3 = require("d3");
 const loadImages = require("./image");
 const Ctl = require("./ctl");
 const _ = require("lodash");
+const { ffmpeg, pngToMp4 } = require("./ffmpeg");
 class AniBarChart {
   constructor() {
     this.metaData = [];
     this.data = [];
+    this.ffmpeg = ffmpeg;
+    this.pngToMp4 = pngToMp4;
   }
   setOptions(options) {
     _.merge(this, options);
@@ -276,7 +279,7 @@ class AniBarChart {
       console.log("Do not out Mp4 from Pngs in browser!");
       return;
     }
-    await this.pngToMp4(this.imagePath, this.outputName, this.frameRate);
+    await pngToMp4(this.imagePath, this.outputName, this.frameRate);
   }
 
   async outputPng(n, name, fs, path) {

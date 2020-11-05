@@ -3,14 +3,11 @@ const d3 = require("d3");
 
 const ColorThiefUmd = require("colorthief/dist/color-thief.umd.js");
 const colorThief = require("colorthief");
-const { ffmpeg, pngToMp4 } = require("./ffmpeg");
 const fs = require("fs");
 const Anichart = require("./anichart");
 class AniBarChart extends Anichart {
   constructor(options = {}) {
     super();
-    this.ffmpeg = ffmpeg;
-    this.pngToMp4 = pngToMp4;
     this.imagePath = "image/";
     this.language = "zh-CN";
     this.width = 1366;
