@@ -173,12 +173,3 @@ yarn serve
 ```bash
 npm run serve
 ```
-
-### 待完成事项
-
-- [x] 使用FFmpeg处理视频
-- [x] 自定义Bar上文字
-- [x] 自定义标题
-- [x] 导入配置
-- [ ] 模块化
-- [ ] 建站
