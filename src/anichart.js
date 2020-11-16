@@ -200,7 +200,7 @@ class AniBarChart {
     let delay = this.output ? 0 : 1000 / this.frameRate;
     this.player = d3.interval(async () => {
       try {
-        if (this.currentFrame == this.totalFrames + this.freeze) {
+        if (this.currentFrame == this.frameData.length) {
           this.player.stop();
           let btn = d3.select("#play-btn");
           btn.text(btn.text() == "STOP" ? "PLAY" : "STOP");

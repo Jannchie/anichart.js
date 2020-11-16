@@ -225,12 +225,12 @@ class AniBarChart extends Anichart {
     this.tsToFi = d3
       .scaleLinear()
       .domain(d3.extent(tsList))
-      .range([0, this.totalFrames])
+      .range([0, this.totalTrueFrames])
       .clamp(true);
     this.fiToTs = d3
       .scaleLinear()
       .range(d3.extent(tsList))
-      .domain([0, this.totalFrames])
+      .domain([0, this.totalTrueFrames])
       .clamp(true);
   }
 
@@ -393,11 +393,11 @@ class AniBarChart extends Anichart {
   }
 
   setKeyFramesInfo() {
-    this.totalFrames =
+    this.totalTrueFrames =
       (this.keyFramesCount - 1) * this.frameRate * this.interval;
     this.keyFrames = d3.range(
       0,
-      this.totalFrames,
+      this.totalTrueFrames,
       this.frameRate * this.interval
     );
   }
@@ -459,9 +459,11 @@ class AniBarChart extends Anichart {
    */
   calPosition(idSet, frameData) {
     for (let __ of d3.range(this.freeze + this.frameRate * this.interval)) {
-      frameData.push(_.cloneDeep(frameData[this.totalFrames - 1]));
-      frameData[frameData.length - 1].max = frameData[this.totalFrames - 1].max;
-      frameData[frameData.length - 1].min = frameData[this.totalFrames - 1].min;
+      frameData.push(_.cloneDeep(frameData[this.totalTrueFrames - 1]));
+      frameData[frameData.length - 1].max =
+        frameData[this.totalTrueFrames - 1].max;
+      frameData[frameData.length - 1].min =
+        frameData[this.totalTrueFrames - 1].min;
     }
     let tempDict = [...idSet].reduce((dict, id) => {
       let rankList = frameData.map((dList) => {

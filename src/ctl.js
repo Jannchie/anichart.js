@@ -25,7 +25,7 @@ class Ctl {
       .style("flex-grow", 1)
       .attr("type", "range")
       .attr("min", 0)
-      .attr("max", aniChart.totalFrames - 1 + aniChart.freeze)
+      .attr("max", a.totalTrueFrames + a.freeze + a.frameRate - 1)
       .attr("step", 1)
       .attr("value", 0)
       .on("input", () => {
@@ -38,13 +38,13 @@ class Ctl {
       .attr("id", "c-frame")
       .attr("type", "text")
       .style("font-family", "Sarasa Mono SC")
-      .attr("size", aniChart.totalFrames.toString().length)
+      .attr("size", aniChart.totalTrueFrames.toString().length)
       .on("input", () => {
         let val = +d3.select("#c-frame").node().value;
         if (val < 1) {
           val = 1;
-        } else if (val > aniChart.totalFrames + 300) {
-          val = aniChart.totalFrames;
+        } else if (val > aniChart.totalTrueFrames + 300) {
+          val = aniChart.totalTrueFrames;
         } else if (isNaN(val)) {
           val = 1;
         }
@@ -54,7 +54,9 @@ class Ctl {
       });
     ctl
       .append("text")
-      .text(` / ${d3.format(",d")(aniChart.totalFrames + aniChart.freeze)}`);
+      .text(
+        ` / ${d3.format(",d")(a.totalTrueFrames + a.freeze + a.frameRate)}`
+      );
     this.updatectlCurrentFrame(aniChart);
     this.slider = slider.node();
   }
