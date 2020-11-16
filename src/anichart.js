@@ -212,8 +212,10 @@ class AniBarChart {
           );
         }
         if (this.currentFrame == this.frameData.length - 1) {
-          let btn = d3.select("#play-btn");
-          btn.text(btn.text() == "STOP" ? "PLAY" : "STOP");
+          if (this.useCtl) {
+            let btn = d3.select("#play-btn");
+            btn.text(btn.text() == "STOP" ? "PLAY" : "STOP");
+          }
           if (this.output) {
             await this.ffmpeg.run(
               `-r ${this.frameRate} -threads ${16} -i ${
