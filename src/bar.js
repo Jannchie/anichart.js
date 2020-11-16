@@ -83,7 +83,7 @@ class AniBarChart extends Anichart {
       ],
     };
 
-    this.useCtl = true;
+    this.useCtl = false;
 
     this.colorGener = (function* (cs) {
       let i = 0;
