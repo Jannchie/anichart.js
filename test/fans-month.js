@@ -10,12 +10,13 @@ if (typeof window != "undefined") {
 }
 
 let settings = {
-  output: false,
+  output: true,
+  useCtl: true,
   width: 1366,
   height: 768,
   outerMargin: { left: 10, right: 10, top: 10, bottom: 10 },
   idField: "mid",
-  frameRate: 24,
+  frameRate: 20,
   freeze: 20,
   keyFrameDeltaTime: 86400 * 0.5,
 

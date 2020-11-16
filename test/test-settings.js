@@ -1,4 +1,3 @@
-
 const d3 = require("d3");
 const _ = require("lodash");
 let settings = {
@@ -12,10 +11,16 @@ let settings = {
 
   imageDict: (metaData, self) => {
     let tmp = Object.entries(metaData).map((d) => d[1]);
-    return _.reduce(tmp, (pv, cv) => {
-      pv[cv[self.idField]] = `${cv.image}@${self.barHeight}w_${self.barHeight}h.png`;
-      return pv;
-    }, {})
+    return _.reduce(
+      tmp,
+      (pv, cv) => {
+        pv[
+          cv[self.idField]
+        ] = `${cv.image}@${self.barHeight}w_${self.barHeight}h.png`;
+        return pv;
+      },
+      {}
+    );
   },
   colorData: {
     生活: "#FFF",

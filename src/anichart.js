@@ -198,10 +198,20 @@ class AniBarChart {
     }
 
     let delay = this.output ? 0 : 1000 / this.frameRate;
-    this.player = d3.interval(async () => {
+    let playFrame = async () => {
       try {
-        if (this.currentFrame == this.frameData.length) {
-          this.player.stop();
+        if (this.useCtl) {
+          this.ctl.slider.value = this.currentFrame;
+          this.ctl.updatectlCurrentFrame(this);
+        }
+        await this.drawFrame(this.currentFrame);
+        if (this.output) {
+          await ffmpeg.write(
+            `${this.outputName}-${this.currentFrame}.png`,
+            this.canvas.toDataURL("image/png", 1)
+          );
+        }
+        if (this.currentFrame == this.frameData.length - 1) {
           let btn = d3.select("#play-btn");
           btn.text(btn.text() == "STOP" ? "PLAY" : "STOP");
           if (this.output) {
@@ -216,24 +226,27 @@ class AniBarChart {
               this.outputName
             );
           }
+          await this.player.stop();
           return;
-        }
-        if (this.useCtl) {
-          this.ctl.slider.value = this.currentFrame;
-          this.ctl.updatectlCurrentFrame(this);
-        }
-        await this.drawFrame(this.currentFrame++);
-        if (this.output) {
-          await ffmpeg.write(
-            `${this.outputName}-${this.currentFrame}.png`,
-            this.canvas.toDataURL("image/png", 1)
-          );
+        } else {
+          this.currentFrame++;
         }
       } catch (e) {
         console.error(e);
         this.player.stop();
       }
-    }, delay);
+    };
+
+    if (this.output) {
+      const len = this.frameData.length;
+      while (this.currentFrame < len) {
+        await playFrame();
+      }
+    } else {
+      this.player = d3.interval(async () => {
+        await playFrame();
+      }, delay);
+    }
   }
 
   async readyToDraw() {
