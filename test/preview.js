@@ -2,11 +2,9 @@ const anichart = require("../src/index.js");
 const d3 = require("d3");
 const path = require("path");
 const _ = require("lodash");
-let d = path.join(__dirname, "./data/preview.csv");
-let m = path.join(__dirname, "./data/preview.csv");
+let d = path.join(__dirname, "./data/test.csv");
 if (typeof window != "undefined") {
-  d = require("./data/preview.csv");
-  m = require("./data/preview.csv");
+  d = require("./data/test.csv");
 }
 
 const a = new window.anichart.Bar({
