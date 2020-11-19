@@ -7,7 +7,7 @@ module.exports = {
     path: path.resolve(__dirname, "dist"),
     library: "anichart",
     libraryTarget: "umd",
-    globalObject: "this"
+    globalObject: "this",
   },
   plugins: [new CleanWebpackPlugin()],
   module: {
@@ -24,5 +24,5 @@ module.exports = {
   externals: {
     fs: "fs",
     canvas: "canvas",
-  }
+  },
 };

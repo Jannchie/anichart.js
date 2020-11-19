@@ -3,7 +3,8 @@ const loadImages = require("./image");
 const Ctl = require("./ctl");
 const _ = require("lodash");
 const { ffmpeg, pngToMp4 } = require("./ffmpeg");
-class AniBarChart {
+const enhanceCtx = require("./ctx");
+class BaseAniChart {
   constructor() {
     this.metaData = [];
     this.data = [];
@@ -19,7 +20,9 @@ class AniBarChart {
       bottom: this.outerMargin.bottom,
     };
   }
-
+  loadImages(metaData, imgDict, imgData) {
+    return loadImages(metaData, imgDict, imgData, this);
+  }
   imageDict() {
     return Object();
   }
@@ -40,6 +43,16 @@ class AniBarChart {
     return data[this.idField];
   }
 
+  async selectCanvas(selector = "canvas") {
+    if (typeof window != "undefined") {
+      this.canvas = d3.select(selector).node();
+    } else {
+      this.initCanvas();
+    }
+    this.ctx = this.canvas.getContext("2d");
+    enhanceCtx(this.ctx);
+  }
+
   async initCanvas(parent = "body") {
     if (typeof window != "undefined") {
       this.canvas = d3
@@ -53,124 +66,7 @@ class AniBarChart {
       this.canvas = createCanvas(this.width, this.height);
     }
     this.ctx = this.canvas.getContext("2d");
-    this.ctx.drawClipedImg = (
-      img,
-      x = 0,
-      y = 0,
-      imageHeight = 100,
-      imageWidth = 100,
-      r = 4
-    ) => {
-      if (img != undefined) {
-        this.ctx.save();
-        this.ctx.beginPath();
-        this.ctx.radiusArea(x, y, imageWidth, imageHeight, r);
-        this.ctx.clip(); //call the clip method so the next render is clipped in last path
-        this.ctx.closePath();
-        try {
-          this.ctx.drawImage(
-            img,
-            0,
-            0,
-            img.width,
-            img.height,
-            x,
-            y,
-            imageWidth,
-            imageHeight
-          );
-        } catch (error) {
-          console.log(error);
-        }
-        this.ctx.strokeStyle = this.colorScheme.background;
-        this.ctx.lineWidth = 1;
-        this.ctx.stroke();
-
-        this.ctx.restore();
-      }
-    };
-
-    this.ctx.radiusArea = (left, top, w, h, r) => {
-      this.ctx.lineWidth = 0;
-      const pi = Math.PI;
-      this.ctx.arc(left + r, top + r, r, -pi, -pi / 2);
-      this.ctx.arc(left + w - r, top + r, r, -pi / 2, 0);
-      this.ctx.arc(left + w - r, top + h - r, r, 0, pi / 2);
-      this.ctx.arc(left + r, top + h - r, r, pi / 2, pi);
-    };
-    this.ctx.radiusRect = (left, top, w, h, r) => {
-      this.ctx.beginPath();
-      this.ctx.radiusArea(left, top, w, h, r);
-      this.ctx.closePath();
-      this.ctx.fill();
-    };
-    this.ctx.drawBar = (data, series) => {
-      this.ctx.fillStyle = "#999";
-      let fillColor = this.getColor(data);
-      let barWidth = series.xScale(data.value);
-      let r = this.barRedius > barWidth / 2 ? barWidth / 2 : this.barRedius;
-      let imgPandding =
-        this.imageData[data[this.idField]] == undefined ? 0 : this.barHeight;
-      this.ctx.globalAlpha = data.alpha;
-
-      let x = this.innerMargin.left;
-      let y = series.yScale(data.pos);
-      // draw rect
-      this.ctx.fillStyle = fillColor;
-      this.ctx.radiusRect(x, y, barWidth, this.barHeight, r);
-
-      // draw bar label text
-      this.ctx.fillStyle = fillColor;
-      this.ctx.font = `900 ${this.barHeight}px Sarasa Mono SC`;
-      this.ctx.textAlign = "right";
-      this.ctx.fillText(
-        this.label(data, this.metaData, this),
-        x - this.labelPandding,
-        y + this.barHeight * 0.88
-      );
-
-      // draw bar value text
-      this.ctx.textAlign = "left";
-      this.ctx.fillText(
-        this.valueFormat(data),
-        barWidth + x + this.labelPandding,
-        y + this.barHeight * 0.88
-      );
-
-      // draw bar info
-      this.ctx.save();
-
-      // clip bar info
-      this.ctx.beginPath();
-      this.ctx.radiusArea(x, y, barWidth, this.barHeight, r);
-      this.ctx.clip(); //call the clip method so the next render is clipped in last path
-      this.ctx.closePath();
-
-      // draw bar text
-      this.ctx.textAlign = "right";
-      this.ctx.fillStyle = this.colorScheme.background;
-      this.ctx.font = `900 ${this.barHeight}px Sarasa Mono SC`;
-      this.ctx.fillText(
-        this.barInfo(data, this.metaData, this),
-        barWidth + x - this.labelPandding - imgPandding,
-        y + this.barHeight * 0.88
-      );
-      // draw bar img
-      this.ctx.drawClipedImg(
-        this.imageData[data[this.idField]],
-        x + series.xScale(data.value) - this.barHeight,
-        y,
-        this.barHeight,
-        this.barHeight,
-        4
-      );
-
-      this.ctx.restore();
-
-      this.drawBarExt(this.ctx, data, series, this);
-
-      this.ctx.globalAlpha = 1;
-    };
+    enhanceCtx(this.ctx);
   }
 
   async hintText(txt, self = this) {
@@ -252,7 +148,7 @@ class AniBarChart {
   }
 
   async readyToDraw() {
-    await loadImages(this.metaData, this.imageDict, this.imageData, this);
+    await this.loadImages(this.metaData, this.imageDict, this.imageData);
     await this.hintText("Loading Data", this);
     this.calculateFrameData(this.data);
     this.calPosition(this.idSet, this.frameData);
@@ -276,6 +172,20 @@ class AniBarChart {
       this.outputMp4();
     }
   }
+
+  async drawFrame(n) {
+    this.ctx.clearRect(0, 0, this.width, this.height);
+    let cData = this.frameData[n];
+    this.drawBackground();
+    this.drawWatermark();
+    this.drawAxis(n, cData);
+    this.drawDate(n);
+    cData.forEach((e) => {
+      this.ctx.drawBar(e, cData);
+    });
+    this.drawExt(this.ctx, cData, this);
+  }
+
   async outputPngs() {
     if (typeof window != "undefined") {
       console.log("Do not out pngs in browser!");
@@ -348,4 +258,4 @@ class AniBarChart {
     }
   }
 }
-module.exports = AniBarChart;
+module.exports = BaseAniChart;

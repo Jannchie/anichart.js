@@ -4,4 +4,4 @@
  * @author   Jannchie <https://github.com/Jannchie>
  * @license  MIT
  */
-module.exports = { Bar: require("./bar") };
+module.exports = { Bar: require("./charts/bar") };

@@ -1,11 +1,10 @@
 const _ = require("lodash");
 const d3 = require("d3");
-
 const ColorThiefUmd = require("colorthief/dist/color-thief.umd.js");
 const colorThief = require("colorthief");
 const fs = require("fs");
-const Anichart = require("./anichart");
-class AniBarChart extends Anichart {
+const BaseAnichart = require("../anichart");
+class AniBarChart extends BaseAnichart {
   constructor(options = {}) {
     super();
     this.imagePath = "image/";
@@ -422,6 +421,74 @@ class AniBarChart extends Anichart {
     );
     this.innerMargin.left += maxTextWidth;
     this.currentFrame = 0;
+
+    this.ctx.drawBar = (data, series) => {
+      this.ctx.fillStyle = "#999";
+      let fillColor = this.getColor(data);
+      let barWidth = series.xScale(data.value);
+      let r = this.barRedius > barWidth / 2 ? barWidth / 2 : this.barRedius;
+      let imgPandding =
+        this.imageData[data[this.idField]] == undefined ? 0 : this.barHeight;
+      this.ctx.globalAlpha = data.alpha;
+
+      let x = this.innerMargin.left;
+      let y = series.yScale(data.pos);
+      // draw rect
+      this.ctx.fillStyle = fillColor;
+      this.ctx.radiusRect(x, y, barWidth, this.barHeight, r);
+
+      // draw bar label text
+      this.ctx.fillStyle = fillColor;
+      this.ctx.font = `900 ${this.barHeight}px Sarasa Mono SC`;
+      this.ctx.textAlign = "right";
+      this.ctx.fillText(
+        this.label(data, this.metaData, this),
+        x - this.labelPandding,
+        y + this.barHeight * 0.88
+      );
+
+      // draw bar value text
+      this.ctx.textAlign = "left";
+      this.ctx.fillText(
+        this.valueFormat(data),
+        barWidth + x + this.labelPandding,
+        y + this.barHeight * 0.88
+      );
+
+      // draw bar info
+      this.ctx.save();
+
+      // clip bar info
+      this.ctx.beginPath();
+      this.ctx.radiusArea(x, y, barWidth, this.barHeight, r);
+      this.ctx.clip(); //call the clip method so the next render is clipped in last path
+      this.ctx.closePath();
+
+      // draw bar text
+      this.ctx.textAlign = "right";
+      this.ctx.fillStyle = this.colorScheme.background;
+      this.ctx.font = `900 ${this.barHeight}px Sarasa Mono SC`;
+      this.ctx.fillText(
+        this.barInfo(data, this.metaData, this),
+        barWidth + x - this.labelPandding - imgPandding,
+        y + this.barHeight * 0.88
+      );
+      // draw bar img
+      this.ctx.drawClipedImg(
+        this.imageData[data[this.idField]],
+        x + series.xScale(data.value) - this.barHeight,
+        y,
+        this.barHeight,
+        this.barHeight,
+        4
+      );
+
+      this.ctx.restore();
+
+      this.drawBarExt(this.ctx, data, series, this);
+
+      this.ctx.globalAlpha = 1;
+    };
   }
 
   async autoGetColorFromImage(key, src) {
@@ -488,10 +555,9 @@ class AniBarChart extends Anichart {
           i - frames > 0 ? i - frames : 0,
           i + frames
         );
-        let mean = d3.mean(tmpArray);
+        let m = d3.mean(tmpArray);
         // 优化条目变换的缓动效果
-        tmpList[i] =
-          d3.easePolyInOut.exponent(1.5)(mean % 1) + Math.floor(mean);
+        tmpList[i] = d3.easePolyInOut.exponent(1.5)(m % 1) + Math.floor(m);
       }
       dict[id] = tmpList;
       return dict;
