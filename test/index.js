@@ -1,1 +1,1 @@
-let runBartest = require("./preview");
+let runBartest = require("./fans-month");

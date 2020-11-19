@@ -10,7 +10,7 @@ if (typeof window != "undefined") {
 const a = new window.anichart.Bar({
   height: 400,
   output: false,
-  useCtl: false,
+  useCtl: true,
   itemCount: 4,
 });
 (async () => {

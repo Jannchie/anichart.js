@@ -10,7 +10,7 @@ if (typeof window != "undefined") {
 }
 
 let settings = {
-  output: true,
+  output: false,
   useCtl: true,
   width: 1366,
   height: 768,
