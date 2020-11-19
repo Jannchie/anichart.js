@@ -65,7 +65,7 @@ class AniBarChart extends Anichart {
     this.imageData = {};
 
     this.colorScheme = {
-      background: "#1D1F21",
+      background: "#1E1E1E",
       colors: [
         "#27C",
         "#FB0",
@@ -73,11 +73,11 @@ class AniBarChart extends Anichart {
         "#2C8",
         "#D23",
         "#0CE",
+        "#E8A",
+        "#DDA",
+        "#C86",
         "#F72",
         "#C8C",
-        "#C86",
-        "#F8B",
-        "#DDA",
         "#BCA",
         "#F27",
       ],
