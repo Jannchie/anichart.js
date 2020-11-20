@@ -1,7 +1,7 @@
 import { merge } from "lodash-es";
-import * as d3 from "d3";
 import enhanceCtx from "../ctx";
 import { BaseComponent } from "../components/BaseComponent";
+import { select } from "d3-selection";
 
 class AniBaseChart {
   fps: number;
@@ -30,7 +30,7 @@ class AniBaseChart {
 
   setCanvas(selector: string): void {
     if (typeof window != "undefined") {
-      this.canvas = <HTMLCanvasElement>d3.select(selector).node();
+      this.canvas = <HTMLCanvasElement>select(selector).node();
       if (this.canvas.getContext == undefined) {
         this.initCanvas(selector);
       }
@@ -41,7 +41,7 @@ class AniBaseChart {
   }
   selectCanvas(selector: string = "canvas"): void {
     if (typeof window != "undefined") {
-      this.canvas = <HTMLCanvasElement>d3.select(selector).node();
+      this.canvas = <HTMLCanvasElement>select(selector).node();
     } else {
       this.initCanvas();
     }
@@ -49,8 +49,7 @@ class AniBaseChart {
     enhanceCtx(this.ctx);
   }
   initCanvas(parent: string = "body"): void {
-    this.canvas = d3
-      .select(parent)
+    this.canvas = select(parent)
       .append("canvas")
       .attr("width", this.width)
       .attr("height", this.height)

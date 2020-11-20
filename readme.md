@@ -35,7 +35,7 @@ anichart.js
 
 这是一个更好的可视化模板。
 
-相较于它的[前身](https://github.com/Jannchie/Historical-ranking-data-visualization-based-on-d3.js)，主要优势在于：
+相较于它的[前身](https://github.com/Jannchie/Historical-ranking-data-visualization-based-on-js)，主要优势在于：
 
 - 双端制作: 整合了前端和后端的优势。前端（浏览器端）可以便利地进行浏览和调试，后端（服务器端）结合FFmpeg， 可以导出高质量的视频。
 - 可编程化：开放接口，允许插入自定义的代码，利用框架计算的数据，基于Canvas Api进行绘图。

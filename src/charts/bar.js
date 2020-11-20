@@ -1,9 +1,16 @@
 import _ from "lodash-es";
-import * as d3 from "d3";
 import ColorThiefUmd from "colorthief/dist/color-thief.umd.js";
 import colorThief from "colorthief";
 import fs from "fs";
 import { BaseAniChart } from "../anichart";
+import { format } from "d3-format";
+import { timeFormat } from "d3-time-format";
+import { csv } from "d3-fetch";
+import { csvParse } from "d3-dsv";
+import { scaleLinear } from "d3-scale";
+import { group, range, extent, max, mean, min } from "d3-array";
+import { interpolateNumber } from "d3-interpolate";
+import { easePolyOut, easePolyInOut } from "d3-ease";
 class AniBarChart extends BaseAniChart {
   constructor(options = {}) {
     super();
@@ -50,8 +57,8 @@ class AniBarChart extends BaseAniChart {
     this.valueFormat = (d) => {
       let v = d.value;
       if (v == undefined) v = d;
-      if (String(d).indexOf(".") > -1) return `${d3.format(",.2f")(v)}`;
-      return `${d3.format(",d")(v)}`;
+      if (String(d).indexOf(".") > -1) return `${format(",.2f")(v)}`;
+      return `${format(",d")(v)}`;
     };
 
     this.tickFormat = (val) =>
@@ -125,19 +132,19 @@ class AniBarChart extends BaseAniChart {
 
   async readCsv(path) {
     if (typeof window == "undefined") {
-      return d3.csvParse(fs.readFileSync(path).toString());
+      return csvParse(fs.readFileSync(path).toString());
     } else {
       if ("object" == typeof path) {
-        return d3.csv(path.default);
+        return csv(path.default);
       }
-      return await d3.csv(path);
+      return await csv(path);
     }
   }
 
   async loadCsv(path) {
     this.data = [];
     let csvData = await this.readCsv(path);
-    let tsList = [...d3.group(csvData, (d) => d.date).keys()]
+    let tsList = [...group(csvData, (d) => d.date).keys()]
       .map(
         (d) =>
           new Date().getTimezoneOffset() * 60 * 1000 + new Date(d).getTime()
@@ -157,11 +164,10 @@ class AniBarChart extends BaseAniChart {
 
     let firstTs = tsList[0];
     let lastTs = tsList[tsList.length - 1];
-    tsList = d3.range(firstTs, lastTs + 1, delta);
+    tsList = range(firstTs, lastTs + 1, delta);
     let frameCount = this.frameRate * this.interval * (tsList.length - 1);
 
-    this.getCurrentDate = d3
-      .scaleLinear()
+    this.getCurrentDate = scaleLinear()
       .domain([0, frameCount - 1])
       .range([firstTs, lastTs])
       .clamp(true);
@@ -172,7 +178,7 @@ class AniBarChart extends BaseAniChart {
         new Date().getTimezoneOffset() * 60 * 1000 + new Date(d.date).getTime();
       d.value = +d.value;
     });
-    let temp = d3.group(
+    let temp = group(
       csvData,
       (d) => d[this.idField],
       (d) => d.date
@@ -191,8 +197,7 @@ class AniBarChart extends BaseAniChart {
           Number(valList[0][key]) != 0
         ) {
           this.numberKey.add(key);
-          scales[key] = d3
-            .scaleLinear()
+          scales[key] = scaleLinear()
             .domain(dtList)
             .range(valList.map((d) => d[key]));
         }
@@ -221,14 +226,12 @@ class AniBarChart extends BaseAniChart {
     }
     this.keyFramesCount = tsList.length;
     this.setKeyFramesInfo();
-    this.tsToFi = d3
-      .scaleLinear()
-      .domain(d3.extent(tsList))
+    this.tsToFi = scaleLinear()
+      .domain(extent(tsList))
       .range([0, this.totalTrueFrames])
       .clamp(true);
-    this.fiToTs = d3
-      .scaleLinear()
-      .range(d3.extent(tsList))
+    this.fiToTs = scaleLinear()
+      .range(extent(tsList))
       .domain([0, this.totalTrueFrames])
       .clamp(true);
   }
@@ -239,7 +242,7 @@ class AniBarChart extends BaseAniChart {
     this.maxValue = -Infinity;
     this.minValue = Infinity;
     // 对每组数据
-    let idMap = d3.group(data, (d) => d[this.idField]);
+    let idMap = group(data, (d) => d[this.idField]);
     for (let [id, dataList] of idMap) {
       idSet.add(id);
       // 对每个数据区间
@@ -271,42 +274,36 @@ class AniBarChart extends BaseAniChart {
           state = "out";
         }
         _.keys(ints).forEach((key) => {
-          ints[key].int = d3
-            .scaleLinear()
+          ints[key].int = scaleLinear()
             .range([ints[key].lValue, ints[key].rValue])
             .domain([0, 1])
             .clamp(true);
         });
-        let aint = d3.interpolateNumber(1, 1);
+        let aint = interpolateNumber(1, 1);
         let offsetInt = () => 0;
         switch (state) {
           case "null":
-            aint = d3.interpolateNumber(0, 0);
+            aint = interpolateNumber(0, 0);
             break;
           case "out":
-            offsetInt = d3
-              .scaleLinear()
-              .domain([0, 1])
-              .range([0, 1])
-              .clamp(true);
+            offsetInt = scaleLinear().domain([0, 1]).range([0, 1]).clamp(true);
             _.keys(ints).forEach((key) => {
-              ints[key].int = d3.interpolateNumber(
+              ints[key].int = interpolateNumber(
                 ints[key].lValue,
                 ints[key].lValue * 0.1
               );
             });
-            aint = d3.scaleLinear().domain([0, 0.4]).range([1, 0]).clamp(true);
+            aint = scaleLinear().domain([0, 0.4]).range([1, 0]).clamp(true);
             break;
           case "in":
             _.keys(ints).forEach((key) => {
-              ints[key].int = d3.interpolateNumber(
+              ints[key].int = interpolateNumber(
                 ints[key].rValue * 0.3,
                 ints[key].rValue
               );
             });
-            aint = d3.scaleLinear().domain([0, 0.2]).range([0, 1]).clamp(true);
-            offsetInt = d3
-              .scaleLinear()
+            aint = scaleLinear().domain([0, 0.2]).range([0, 1]).clamp(true);
+            offsetInt = scaleLinear()
               .domain([0.2, 1])
               .range([1, 0])
               .clamp(true);
@@ -324,7 +321,7 @@ class AniBarChart extends BaseAniChart {
         }
         // 对每一帧
         // f: 帧号
-        for (let f of d3.range(
+        for (let f of range(
           Math.round(this.tsToFi(lDate)),
           Math.round(this.tsToFi(rDate))
         )) {
@@ -335,9 +332,9 @@ class AniBarChart extends BaseAniChart {
             (f % (this.frameRate * this.interval)) /
             (this.frameRate * this.interval);
           let val = ints.value.int(r);
-          let alpha = aint(d3.easePolyOut(r));
+          let alpha = aint(easePolyOut(r));
           if (alpha == 0 && state != "out") continue;
-          let offset = offsetInt(d3.easePolyOut(r));
+          let offset = offsetInt(easePolyOut(r));
           let fd = {
             ...lData,
             alpha: alpha,
@@ -394,7 +391,7 @@ class AniBarChart extends BaseAniChart {
   setKeyFramesInfo() {
     this.totalTrueFrames =
       (this.keyFramesCount - 1) * this.frameRate * this.interval;
-    this.keyFrames = d3.range(
+    this.keyFrames = range(
       0,
       this.totalTrueFrames,
       this.frameRate * this.interval
@@ -410,11 +407,11 @@ class AniBarChart extends BaseAniChart {
     this.innerMargin.left += this.labelPandding;
     let w1 = this.ctx.measureText(this.valueFormat(this.maxData)).width;
     let w2 = this.ctx.measureText(this.valueFormat(this.minData)).width;
-    this.innerMargin.right += d3.max([w1, w2]);
+    this.innerMargin.right += max([w1, w2]);
     this.innerMargin.right += this.labelPandding;
 
-    let maxTextWidth = d3.max(this.frameData, (fd) =>
-      d3.max(
+    let maxTextWidth = max(this.frameData, (fd) =>
+      max(
         fd,
         (d) => this.ctx.measureText(this.label(d, this.metaData, this)).width
       )
@@ -525,7 +522,7 @@ class AniBarChart extends BaseAniChart {
    * @param {List} frameData
    */
   calPosition(idSet, frameData) {
-    for (let __ of d3.range(this.freeze + this.frameRate * this.interval)) {
+    for (let __ of range(this.freeze + this.frameRate * this.interval)) {
       frameData.push(_.cloneDeep(frameData[this.totalTrueFrames - 1]));
       frameData[frameData.length - 1].max =
         frameData[this.totalTrueFrames - 1].max;
@@ -555,9 +552,9 @@ class AniBarChart extends BaseAniChart {
           i - frames > 0 ? i - frames : 0,
           i + frames
         );
-        let m = d3.mean(tmpArray);
+        let m = mean(tmpArray);
         // 优化条目变换的缓动效果
-        tmpList[i] = d3.easePolyInOut.exponent(1.5)(m % 1) + Math.floor(m);
+        tmpList[i] = easePolyInOut.exponent(1.5)(m % 1) + Math.floor(m);
       }
       dict[id] = tmpList;
       return dict;
@@ -579,8 +576,7 @@ class AniBarChart extends BaseAniChart {
 
   calScale() {
     this.tickArrays = this.keyFrames.map((f) => {
-      let scale = d3
-        .scaleLinear()
+      let scale = scaleLinear()
         .domain(this.xDomain(this.frameData[f]))
         .range([
           0,
@@ -589,12 +585,10 @@ class AniBarChart extends BaseAniChart {
       return scale.ticks(this.tickNumber);
     });
     this.frameData.forEach((f, i) => {
-      f.yScale = d3
-        .scaleLinear()
+      f.yScale = scaleLinear()
         .domain([0, this.itemCount])
         .range([this.innerMargin.top, this.height - this.innerMargin.bottom]);
-      f.xScale = d3
-        .scaleLinear()
+      f.xScale = scaleLinear()
         .domain(this.xDomain(f))
         .range([
           0,
@@ -608,10 +602,10 @@ class AniBarChart extends BaseAniChart {
     let [idx1, idx2] = this.getKeyFrame(n);
     while (idx1 >= this.tickArrays.length) idx1 -= 1;
     if (idx2 >= this.tickArrays.length) idx2 = idx1;
-    let a = d3.easePolyInOut.exponent(10)(idx % 1);
+    let a = easePolyInOut.exponent(10)(idx % 1);
     let mainTicks = this.tickArrays[idx1];
     let secondTicks = this.tickArrays[idx2];
-    this.ctx.globalAlpha = d3.max(mainTicks) == d3.max(secondTicks) ? 1 : a;
+    this.ctx.globalAlpha = max(mainTicks) == max(secondTicks) ? 1 : a;
     this.ctx.font = `${this.axisTextSize}px Sarasa Mono SC`;
     this.ctx.fillStyle = "#888";
     this.ctx.strokeStyle = "#888";
@@ -625,7 +619,7 @@ class AniBarChart extends BaseAniChart {
         this.axisTextSize
       );
     });
-    this.ctx.globalAlpha = d3.max(mainTicks) == d3.max(secondTicks) ? 1 : 1 - a;
+    this.ctx.globalAlpha = max(mainTicks) == max(secondTicks) ? 1 : 1 - a;
     mainTicks.forEach((val) => {
       this.drawTick(xScale, val);
       this.ctx.fillText(
@@ -679,7 +673,7 @@ class AniBarChart extends BaseAniChart {
     this.ctx.font = `${this.dateLabelSize}px Sarasa Mono SC`;
     this.ctx.fillStyle = "#fff4";
     this.ctx.fillText(
-      d3.timeFormat(this.dateFormat)(new Date(timestamp)),
+      timeFormat(this.dateFormat)(new Date(timestamp)),
       this.width - this.outerMargin.left,
       this.height - this.outerMargin.bottom - this.slogenSize - 4
     );
@@ -727,11 +721,9 @@ class AniBarChart extends BaseAniChart {
     for (let fd of this.frameData) {
       for (let data of fd) {
         if (data.pos > this.itemCount - 1) {
-          let newAlpha = d3
-            .scaleLinear()
-            .domain([0, 1])
-            .range([1, 0])
-            .clamp(true)(data.pos - this.itemCount + 1);
+          let newAlpha = scaleLinear().domain([0, 1]).range([1, 0]).clamp(true)(
+            data.pos - this.itemCount + 1
+          );
           if (data.alpha > newAlpha) data.alpha = newAlpha;
         }
       }

@@ -1,8 +1,8 @@
-import * as d3 from "d3";
+import { select } from "d3-selection";
+import { format } from "d3-format";
 class Ctl {
   addCtl(aniChart) {
-    let ctl = d3
-      .select("body")
+    let ctl = select("body")
       .append("div")
       .style("font-family", "Sarasa Mono SC")
       .attr("class", "ctl")
@@ -14,10 +14,10 @@ class Ctl {
       .style("font-family", "Sarasa Mono SC")
       .text("PLAY")
       .on("click", () => {
-        let btn = d3.select("#play-btn");
+        let btn = select("#play-btn");
         let next = btn.text() == "STOP" ? "PLAY" : "STOP";
         aniChart.play();
-        d3.select("#play-btn").text(next);
+        select("#play-btn").text(next);
       });
 
     let slider = ctl.append("input");
@@ -40,7 +40,7 @@ class Ctl {
       .style("font-family", "Sarasa Mono SC")
       .attr("size", aniChart.totalTrueFrames.toString().length)
       .on("input", () => {
-        let val = +d3.select("#c-frame").node().value;
+        let val = +select("#c-frame").node().value;
         if (val < 1) {
           val = 1;
         } else if (val > aniChart.totalTrueFrames + 300) {
@@ -54,9 +54,7 @@ class Ctl {
       });
     ctl
       .append("text")
-      .text(
-        ` / ${d3.format(",d")(a.totalTrueFrames + a.freeze + a.frameRate)}`
-      );
+      .text(` / ${format(",d")(a.totalTrueFrames + a.freeze + a.frameRate)}`);
     this.updatectlCurrentFrame(aniChart);
     this.slider = slider.node();
   }

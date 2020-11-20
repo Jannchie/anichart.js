@@ -1,8 +1,10 @@
-import * as d3 from "d3";
 import loadImages from "./image";
 import Ctl from "./ctl";
 import _ from "lodash-es";
 import { ffmpeg, pngToMp4 } from "./ffmpeg";
+import { select, selectAll } from "d3-selection";
+import { range } from "d3-array";
+import { interval } from "d3-timer";
 import enhanceCtx from "./ctx";
 class BaseAniChart {
   constructor() {
@@ -45,7 +47,7 @@ class BaseAniChart {
 
   async selectCanvas(selector = "canvas") {
     if (typeof window != "undefined") {
-      this.canvas = d3.select(selector).node();
+      this.canvas = select(selector).node();
     } else {
       this.initCanvas();
     }
@@ -56,8 +58,7 @@ class BaseAniChart {
 
   async initCanvas(parent = "body") {
     if (typeof window != "undefined") {
-      this.canvas = d3
-        .select(parent)
+      this.canvas = select(parent)
         .append("canvas")
         .attr("width", this.width)
         .attr("height", this.height)
@@ -110,7 +111,7 @@ class BaseAniChart {
         }
         if (this.currentFrame == this.frameData.length - 1) {
           if (this.useCtl) {
-            let btn = d3.select("#play-btn");
+            let btn = select("#play-btn");
             btn.text(btn.text() == "STOP" ? "PLAY" : "STOP");
           }
           if (this.output) {
@@ -142,7 +143,7 @@ class BaseAniChart {
         await playFrame();
       }
     } else {
-      this.player = d3.interval(async () => {
+      this.player = interval(async () => {
         await playFrame();
       }, delay);
     }
@@ -192,7 +193,7 @@ class BaseAniChart {
       console.log("Do not out pngs in browser!");
       return;
     }
-    for (let f in d3.range(this.frameData.length)) {
+    for (let f in range(this.frameData.length)) {
       this.currentFrame = f;
       let fs = require("fs");
       let path = require("path");
