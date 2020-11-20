@@ -8,7 +8,8 @@ const a = new ani.BaseChart({
   height: 400,
   output: false,
   useCtl: true,
-  sec: 10,
+  sec: 4,
+  fps: 60,
   itemCount: 4,
 });
 a.setCanvas();

@@ -83,10 +83,17 @@ class BaseChart implements Ani {
         this.draw(this.cFrame++);
       }
     } else {
+      let start = new Date().getTime();
       this.player = interval(async () => {
         this.draw(this.cFrame++);
         if (this.cFrame >= this.totalFrames) {
           this.player.stop();
+          this.drawHint(
+            `Finished! FPS: ${(
+              (this.sec * this.fps) /
+              ((new Date().getTime() - start) / 1000)
+            ).toFixed(2)}`
+          );
         }
       }, (1 / this.fps) * 1000);
     }
