@@ -6,6 +6,7 @@ module.exports = merge(common, {
     anichart: "./src/index.js",
     test: "./test/index.js",
   },
+  devtool: "source-map",
   optimization: {
     splitChunks: {
       chunks: "all",

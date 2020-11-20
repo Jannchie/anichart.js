@@ -3,8 +3,8 @@ const d3 = require("d3");
 const ColorThiefUmd = require("colorthief/dist/color-thief.umd.js");
 const colorThief = require("colorthief");
 const fs = require("fs");
-const BaseAnichart = require("../anichart");
-class AniBarChart extends BaseAnichart {
+const Anichart = require("../anichart");
+class AniBarChart extends Anichart {
   constructor(options = {}) {
     super();
     this.imagePath = "image/";

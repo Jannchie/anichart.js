@@ -1,4 +1,8 @@
-const anichart = require("../src/index.js");
+if (typeof window == "undefined") {
+  const anichart = require("../dist/anichart");
+} else {
+  const anichart = require("../src/index");
+}
 const d3 = require("d3");
 const path = require("path");
 const _ = require("lodash");
@@ -8,6 +12,7 @@ if (typeof window != "undefined") {
   d = require("./data/test-data.csv");
   m = require("./data/test-meta.csv");
 }
+console.log(anichart);
 
 let settings = {
   output: false,
@@ -67,7 +72,7 @@ let settings = {
 
   outputName: "fans-increase",
 };
-
+console.log(anichart);
 let a = new anichart.Bar(settings);
 
 (async () => {
@@ -161,5 +166,6 @@ let a = new anichart.Bar(settings);
 
 if (typeof window != "undefined") {
   window.a = a;
+  window.aa = anichart;
 }
 module.exports = a;

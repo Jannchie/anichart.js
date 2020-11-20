@@ -3,7 +3,7 @@ const loadImages = require("./image");
 const Ctl = require("./ctl");
 const _ = require("lodash");
 const { ffmpeg, pngToMp4 } = require("./ffmpeg");
-const enhanceCtx = require("./ctx");
+const { enhanceCtx } = require("./ctx");
 class BaseAniChart {
   constructor() {
     this.metaData = [];
