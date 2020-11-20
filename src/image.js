@@ -1,5 +1,5 @@
 let load;
-const async = require("async");
+import async from "async";
 
 if (typeof window != "undefined") {
   const { Image } = require("@canvas/image");
@@ -52,4 +52,4 @@ async function loadImageFromSrcAndKey(src, key, imageData) {
     imageData[key].setAttribute("crossOrigin", "Anonymous");
   }
 }
-module.exports = loadImages;
+export default loadImages;

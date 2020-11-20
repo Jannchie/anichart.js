@@ -1,9 +1,9 @@
-const d3 = require("d3");
-const loadImages = require("./image");
-const Ctl = require("./ctl");
-const _ = require("lodash");
-const { ffmpeg, pngToMp4 } = require("./ffmpeg");
-const { enhanceCtx } = require("./ctx");
+import * as d3 from "d3";
+import loadImages from "./image";
+import Ctl from "./ctl";
+import _ from "lodash-es";
+import { ffmpeg, pngToMp4 } from "./ffmpeg";
+import enhanceCtx from "./ctx";
 class BaseAniChart {
   constructor() {
     this.metaData = [];
@@ -50,6 +50,7 @@ class BaseAniChart {
       this.initCanvas();
     }
     this.ctx = this.canvas.getContext("2d");
+    console.log(enhanceCtx);
     enhanceCtx(this.ctx);
   }
 
@@ -258,4 +259,4 @@ class BaseAniChart {
     }
   }
 }
-module.exports = BaseAniChart;
+export { BaseAniChart };

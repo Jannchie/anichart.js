@@ -1,5 +1,5 @@
-const fs = require("fs");
-const { createFFmpeg } = require("@ffmpeg/ffmpeg");
+import fs from "fs";
+import { createFFmpeg } from "@ffmpeg/ffmpeg";
 
 const ffmpeg = createFFmpeg({
   log: true,
@@ -19,4 +19,4 @@ async function pngToMp4(pngPath, name, fps, thread = 16) {
   fs.writeFileSync(`${name}.${out}`, data);
   process.exit(0);
 }
-module.exports = { ffmpeg, pngToMp4 };
+export { ffmpeg, pngToMp4 };

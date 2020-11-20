@@ -1,4 +1,4 @@
-const d3 = require("d3");
+import * as d3 from "d3";
 class Ctl {
   addCtl(aniChart) {
     let ctl = d3
@@ -69,4 +69,4 @@ class Ctl {
     this.ctlCurrentFrame.node().value = `${aniChart.currentFrame + 1}`;
   }
 }
-module.exports = Ctl;
+export default Ctl;

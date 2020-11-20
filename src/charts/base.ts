@@ -1,6 +1,6 @@
-import { merge } from "lodash";
+import { merge } from "lodash-es";
 import * as d3 from "d3";
-import { enhanceCtx } from "../ctx";
+import enhanceCtx from "../ctx";
 import { BaseComponent } from "../components/BaseComponent";
 
 class AniBaseChart {
@@ -66,4 +66,4 @@ class AniBaseChart {
     });
   }
 }
-export { AniBaseChart as Base };
+export { AniBaseChart as BaseChart };

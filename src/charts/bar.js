@@ -1,10 +1,10 @@
-const _ = require("lodash");
-const d3 = require("d3");
-const ColorThiefUmd = require("colorthief/dist/color-thief.umd.js");
-const colorThief = require("colorthief");
-const fs = require("fs");
-const Anichart = require("../anichart");
-class AniBarChart extends Anichart {
+import _ from "lodash-es";
+import * as d3 from "d3";
+import ColorThiefUmd from "colorthief/dist/color-thief.umd.js";
+import colorThief from "colorthief";
+import fs from "fs";
+import { BaseAniChart } from "../anichart";
+class AniBarChart extends BaseAniChart {
   constructor(options = {}) {
     super();
     this.imagePath = "image/";
@@ -738,4 +738,4 @@ class AniBarChart extends Anichart {
     }
   }
 }
-module.exports = AniBarChart;
+export default AniBarChart;

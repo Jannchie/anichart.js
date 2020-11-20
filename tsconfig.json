@@ -1,15 +1,17 @@
 {
     "compilerOptions": {
         "outDir": "./dist/",
-        "sourceMap": true,
+        "sourceMap": false,
         "noImplicitAny": true,
-        "module": "commonjs",
+        "module": "es6",
         "target": "es5",
         "declaration": true,
         "typeRoots": [
-            "./typings",
-            "./node_modules/@types/"
-        ]
+            "./src/**/*",
+            "./dist/**/*",
+            "./node_modules/@types"
+        ],
+        "moduleResolution":"Node"
     },
     "include": [
         "./src/**/*"

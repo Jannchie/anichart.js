@@ -1,5 +1,6 @@
 {
   "name": "anichart",
+  "sideEffects": false,
   "version": "1.1.22",
   "description": "",
   "author": "jannchie <jannchie@gmail.com>",
@@ -14,13 +15,15 @@
     "dist/*.js"
   ],
   "scripts": {
-    "build": "webpack  --config webpack.prod.js",
+    "build": "webpack  --config webpack.prod.js --optimize-minimize",
     "serve": "webpack-dev-server --open  --config webpack.dev.js",
     "dev": "webpack  --config webpack.dev.js",
     "watch": "webpack --watch  --config webpack.dev.js"
   },
   "devDependencies": {
     "@babel/core": "^7.11.6",
+    "@types/d3": "^6.2.0",
+    "@types/lodash-es": "^4.17.3",
     "awesome-typescript-loader": "^5.2.1",
     "babel-loader": "^8.1.0",
     "clean-webpack-plugin": "^3.0.0",
@@ -30,8 +33,10 @@
     "html-webpack-plugin": "^4.4.1",
     "prettier": "^2.1.2",
     "source-map-loader": "^1.1.2",
+    "ts-loader": "^8.0.11",
     "typescript": "^4.0.5",
     "webpack": "^4.44.1",
+    "webpack-bundle-analyzer": "^4.1.0",
     "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.0",
     "webpack-merge": "^5.1.4"
@@ -39,13 +44,13 @@
   "dependencies": {
     "@canvas/image": "^1.0.1",
     "@ffmpeg/ffmpeg": "^0.8.3",
-    "@types/d3": "^6.2.0",
     "async": "^3.2.0",
     "canvas": "2.5.0",
     "colorthief": "^2.3.2",
     "d3": "^6.1.1",
     "full-icu": "^1.3.1",
     "lodash": "^4.17.20",
+    "lodash-es": "^4.17.15",
     "node-csv": "^0.1.2",
     "node-fetch-polyfill": "^2.0.6",
     "node-vibrant": "^3.1.5"

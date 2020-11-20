@@ -17,4 +17,4 @@ declare class AniBaseChart {
     preRender(): void;
     drawFrame(n: number): void;
 }
-export { AniBaseChart as Base };
+export { AniBaseChart as BaseChart };
