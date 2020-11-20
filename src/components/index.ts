@@ -1,4 +1,5 @@
+import { BaseComponent } from "./base-component";
 import { Component } from "./component";
 import { TextComponent } from "./text-component";
 
-export { Component, TextComponent };
+export { Component, TextComponent, BaseComponent };

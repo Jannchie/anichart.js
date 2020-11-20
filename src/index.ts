@@ -6,5 +6,5 @@
  */
 import { BaseChart } from "./charts/base-chart";
 import Bar from "./charts/bar";
-import { Component, TextComponent } from "./components";
-export { BaseChart, Bar, TextComponent, Component };
+import { Component, TextComponent, BaseComponent } from "./components";
+export default { BaseChart, Bar, TextComponent, BaseComponent };

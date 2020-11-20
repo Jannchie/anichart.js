@@ -46,6 +46,7 @@
   "dependencies": {
     "@canvas/image": "^1.0.1",
     "@ffmpeg/ffmpeg": "^0.8.3",
+    "@types/d3": "^6.2.0",
     "@types/d3-array": "^2.8.0",
     "@types/d3-axis": "^2.0.0",
     "@types/d3-dsv": "^2.0.0",
