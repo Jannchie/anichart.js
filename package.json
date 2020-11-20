@@ -7,12 +7,15 @@
   "license": "MIT",
   "private": false,
   "main": "dist/anichart.js",
+  "unpkg": "dist/anichart.js",
+  "jsdelivr": "dist/anichart.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/Jannchie/anichart.js.git"
   },
   "files": [
-    "dist/*.js"
+    "dist/*.js",
+    "dist/*.d.ts"
   ],
   "scripts": {
     "build": "webpack  --config webpack.prod.js --optimize-minimize",

@@ -1,24 +1,35 @@
 import { merge } from "lodash-es";
 import enhanceCtx from "../ctx";
-import { BaseComponent } from "../components/BaseComponent";
 import { select } from "d3-selection";
+import Ani from "./ani";
+import { Component } from "../components/index";
 
-class AniBaseChart {
+class BaseChart implements Ani {
   fps: number;
   sec: number;
   totalFrames: number;
-  components: BaseComponent[];
+  components: Component[];
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
   width: number;
   height: number;
-  constructor(options = {}) {
+  constructor(options: object = {}) {
     this.fps = 12;
     this.sec = 120;
     this.width = 1366;
     this.height = 768;
     this.components = [];
     this.setOptions(options);
+  }
+  output: boolean;
+  ready(): void {
+    throw new Error("Method not implemented.");
+  }
+  play(): void {
+    throw new Error("Method not implemented.");
+  }
+  draw(frame: number): void {
+    throw new Error("Method not implemented.");
   }
   setOptions(options: object): void {
     merge(this, options);
@@ -61,8 +72,8 @@ class AniBaseChart {
   preRender() {}
   drawFrame(n: number) {
     this.components.forEach((component) => {
-      component.drawFrame(n, this.ctx);
+      component.draw(n);
     });
   }
 }
-export { AniBaseChart as BaseChart };
+export { BaseChart };

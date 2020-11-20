@@ -3,7 +3,7 @@ const { merge } = require("webpack-merge");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 module.exports = merge(common, {
   entry: {
-    anichart: "./src/index.js",
+    anichart: "./src/index.ts",
     test: "./test/index.js",
   },
   devtool: "source-map",

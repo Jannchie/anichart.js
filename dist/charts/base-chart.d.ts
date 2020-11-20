@@ -1,14 +1,19 @@
-import { BaseComponent } from "../components/BaseComponent";
-declare class AniBaseChart {
+import Ani from "./ani";
+import { Component } from "../components/index";
+declare class BaseChart implements Ani {
     fps: number;
     sec: number;
     totalFrames: number;
-    components: BaseComponent[];
+    components: Component[];
     canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
     width: number;
     height: number;
-    constructor(options?: {});
+    constructor(options?: object);
+    output: boolean;
+    ready(): void;
+    play(): void;
+    draw(frame: number): void;
     setOptions(options: object): void;
     calOptions(): void;
     setCanvas(selector: string): void;
@@ -17,4 +22,4 @@ declare class AniBaseChart {
     preRender(): void;
     drawFrame(n: number): void;
 }
-export { AniBaseChart as BaseChart };
+export { BaseChart };
