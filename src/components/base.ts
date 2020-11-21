@@ -7,23 +7,26 @@ export abstract class Base implements Component {
   ani: Ani;
   pos: Position | Function;
 
-  constructor(options: object) {
+  constructor(options: any) {
     this.reset(options);
   }
 
-  reset(options: object): void {
+  reset(options: any): void {
     _.merge(this, options);
-  }
-
-  preRender(n: number) {
-    if (this.alpha instanceof Function) {
-    }
   }
 
   private saveCtx(): void {
     this.ani.ctx.save();
   }
-
+  preRender(n: number) {
+    let alpha =
+      this.alpha instanceof Function
+        ? this.alpha(n / this.ani.fps)
+        : this.alpha;
+    this.ani.ctx.globalAlpha = alpha;
+    let position = this.pos instanceof Function ? this.pos(n) : this.pos;
+    this.ani.ctx.translate(position.x, position.y);
+  }
   abstract render(n: number): void;
 
   private restoreCtx(): void {
@@ -31,8 +34,8 @@ export abstract class Base implements Component {
   }
 
   draw(n: number) {
-    this.preRender(n);
     this.saveCtx();
+    this.preRender(n);
     this.render(n);
     this.restoreCtx();
   }

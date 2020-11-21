@@ -1,6 +1,7 @@
 import ani from "../src/index";
 import * as path from "path";
-import { Text } from "../src/components";
+import { Text, FadeText } from "../src/components";
+import { scaleLinear } from "d3-scale";
 let d = path.join(__dirname, "./data/test.csv");
 console.log(d);
 
@@ -13,16 +14,32 @@ const a = new ani.BaseChart({
   itemCount: 4,
 });
 a.setCanvas();
+function calPos(n: number) {
+  let x = scaleLinear([0, 3], [0, 100]).clamp(true);
+  return { x: x(n / a.fps), y: 100 };
+}
 a.addComponent(
   new Text({
-    pos: { x: 50, y: 50 },
-    time: 1,
-    fade: 1,
+    pos: calPos,
+    alpha: scaleLinear([0, 1, 2, 3], [0, 1, 1, 0]).clamp(true),
     text: "测试文本",
     fillStyle: "#FFF",
     font: `${18}px Sarasa Mono SC`,
   })
 );
+
+a.addComponent(
+  new FadeText({
+    pos: { x: 20, y: 128 },
+    time: 0.5,
+    fade: 0.5,
+    last: 2,
+    text: "测试文本",
+    fillStyle: "#FFF",
+    font: `${18}px Sarasa Mono SC`,
+  })
+);
+
 (async () => {
   await a.loadData(d);
   a.play();

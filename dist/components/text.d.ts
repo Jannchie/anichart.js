@@ -1,4 +1,3 @@
-import { ScaleLinear } from "d3-scale";
 import { Base } from ".";
 import Ani from "../charts/ani";
 import Position from "../utils/position";
@@ -7,10 +6,9 @@ declare class Text extends Base {
     ani: Ani;
     alpha: number | Function;
     font: string;
-    text: string;
+    text: string | Function;
     pos: Position | Function;
     fillStyle: string | CanvasGradient | CanvasPattern;
-    alhpaScale: ScaleLinear<number, number, never>;
     constructor(options: TextOptions);
     render(n: number): void;
 }
