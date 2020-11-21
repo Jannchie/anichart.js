@@ -1,6 +1,6 @@
 import ani from "../src/index";
 import * as path from "path";
-import { Text, FadeText } from "../src/components";
+import { Text, FadeText, RiseText } from "../src/components";
 import { scaleLinear } from "d3-scale";
 let d = path.join(__dirname, "./data/test.csv");
 console.log(d);
@@ -22,7 +22,7 @@ a.addComponent(
   new Text({
     pos: calPos,
     alpha: scaleLinear([0, 1, 2, 3], [0, 1, 1, 0]).clamp(true),
-    text: "测试文本",
+    text: "全自定义文字",
     fillStyle: "#FFF",
     font: `${18}px Sarasa Mono SC`,
   })
@@ -34,7 +34,21 @@ a.addComponent(
     time: 0.5,
     fade: 0.5,
     last: 2,
-    text: "测试文本",
+    text: "淡入淡出文字",
+    fillStyle: "#FFF",
+    font: `${18}px Sarasa Mono SC`,
+  })
+);
+
+a.addComponent(
+  new RiseText({
+    pos: { x: 20, y: 156 },
+    time: 0.5,
+    fade: 0.5,
+    last: 2,
+    offset: 50,
+    text: "浮现文字",
+    reverse: true,
     fillStyle: "#FFF",
     font: `${18}px Sarasa Mono SC`,
   })

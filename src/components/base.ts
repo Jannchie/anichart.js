@@ -6,6 +6,8 @@ export abstract class Base implements Component {
   alpha: number | Function;
   ani: Ani;
   pos: Position | Function;
+  protected _alpha: number;
+  protected _position: Position;
 
   constructor(options: any) {
     this.reset(options);
@@ -19,13 +21,13 @@ export abstract class Base implements Component {
     this.ani.ctx.save();
   }
   preRender(n: number) {
-    let alpha =
+    this._alpha =
       this.alpha instanceof Function
         ? this.alpha(n / this.ani.fps)
         : this.alpha;
-    this.ani.ctx.globalAlpha = alpha;
-    let position = this.pos instanceof Function ? this.pos(n) : this.pos;
-    this.ani.ctx.translate(position.x, position.y);
+    this._position = this.pos instanceof Function ? this.pos(n) : this.pos;
+    this.ani.ctx.globalAlpha = this._alpha;
+    this.ani.ctx.translate(this._position.x, this._position.y);
   }
   abstract render(n: number): void;
 

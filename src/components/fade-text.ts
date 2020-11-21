@@ -1,7 +1,9 @@
 import { scaleLinear } from "d3-scale";
 import { Text } from "./text";
+import { FadeTextOptions } from "./fade-text-options";
+import { TextOptions } from "./text-options";
 class FadeText extends Text {
-  constructor(options: any) {
+  constructor(options: FadeTextOptions) {
     super(options);
     // 计算显示时间
     if (options.time !== undefined) {

@@ -9,7 +9,9 @@ declare class Text extends Base {
     text: string | Function;
     pos: Position | Function;
     fillStyle: string | CanvasGradient | CanvasPattern;
+    protected _text: string;
     constructor(options: TextOptions);
+    preRender(n: number): void;
     render(n: number): void;
 }
 export { Text, TextOptions };

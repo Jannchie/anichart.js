@@ -3,4 +3,5 @@ import { Group } from "./group";
 import { FadeText } from "./fade-text";
 import { Text } from "./text";
 import { Component } from "./component";
-export { Component, Text, Base, Group, FadeText };
+import { RiseText } from "./rise-text";
+export { Component, Text, Base, Group, FadeText, RiseText };
