@@ -14,4 +14,5 @@ export declare abstract class Base implements Component {
     abstract render(n: number): void;
     private restoreCtx;
     draw(n: number): void;
+    protected getValue(obj: any, n: number): any;
 }

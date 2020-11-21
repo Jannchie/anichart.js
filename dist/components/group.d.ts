@@ -7,6 +7,5 @@ export declare class Group extends Base {
     ani: Ani;
     pos: Position | Function;
     components: Component[];
-    preRender(n: number): void;
     render(n: number): void;
 }

@@ -1,6 +1,5 @@
 import ani from "../src/index";
 import * as path from "path";
-import { Text, FadeText, RiseText } from "../src/components";
 import { scaleLinear } from "d3-scale";
 let d = path.join(__dirname, "./data/test.csv");
 console.log(d);
@@ -19,7 +18,7 @@ function calPos(n: number) {
   return { x: x(n / a.fps), y: 100 };
 }
 a.addComponent(
-  new Text({
+  new ani.Text({
     pos: calPos,
     alpha: scaleLinear([0, 1, 2, 3], [0, 1, 1, 0]).clamp(true),
     text: "全自定义文字",
@@ -29,7 +28,7 @@ a.addComponent(
 );
 
 a.addComponent(
-  new FadeText({
+  new ani.FadeText({
     pos: { x: 20, y: 128 },
     time: 0.5,
     fade: 0.5,
@@ -41,14 +40,27 @@ a.addComponent(
 );
 
 a.addComponent(
-  new RiseText({
+  new ani.RiseText({
     pos: { x: 20, y: 156 },
     time: 0.5,
     fade: 0.5,
     last: 2,
     offset: 50,
-    text: "浮现文字",
+    text: "上下浮现文字",
     reverse: true,
+    fillStyle: "#FFF",
+    font: `${18}px Sarasa Mono SC`,
+  })
+);
+
+a.addComponent(
+  new ani.BlurText({
+    pos: { x: 20, y: 184 },
+    time: 0.5,
+    fade: 0.5,
+    last: 2,
+    text: "模糊呈现文字",
+    blur: 4,
     fillStyle: "#FFF",
     font: `${18}px Sarasa Mono SC`,
   })

@@ -14,4 +14,4 @@ declare class Text extends Base {
     preRender(n: number): void;
     render(n: number): void;
 }
-export { Text, TextOptions };
+export { Text };

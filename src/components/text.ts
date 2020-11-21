@@ -15,7 +15,7 @@ class Text extends Base {
   }
   preRender(n: number) {
     super.preRender(n);
-    this._text = this.text instanceof Function ? this.text(n) : this.text;
+    this._text = this.getValue(this.text, n);
   }
   public render(n: number): void {
     this.ani.ctx.fillStyle = this.fillStyle;
@@ -23,4 +23,4 @@ class Text extends Base {
     this.ani.ctx.fillText(this._text, 0, 0);
   }
 }
-export { Text, TextOptions };
+export { Text };
