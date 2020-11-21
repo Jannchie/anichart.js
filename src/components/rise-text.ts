@@ -3,23 +3,23 @@ import { scaleLinear } from "d3-scale";
 import { FadeText } from "./fade-text";
 import { RiseTextOptions } from "../options/rise-text-options";
 class RiseText extends FadeText {
-  offset: Function;
-  private _offset: number;
+  offsetYFunc: Function;
+  private offsetY: number;
   constructor(options: RiseTextOptions) {
     super(options);
   }
   reset(options: RiseTextOptions) {
     super.reset(options);
-    if (options.offset == undefined) options.offset = 20;
-    if (options.reverse) options.offset = -options.offset;
-    this.offset = scaleLinear([0, 1], [options.offset, 0]);
+    if (options.offsetY == undefined) options.offsetY = 20;
+    if (options.reverse) options.offsetY = -options.offsetY;
+    this.offsetYFunc = scaleLinear([0, 1], [options.offsetY, 0]);
   }
   preRender(n: number) {
     super.preRender(n);
-    this._offset = this.offset(easeBackOut(this._alpha));
+    this.offsetY = this.offsetYFunc(easeBackOut(this._alpha));
   }
   render(n: number) {
-    this.ani.ctx.fillText(this._text, 0, this._offset);
+    this.ani.ctx.fillText(this._text, 0, this.offsetY);
   }
 }
 export { RiseText };

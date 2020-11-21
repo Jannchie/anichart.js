@@ -4,19 +4,35 @@ import { Group } from "./group";
 import { Text } from "./Text";
 export class TextLines extends Group {
   components: Text[];
-  lineHeight: number;
+  lineSpacing: number;
+  fontSize: number;
+  font: string;
+  fillStyle: string | CanvasGradient | CanvasPattern;
   constructor(options: TextLinesOptions) {
     super(options);
+    this.reset(options);
+  }
+  addComponent(c: Text) {
+    this.components.push(c);
+    c.ani = this.ani;
+    this.reset({});
   }
   reset(options: TextLinesOptions) {
     super.reset(options);
-    this.lineHeight = options.lineHeight;
-  }
-  preRender(n: number) {
-    super.preRender(n);
-    this.components.forEach((c, i) => {
-      c._pos = <Position>this.getValue(this.pos, n);
-      c._pos.y += this.lineHeight;
+    if (options.lineSpacing) {
+      this.lineSpacing = options.lineSpacing;
+    }
+    let offset = 0;
+    this.components.forEach((c) => {
+      let fontSize = c.fontSize ? c.fontSize : this.fontSize;
+      let font = c.font ? c.font : this.font;
+      let fillStyle = c.fillStyle ? c.fillStyle : this.fillStyle;
+      offset += this.lineSpacing + fontSize;
+      c.pos = this.pos;
+      c.font = font;
+      c.fontSize = fontSize;
+      c.fillStyle = fillStyle;
+      c.offset = { x: 0, y: offset };
     });
   }
 }

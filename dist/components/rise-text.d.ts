@@ -1,8 +1,8 @@
 import { FadeText } from "./fade-text";
 import { RiseTextOptions } from "../options/rise-text-options";
 declare class RiseText extends FadeText {
-    offset: Function;
-    private _offset;
+    offsetYFunc: Function;
+    private offsetY;
     constructor(options: RiseTextOptions);
     reset(options: RiseTextOptions): void;
     preRender(n: number): void;

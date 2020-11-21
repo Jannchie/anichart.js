@@ -6,8 +6,9 @@ export abstract class Base implements Component {
   alpha: number | Function;
   ani: Ani;
   pos: Position | Function;
-  _alpha: number;
-  _pos: Position;
+  protected _alpha: number;
+  protected _pos: Position;
+  components: Base[];
 
   constructor(options: any) {
     this.reset(options);
@@ -17,7 +18,7 @@ export abstract class Base implements Component {
     _.merge(this, options);
   }
 
-  private saveCtx(): void {
+  saveCtx(): void {
     this.ani.ctx.save();
   }
   preRender(n: number) {
@@ -32,7 +33,7 @@ export abstract class Base implements Component {
 
   abstract render(n: number): void;
 
-  private restoreCtx(): void {
+  restoreCtx(): void {
     this.ani.ctx.restore();
   }
 
@@ -41,6 +42,11 @@ export abstract class Base implements Component {
     this.preRender(n);
     this.render(n);
     this.restoreCtx();
+    if (this.components) {
+      this.components.forEach((c) => {
+        c.draw(n);
+      });
+    }
   }
 
   protected getValue(obj: any, n: number): any {

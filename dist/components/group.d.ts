@@ -1,8 +1,9 @@
-import { Base } from ".";
-import { Component } from "./component";
+import { Base } from "./base";
 export declare class Group extends Base {
-    components: Component[];
-    addComponent(c: Component): void;
-    preRender(n: number): void;
     render(n: number): void;
+    components: Base[];
+    constructor(options: any);
+    addComponent(c: Base): void;
+    reset(options: any): void;
+    draw(n: number): void;
 }

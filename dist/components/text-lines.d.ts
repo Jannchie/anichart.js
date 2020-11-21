@@ -3,8 +3,11 @@ import { Group } from "./group";
 import { Text } from "./Text";
 export declare class TextLines extends Group {
     components: Text[];
-    lineHeight: number;
+    lineSpacing: number;
+    fontSize: number;
+    font: string;
+    fillStyle: string | CanvasGradient | CanvasPattern;
     constructor(options: TextLinesOptions);
+    addComponent(c: Text): void;
     reset(options: TextLinesOptions): void;
-    preRender(n: number): void;
 }

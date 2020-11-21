@@ -1,3 +1,5 @@
+import { Group } from "./components/group";
+import { TextLines } from "./components/text-lines";
 /**
  * Anichart.js
  *
@@ -15,5 +17,17 @@ export default {
   BlurText,
   FadeText,
   RiseText,
+  Group,
+  TextLines,
 };
-export { BaseChart, Bar, Text, Base, BlurText, FadeText, RiseText };
+export {
+  BaseChart,
+  Bar,
+  Text,
+  Base,
+  BlurText,
+  FadeText,
+  RiseText,
+  Group,
+  TextLines,
+};

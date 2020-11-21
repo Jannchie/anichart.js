@@ -2,7 +2,7 @@ import { FadeTextOptions } from "./fade-text-options";
 
 export interface RiseTextOptions extends FadeTextOptions {
   // 偏移
-  offset?: number;
+  offsetY?: number;
   // 反向
   reverse?: boolean;
 }

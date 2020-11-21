@@ -3,3 +3,4 @@ interface Position {
     y: number;
 }
 export default Position;
+export { Position };
