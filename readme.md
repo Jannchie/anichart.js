@@ -23,6 +23,8 @@ anichart.js
 
 本项目开源、自由、免费。
 
+这是一个Web、Node等环境下，利用TypeScript或者JavaScript编程的动画库。可用于数据可视化、视频动画展示、片头片尾等领域。
+
 目前正在开发中，虽然该有的功能已经实现了，但是没有提供友好的接口，想要做出自己的作品需要阅读源代码并了解JavaScript编程。
 
 目前前端、后端导出视频均使用内置的FFmpeg。能够直接导出MP4。如果觉得wasm版本的FFmpeg速度过慢，也支持导出Png序列，调用本地FFmpeg生成视频。
@@ -154,12 +156,6 @@ a.output = true;
 
 ### 测试
 
-#### Node.js环境
-
-```bash
-node --experimental-wasm-threads --experimental-wasm-bulk-memory ./test/fans-month.js
-```
-
 #### Browser环境
 
 使用yarn:
@@ -172,4 +168,10 @@ yarn serve
 
 ```bash
 npm run serve
+```
+
+#### Node.js环境
+
+```bash
+node --experimental-wasm-threads --experimental-wasm-bulk-memory index.js
 ```
