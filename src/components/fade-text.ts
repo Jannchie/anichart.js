@@ -1,7 +1,6 @@
 import { scaleLinear } from "d3-scale";
+import { FadeTextOptions } from "../options/fade-text-options";
 import { Text } from "./text";
-import { FadeTextOptions } from "./fade-text-options";
-import { TextOptions } from "./text-options";
 class FadeText extends Text {
   constructor(options: FadeTextOptions) {
     super(options);

@@ -1,8 +1,8 @@
-import Position from "../utils/position";
-export interface TextOptions {
+import { BaseOptions } from "./base-options";
+export interface TextLinesOptions extends BaseOptions {
     text?: string | Function;
-    pos?: Position | Function;
     alpha?: number | Function;
     fillStyle?: string | CanvasGradient | CanvasPattern;
     font?: string;
+    lineHeight?: number;
 }

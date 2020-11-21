@@ -1,7 +1,7 @@
 import { Base } from ".";
 import Ani from "../charts/ani";
 import Position from "../utils/position";
-import { TextOptions } from "./text-options";
+import { TextOptions } from "../options/text-options";
 declare class Text extends Base {
     ani: Ani;
     alpha: number | Function;

@@ -1,7 +1,7 @@
 import { easeBackOut } from "d3-ease";
 import { scaleLinear } from "d3-scale";
 import { FadeText } from "./fade-text";
-import { RiseTextOptions } from "./rise-text-options";
+import { RiseTextOptions } from "../options/rise-text-options";
 class RiseText extends FadeText {
   offset: Function;
   private _offset: number;

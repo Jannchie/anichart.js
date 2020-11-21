@@ -1,4 +1,4 @@
-import { BlurTextOptions } from "./blur-text-options";
+import { BlurTextOptions } from "../options/blur-text-options";
 import { FadeText } from "./fade-text";
 
 export class BlurText extends FadeText {
