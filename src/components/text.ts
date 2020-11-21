@@ -2,20 +2,19 @@ import { ScaleLinear, scaleLinear } from "d3-scale";
 import Ani from "../charts/ani";
 import Position from "../utils/position";
 import { Component } from "./component";
-import { TextComponentOptions } from "./text-component-options";
-class TextComponent implements Component {
+import { TextOptions } from "./text-options";
+class Text implements Component {
   private scale: ScaleLinear<any, any, any>;
   public ani: Ani;
-
   public font: string;
   public text: string;
   public pos: Position;
   public fillStyle: string | CanvasGradient | CanvasPattern;
 
-  constructor(options: TextComponentOptions) {
+  constructor(options: TextOptions) {
     this.reset(options);
   }
-  public reset(options: TextComponentOptions) {
+  public reset(options: TextOptions) {
     this.ani = options.anichart;
 
     if (options.text != undefined) {
@@ -71,4 +70,4 @@ class TextComponent implements Component {
     }
   }
 }
-export { TextComponent, TextComponentOptions };
+export { Text, TextOptions };

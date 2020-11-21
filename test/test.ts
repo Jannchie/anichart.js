@@ -1,6 +1,6 @@
 import ani from "../src/index";
 import * as path from "path";
-import { TextComponent } from "../src/components";
+import { Text } from "../src/components";
 let d = path.join(__dirname, "./data/test.csv");
 console.log(d);
 
@@ -14,7 +14,7 @@ const a = new ani.BaseChart({
 });
 a.setCanvas();
 a.addComponent(
-  new TextComponent({
+  new Text({
     pos: { x: 50, y: 50 },
     time: 1,
     fade: 1,

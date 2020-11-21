@@ -1,4 +1,4 @@
-const d3 = require("d3");
+const { format } = require("d3-format");
 const _ = require("lodash");
 let settings = {
   width: 1366,
@@ -49,7 +49,7 @@ let settings = {
     `${metaData[data.mid].channel}-${data.name}`,
 
   label: () => ``,
-  valueFormat: (d) => `${d3.format("+,.2f")(d.value / 10000)}万粉/月`,
+  valueFormat: (d) => `${format("+,.2f")(d.value / 10000)}万粉/月`,
 
   outputName: "fans-increase",
 };

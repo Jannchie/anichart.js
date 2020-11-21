@@ -1,5 +1,4 @@
 const anichart = require("../dist/anichart");
-const d3 = require("d3");
 const path = require("path");
 const _ = require("lodash");
 let d = path.join(__dirname, "./data/test.csv");

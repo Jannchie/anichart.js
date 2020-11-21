@@ -1,7 +1,7 @@
 import Ani from "../charts/ani";
 import Position from "../utils/position";
 
-export interface TextComponentOptions {
+export interface TextOptions {
   // 图表对象
   anichart?: Ani;
   // 文字内容
