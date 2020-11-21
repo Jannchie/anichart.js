@@ -1,16 +1,17 @@
+import { ScaleLinear } from "d3-scale";
+import { Base } from ".";
 import Ani from "../charts/ani";
 import Position from "../utils/position";
-import { Component } from "./component";
 import { TextOptions } from "./text-options";
-declare class Text implements Component {
-    private scale;
+declare class Text extends Base {
     ani: Ani;
+    alpha: number | Function;
     font: string;
     text: string;
-    pos: Position;
+    pos: Position | Function;
     fillStyle: string | CanvasGradient | CanvasPattern;
+    alhpaScale: ScaleLinear<number, number, never>;
     constructor(options: TextOptions);
-    reset(options: TextOptions): void;
-    draw(n: number, pos?: Position): void;
+    render(n: number): void;
 }
 export { Text, TextOptions };

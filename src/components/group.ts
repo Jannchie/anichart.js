@@ -1,12 +1,19 @@
+import { Base } from ".";
 import Ani from "../charts/ani";
 import Position from "../utils/position";
 import { Component } from "./component";
 
-export class Group implements Component {
+export class Group extends Base {
+  alpha: number;
   ani: Ani;
-  pos: Position;
+  pos: Position | Function;
   components: Component[];
-  draw(n: number): void {
+
+  preRender(n: number): void {
+    return;
+  }
+
+  render(n: number): void {
     this.components.forEach((c) => {
       c.draw(n);
     });

@@ -3,7 +3,7 @@ import Position from "../utils/position";
 
 export interface TextOptions {
   // 图表对象
-  anichart?: Ani;
+  ani?: Ani;
   // 文字内容
   text?: string;
   // 展示时间
@@ -13,7 +13,7 @@ export interface TextOptions {
   // 淡入时间
   fade?: number;
   // 位置
-  pos?: Position;
+  pos?: Position | Function;
 
   // 颜色
   fillStyle?: string | CanvasGradient | CanvasPattern;
