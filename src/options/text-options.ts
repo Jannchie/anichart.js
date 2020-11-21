@@ -7,4 +7,6 @@ export interface TextOptions extends BaseOptions {
   fillStyle?: string | CanvasGradient | CanvasPattern;
   // 字体
   font?: string;
+  // 字号
+  fontSize?: number;
 }

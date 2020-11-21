@@ -16,3 +16,4 @@ export default {
   FadeText,
   RiseText,
 };
+export { BaseChart, Bar, Text, Base, BlurText, FadeText, RiseText };

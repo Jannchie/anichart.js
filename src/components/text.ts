@@ -1,13 +1,9 @@
 import { Base } from ".";
-import Ani from "../charts/ani";
-import Position from "../utils/position";
 import { TextOptions } from "../options/text-options";
 class Text extends Base {
-  ani: Ani;
-  alpha: number | Function;
   font: string;
+  fontSize: number;
   text: string | Function;
-  pos: Position | Function;
   fillStyle: string | CanvasGradient | CanvasPattern;
   protected _text: string;
   constructor(options: TextOptions) {
@@ -16,10 +12,10 @@ class Text extends Base {
   preRender(n: number) {
     super.preRender(n);
     this._text = this.getValue(this.text, n);
+    this.ani.ctx.fillStyle = this.fillStyle;
+    this.ani.ctx.font = `${this.fontSize}px ${this.font}`;
   }
   public render(n: number): void {
-    this.ani.ctx.fillStyle = this.fillStyle;
-    this.ani.ctx.font = this.font;
     this.ani.ctx.fillText(this._text, 0, 0);
   }
 }

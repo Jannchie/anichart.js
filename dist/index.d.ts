@@ -17,3 +17,4 @@ declare const _default: {
     RiseText: typeof RiseText;
 };
 export default _default;
+export { BaseChart, Bar, Text, Base, BlurText, FadeText, RiseText };

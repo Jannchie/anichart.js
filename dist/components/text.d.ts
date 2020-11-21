@@ -1,13 +1,9 @@
 import { Base } from ".";
-import Ani from "../charts/ani";
-import Position from "../utils/position";
 import { TextOptions } from "../options/text-options";
 declare class Text extends Base {
-    ani: Ani;
-    alpha: number | Function;
     font: string;
+    fontSize: number;
     text: string | Function;
-    pos: Position | Function;
     fillStyle: string | CanvasGradient | CanvasPattern;
     protected _text: string;
     constructor(options: TextOptions);

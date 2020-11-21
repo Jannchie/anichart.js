@@ -23,7 +23,8 @@ a.addComponent(
     alpha: scaleLinear([0, 1, 2, 3], [0, 1, 1, 0]).clamp(true),
     text: "全自定义文字",
     fillStyle: "#FFF",
-    font: `${18}px Sarasa Mono SC`,
+    font: `Sarasa Mono SC`,
+    fontSize: 18,
   })
 );
 
@@ -35,7 +36,8 @@ a.addComponent(
     last: 2,
     text: "淡入淡出文字",
     fillStyle: "#FFF",
-    font: `${18}px Sarasa Mono SC`,
+    font: `Sarasa Mono SC`,
+    fontSize: 18,
   })
 );
 
@@ -49,7 +51,8 @@ a.addComponent(
     text: "上下浮现文字",
     reverse: true,
     fillStyle: "#FFF",
-    font: `${18}px Sarasa Mono SC`,
+    font: `Sarasa Mono SC`,
+    fontSize: 18,
   })
 );
 
@@ -62,7 +65,8 @@ a.addComponent(
     text: "模糊呈现文字",
     blur: 4,
     fillStyle: "#FFF",
-    font: `${18}px Sarasa Mono SC`,
+    font: `Sarasa Mono SC`,
+    fontSize: 18,
   })
 );
 
