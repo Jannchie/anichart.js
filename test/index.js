@@ -1,0 +1,1 @@
+let runBartest = require("./test");

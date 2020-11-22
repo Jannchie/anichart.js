@@ -1,7 +1,7 @@
 import { Scene } from "./scene";
 
 class Series {
-  scenes: Scene[];
+  scenes: Scene[] = [];
   play() {
     this.scenes.forEach((s) => {
       s.play();

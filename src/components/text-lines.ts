@@ -3,7 +3,7 @@ import Position from "../utils/position";
 import { Group } from "./group";
 import { Text } from "./Text";
 export class TextLines extends Group {
-  components: Text[];
+  components: Text[] = [];
   lineSpacing: number;
   fontSize: number;
   font: string;

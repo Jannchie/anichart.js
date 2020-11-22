@@ -4,14 +4,15 @@ import { select } from "d3-selection";
 import Ani from "./ani";
 import { Component } from "../components";
 import { csv } from "d3-fetch";
+import { csvParse, DSVRowArray } from "d3-dsv";
 import { interval, Timer } from "d3-timer";
-
+import * as fs from "fs";
 class Scene implements Ani {
   fps: number;
   sec: number;
   totalFrames: number;
   cFrame: number;
-  components: Component[];
+  components: Component[] = [];
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
   width: number;
@@ -21,7 +22,7 @@ class Scene implements Ani {
   meta: any;
 
   background: string;
-  colorScheme: string[];
+  colorScheme: string[] = [];
   hint: string;
   player: Timer;
 
@@ -30,7 +31,6 @@ class Scene implements Ani {
     this.sec = 3;
     this.width = 1366;
     this.height = 768;
-    this.components = [];
     this.cFrame = 0;
     this.colorScheme = [
       "#27C",
@@ -57,16 +57,25 @@ class Scene implements Ani {
 
   async loadData(path: string | any): Promise<void> {
     this.drawHint("Loading Data...");
-    if (typeof path == "string") {
-      this.data = await csv(path);
-    } else {
-      this.data = await csv(path.default);
-    }
+    this.data = await this.readCsv(path);
     this.drawHint("Loading Data...Finished!");
   }
 
-  async loadMeta(path: string): Promise<void> {
-    this.meta = await csv(path);
+  private async readCsv(path: string | any): Promise<DSVRowArray<string>> {
+    if (typeof path !== "string") {
+      path = path.default;
+    }
+    if (typeof window === "undefined") {
+      return csvParse(fs.readFileSync(path).toString());
+    } else {
+      if ("object" == typeof path) {
+        return csv(path);
+      }
+      return csv(path);
+    }
+  }
+  async loadMeta(path: string | any): Promise<void> {
+    this.meta = await this.readCsv(path);
   }
 
   ready(): void {

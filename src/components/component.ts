@@ -1,4 +1,4 @@
-import Ani from "../charts/ani";
+import Ani from "../base/ani";
 import Position from "../utils/position";
 
 interface Component {

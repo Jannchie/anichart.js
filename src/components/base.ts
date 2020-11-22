@@ -1,5 +1,5 @@
 import { merge } from "lodash-es";
-import Ani from "../charts/ani";
+import Ani from "../base/ani";
 import Position from "../utils/position";
 import { Component } from "./component";
 export abstract class Base implements Component {
@@ -8,7 +8,7 @@ export abstract class Base implements Component {
   pos: Position | Function;
   protected _alpha: number;
   protected _pos: Position;
-  components: Base[];
+  components: Base[] = [];
 
   constructor(options: any) {
     this.reset(options);

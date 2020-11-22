@@ -21,6 +21,7 @@ declare class Scene implements Ani {
     constructor(options?: object);
     addComponent(c: Component): void;
     loadData(path: string | any): Promise<void>;
+    private readCsv;
     loadMeta(path: string): Promise<void>;
     ready(): void;
     play(): void;

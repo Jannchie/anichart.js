@@ -1,8 +1,8 @@
-import { Base } from "./base";
-import { Group } from "./group";
-import { FadeText } from "./fade-text";
-import { Text } from "./text";
-import { Component } from "./component";
-import { RiseText } from "./rise-text";
-import { BlurText } from "./blur-text";
-export { Component, Text, Base, Group, FadeText, RiseText, BlurText };
+export * from "./component";
+export * from "./base";
+export * from "./text";
+export * from "./blur-text";
+export * from "./fade-text";
+export * from "./rise-text";
+export * from "./group";
+export * from "./text-lines";
