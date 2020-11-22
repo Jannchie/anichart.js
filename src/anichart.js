@@ -2,7 +2,7 @@ import loadImages from "./image";
 import Ctl from "./ctl";
 import * as _ from "lodash-es";
 import { ffmpeg, pngToMp4 } from "./ffmpeg";
-import { select, selectAll } from "d3-selection";
+import { select } from "d3-selection";
 import { range } from "d3-array";
 import { interval } from "d3-timer";
 import enhanceCtx from "./ctx";

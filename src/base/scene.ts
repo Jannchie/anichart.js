@@ -54,12 +54,18 @@ class Scene implements Ani {
     c.ani = this;
     this.components.push(c);
     this.setOptions({});
+    c.reset({});
   }
 
   async loadData(path: string | any): Promise<void> {
     this.drawHint("Loading Data...");
     this.data = await this.readCsv(path);
     this.drawHint("Loading Data...Finished!");
+    if (this.components) {
+      this.components.forEach((c) => {
+        c.reset({});
+      });
+    }
   }
 
   private async readCsv(path: string | any): Promise<DSVRowArray<string>> {

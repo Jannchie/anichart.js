@@ -8,7 +8,7 @@ import { timeFormat } from "d3-time-format";
 import { csv } from "d3-fetch";
 import { csvParse } from "d3-dsv";
 import { scaleLinear } from "d3-scale";
-import { group, range, extent, max, mean, min } from "d3-array";
+import { group, range, extent, max, mean } from "d3-array";
 import { interpolateNumber } from "d3-interpolate";
 import { easePolyOut, easePolyInOut } from "d3-ease";
 class AniBarChart extends BaseAniChart {

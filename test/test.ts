@@ -5,6 +5,7 @@ let d = path.join(__dirname, "./data/test.csv");
 
 const a = new ani.Scene({
   height: 400,
+  width: 1600,
   output: false,
   useCtl: true,
   sec: 4,
