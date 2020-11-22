@@ -8,6 +8,5 @@ export declare class TextLines extends Group {
     font: string;
     fillStyle: string | CanvasGradient | CanvasPattern;
     constructor(options: TextLinesOptions);
-    addComponent(c: Text): void;
     reset(options: TextLinesOptions): void;
 }

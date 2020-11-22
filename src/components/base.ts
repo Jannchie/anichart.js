@@ -8,7 +8,6 @@ export abstract class Base implements Component {
   pos: Position | Function;
   protected _alpha: number;
   protected _pos: Position;
-  components: Base[] = [];
 
   constructor(options: any) {
     this.reset(options);
@@ -22,6 +21,7 @@ export abstract class Base implements Component {
     this.ani.ctx.save();
   }
   preRender(n: number) {
+    if (this.pos == undefined) this.pos = { x: 0, y: 0 };
     this._alpha =
       this.alpha instanceof Function
         ? this.alpha(n / this.ani.fps)
@@ -42,11 +42,6 @@ export abstract class Base implements Component {
     this.preRender(n);
     this.render(n);
     this.restoreCtx();
-    if (this.components) {
-      this.components.forEach((c) => {
-        c.draw(n);
-      });
-    }
   }
 
   protected getValue(obj: any, n: number): any {

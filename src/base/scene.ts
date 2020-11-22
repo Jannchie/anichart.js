@@ -53,6 +53,7 @@ class Scene implements Ani {
   addComponent(c: Component): void {
     c.ani = this;
     this.components.push(c);
+    this.setOptions({});
   }
 
   async loadData(path: string | any): Promise<void> {

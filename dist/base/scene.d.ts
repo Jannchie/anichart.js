@@ -22,7 +22,7 @@ declare class Scene implements Ani {
     addComponent(c: Component): void;
     loadData(path: string | any): Promise<void>;
     private readCsv;
-    loadMeta(path: string): Promise<void>;
+    loadMeta(path: string | any): Promise<void>;
     ready(): void;
     play(): void;
     draw(frame: number): void;

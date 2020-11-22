@@ -10,9 +10,9 @@ export class Group extends Base {
     this.reset(options);
   }
   addComponent(c: Base) {
-    this.reset({});
     this.components.push(c);
     c.ani = this.ani;
+    this.reset({});
   }
   reset(options: any) {
     super.reset(options);

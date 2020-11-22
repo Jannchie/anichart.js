@@ -3,11 +3,11 @@ import { Base } from "../components";
 import { LineChartOptions } from "../options/line-chart-options";
 
 export class LineChart extends Base {
-  shape: { width: number; height: number } = { width: 400, height: 200 };
+  shape: { width: number; height: number };
   reset(options: LineChartOptions) {
     super.reset(options);
+    if ((this.shape = undefined)) {
+    }
   }
-  render(n: number): void {
-    throw new Error("Method not implemented.");
-  }
+  render(n: number): void {}
 }

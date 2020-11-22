@@ -2,14 +2,13 @@ import * as ani from "../src/index";
 import * as path from "path";
 import { scaleLinear } from "d3-scale";
 let d = path.join(__dirname, "./data/test.csv");
-console.log(d);
 
 const a = new ani.Scene({
   height: 400,
   output: false,
   useCtl: true,
   sec: 4,
-  fps: 60,
+  fps: 30,
   itemCount: 4,
 });
 a.setCanvas();
@@ -65,6 +64,7 @@ lines.addComponent(
   })
 );
 
+a.addComponent(new ani.LineChart({}));
 (async () => {
   await a.loadData(d);
   a.play();
