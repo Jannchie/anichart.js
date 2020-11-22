@@ -6,7 +6,7 @@ import { Component } from "../components";
 import { csv } from "d3-fetch";
 import { interval, Timer } from "d3-timer";
 
-class BaseChart implements Ani {
+class Scene implements Ani {
   fps: number;
   sec: number;
   totalFrames: number;
@@ -157,4 +157,4 @@ class BaseChart implements Ani {
     console.log(text);
   }
 }
-export { BaseChart };
+export { Scene };

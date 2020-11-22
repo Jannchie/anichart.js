@@ -1,4 +1,4 @@
-import * as _ from "lodash-es";
+import { merge } from "lodash-es";
 import Ani from "../charts/ani";
 import Position from "../utils/position";
 import { Component } from "./component";
@@ -15,7 +15,7 @@ export abstract class Base implements Component {
   }
 
   reset(options: any): void {
-    _.merge(this, options);
+    merge(this, options);
   }
 
   saveCtx(): void {

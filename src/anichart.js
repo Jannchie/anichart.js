@@ -1,6 +1,6 @@
 import loadImages from "./image";
 import Ctl from "./ctl";
-import _ from "lodash-es";
+import * as _ from "lodash-es";
 import { ffmpeg, pngToMp4 } from "./ffmpeg";
 import { select, selectAll } from "d3-selection";
 import { range } from "d3-array";

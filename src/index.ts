@@ -6,11 +6,11 @@ import { TextLines } from "./components/text-lines";
  * @author   Jannchie <https://github.com/Jannchie>
  * @license  MIT
  */
-import { BaseChart } from "./charts/base-chart";
+import { Scene } from "./charts/scene";
 import Bar from "./charts/bar";
 import { Text, Base, BlurText, FadeText, RiseText } from "./components";
 export default {
-  BaseChart,
+  Scene,
   Bar,
   Text,
   Base,
@@ -21,7 +21,7 @@ export default {
   TextLines,
 };
 export {
-  BaseChart,
+  Scene,
   Bar,
   Text,
   Base,

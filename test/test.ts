@@ -4,7 +4,7 @@ import { scaleLinear } from "d3-scale";
 let d = path.join(__dirname, "./data/test.csv");
 console.log(d);
 
-const a = new ani.BaseChart({
+const a = new ani.Scene({
   height: 400,
   output: false,
   useCtl: true,

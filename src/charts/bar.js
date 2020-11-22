@@ -1,4 +1,4 @@
-import _ from "lodash-es";
+import * as _ from "lodash-es";
 import ColorThiefUmd from "colorthief/dist/color-thief.umd.js";
 import colorThief from "colorthief";
 import fs from "fs";

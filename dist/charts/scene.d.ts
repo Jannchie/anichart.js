@@ -1,7 +1,7 @@
 import Ani from "./ani";
 import { Component } from "../components";
 import { Timer } from "d3-timer";
-declare class BaseChart implements Ani {
+declare class Scene implements Ani {
     fps: number;
     sec: number;
     totalFrames: number;
@@ -33,4 +33,4 @@ declare class BaseChart implements Ani {
     private drawBackground;
     private drawHint;
 }
-export { BaseChart };
+export { Scene };

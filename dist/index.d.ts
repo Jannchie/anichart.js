@@ -6,11 +6,11 @@ import { TextLines } from "./components/text-lines";
  * @author   Jannchie <https://github.com/Jannchie>
  * @license  MIT
  */
-import { BaseChart } from "./charts/base-chart";
+import { Scene } from "./charts/scene";
 import Bar from "./charts/bar";
 import { Text, Base, BlurText, FadeText, RiseText } from "./components";
 declare const _default: {
-    BaseChart: typeof BaseChart;
+    Scene: typeof Scene;
     Bar: typeof Bar;
     Text: typeof Text;
     Base: typeof Base;
@@ -21,4 +21,4 @@ declare const _default: {
     TextLines: typeof TextLines;
 };
 export default _default;
-export { BaseChart, Bar, Text, Base, BlurText, FadeText, RiseText, Group, TextLines, };
+export { Scene, Bar, Text, Base, BlurText, FadeText, RiseText, Group, TextLines, };
