@@ -1,5 +1,5 @@
 import { merge } from "lodash-es";
-import enhanceCtx from "../ctx";
+import { enhanceCtx } from "../utils/enhance-ctx";
 import { select } from "d3-selection";
 import Ani from "./ani";
 import { Component } from "../components";
