@@ -137,22 +137,17 @@ export class LineChart extends Base {
   }
 
   private findY(area: Path2D) {
-    // TODO: 优化算法
-    for (let i of d3.range(
-      this._pos.y + this.padding.top,
-      this._pos.y + this.shape.height - this.padding.bottom + 1,
-      1
-    )) {
-      this.count += 1;
-      let bool = this.ani.ctx.isPointInStroke(
-        area,
-        this._pos.x + this.shape.width - this.padding.right,
-        i
-      );
-      if (bool == true) {
-        console.log(this.count);
-        return i;
-      }
-    }
+    let l = this._pos.y + this.padding.top;
+    let r = this._pos.y + this.shape.height - this.padding.bottom + 1;
+    let x = this._pos.x + this.shape.width - this.padding.right;
+    // 9w => 4k
+    // 使用中值优化，提升22倍性能
+    let b = d3.bisector((d: number) => {
+      this.count++;
+      return this.ani.ctx.isPointInPath(area, x, d);
+    }).left;
+    let range = d3.range(l, r, 1);
+    let index = b(range, true);
+    return range[index];
   }
 }
