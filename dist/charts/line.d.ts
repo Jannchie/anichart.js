@@ -7,7 +7,7 @@ export declare class LineChart extends Base {
         height: number;
     };
     scales: {
-        x: d3.ScaleTime<number, number, never>;
+        x: d3.ScaleLinear<number, number, never>;
         y: d3.ScaleLinear<number, number, never>;
     };
     dataGroup: Map<any, any[]>;
@@ -18,10 +18,19 @@ export declare class LineChart extends Base {
         top: number;
         bottom: number;
     };
+    data: any;
+    tsRange: [number, number];
+    dtRange: [number, number];
+    showTime: [number, number];
+    count: number;
+    area: d3.Area<[number, number]>;
     constructor(options: LineChartOptions);
     reset(options: LineChartOptions): void;
     private setLine;
     private setDataGroup;
     private setScale;
+    private setRange;
+    preRender(n: number): void;
     render(n: number): void;
+    private findY;
 }

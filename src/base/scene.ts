@@ -1,5 +1,8 @@
 import { merge } from "lodash-es";
-import { enhanceCtx } from "../utils/enhance-ctx";
+import {
+  enhanceCtx,
+  EnhancedCanvasRenderingContext2D,
+} from "../utils/enhance-ctx";
 import { select } from "d3-selection";
 import Ani from "./ani";
 import { Component } from "../components";
@@ -14,7 +17,7 @@ class Scene implements Ani {
   cFrame: number;
   components: Component[] = [];
   canvas: HTMLCanvasElement;
-  ctx: CanvasRenderingContext2D;
+  ctx: EnhancedCanvasRenderingContext2D;
   width: number;
   height: number;
   output: boolean;
@@ -28,7 +31,7 @@ class Scene implements Ani {
 
   constructor(options: object = {}) {
     this.fps = 12;
-    this.sec = 3;
+    this.sec = 6;
     this.width = 1366;
     this.height = 768;
     this.cFrame = 0;
@@ -62,9 +65,11 @@ class Scene implements Ani {
     this.data = await this.readCsv(path);
     this.drawHint("Loading Data...Finished!");
     if (this.components) {
+      this.drawHint(`Refresh Components...`);
       this.components.forEach((c) => {
         c.reset({});
       });
+      this.drawHint("Refresh Components... Finished!");
     }
   }
 
@@ -82,7 +87,16 @@ class Scene implements Ani {
     }
   }
   async loadMeta(path: string | any): Promise<void> {
+    this.drawHint("Loading Meta...");
     this.meta = await this.readCsv(path);
+    this.drawHint("Loading Data...Finished!");
+    if (this.components) {
+      this.drawHint(`Refresh Components...`);
+      this.components.forEach((c) => {
+        c.reset({});
+      });
+      this.drawHint("Refresh Components... Finished!");
+    }
   }
 
   ready(): void {
@@ -139,8 +153,7 @@ class Scene implements Ani {
       const { createCanvas } = require("canvas");
       this.canvas = createCanvas(this.width, this.height);
     }
-    this.ctx = this.canvas.getContext("2d");
-    enhanceCtx(this.ctx);
+    this.ctx = enhanceCtx(this.canvas.getContext("2d"));
   }
 
   private initCanvas(): void {

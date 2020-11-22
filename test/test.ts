@@ -8,7 +8,7 @@ const a = new ani.Scene({
   width: 1600,
   output: false,
   useCtl: true,
-  sec: 4,
+  sec: 8,
   fps: 30,
   itemCount: 4,
 });

@@ -1,5 +1,5 @@
 import { Component } from "../components";
-
+import { EnhancedCanvasRenderingContext2D } from "../utils/enhance-ctx";
 interface Ani {
   width: number;
   height: number;
@@ -18,7 +18,7 @@ interface Ani {
   meta: any;
 
   canvas: HTMLCanvasElement;
-  ctx: CanvasRenderingContext2D;
+  ctx: EnhancedCanvasRenderingContext2D;
 
   output: boolean;
 

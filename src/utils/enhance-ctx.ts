@@ -1,9 +1,30 @@
+import * as _ from "lodash";
+
 if (typeof window === "undefined") {
   global.CanvasRenderingContext2D = require("canvas").CanvasRenderingContext2D;
 }
 
-class EnhancedCanvasRenderingContext2D extends CanvasRenderingContext2D {
-  drawClipedImg = (
+interface EnhancedCanvasRenderingContext2D extends CanvasRenderingContext2D {
+  drawClipedImg(
+    img: CanvasImageSource,
+    x: number,
+    y: number,
+    imageHeight: number,
+    imageWidth: number,
+    r: number
+  ): void;
+  radiusArea(left: number, top: number, w: number, h: number, r: number): void;
+  fillRadiusRect(
+    left: number,
+    top: number,
+    w: number,
+    h: number,
+    r: number
+  ): void;
+}
+
+export function enhanceCtx(ctx: any): EnhancedCanvasRenderingContext2D {
+  ctx.drawClipedImg = (
     img: CanvasImageSource,
     x = 0,
     y = 0,
@@ -12,18 +33,18 @@ class EnhancedCanvasRenderingContext2D extends CanvasRenderingContext2D {
     r = 4
   ) => {
     if (img != undefined) {
-      this.save();
-      this.beginPath();
-      this.radiusArea(x, y, imageWidth, imageHeight, r);
-      this.clip(); //call the clip method so the next render is clipped in last path
-      this.closePath();
+      ctx.save();
+      ctx.beginPath();
+      ctx.radiusArea(x, y, imageWidth, imageHeight, r);
+      ctx.clip(); //call the clip method so the next render is clipped in last path
+      ctx.closePath();
       try {
-        this.drawImage(
+        ctx.drawImage(
           img,
           0,
           0,
-          <number>img.width,
-          <number>img.height,
+          img.width,
+          img.height,
           x,
           y,
           imageWidth,
@@ -32,25 +53,37 @@ class EnhancedCanvasRenderingContext2D extends CanvasRenderingContext2D {
       } catch (error) {
         console.log(error);
       }
-      this.stroke();
-      this.restore();
+      ctx.stroke();
+      ctx.restore();
     }
   };
-  radiusArea = (left: any, top: any, w: any, h: any, r: number) => {
-    this.lineWidth = 0;
+
+  ctx.radiusArea = (
+    left: number,
+    top: number,
+    w: number,
+    h: number,
+    r: number
+  ) => {
+    ctx.lineWidth = 0;
     const pi = Math.PI;
-    this.arc(left + r, top + r, r, -pi, -pi / 2);
-    this.arc(left + w - r, top + r, r, -pi / 2, 0);
-    this.arc(left + w - r, top + h - r, r, 0, pi / 2);
-    this.arc(left + r, top + h - r, r, pi / 2, pi);
+    ctx.arc(left + r, top + r, r, -pi, -pi / 2);
+    ctx.arc(left + w - r, top + r, r, -pi / 2, 0);
+    ctx.arc(left + w - r, top + h - r, r, 0, pi / 2);
+    ctx.arc(left + r, top + h - r, r, pi / 2, pi);
   };
-  radiusRect = (left: any, top: any, w: any, h: any, r: any) => {
-    this.beginPath();
-    this.radiusArea(left, top, w, h, r);
-    this.closePath();
-    this.fill();
+  ctx.fillRadiusRect = (
+    left: number,
+    top: number,
+    w: number,
+    h: number,
+    r: number
+  ) => {
+    ctx.beginPath();
+    ctx.radiusArea(left, top, w, h, r);
+    ctx.closePath();
+    ctx.fill();
   };
+  return ctx;
 }
-export function enhanceCtx(ctx: any) {
-  ctx = <EnhancedCanvasRenderingContext2D>ctx;
-}
+export { EnhancedCanvasRenderingContext2D };

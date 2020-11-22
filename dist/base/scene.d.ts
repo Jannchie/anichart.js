@@ -1,3 +1,4 @@
+import { EnhancedCanvasRenderingContext2D } from "../utils/enhance-ctx";
 import Ani from "./ani";
 import { Component } from "../components";
 import { Timer } from "d3-timer";
@@ -8,7 +9,7 @@ declare class Scene implements Ani {
     cFrame: number;
     components: Component[];
     canvas: HTMLCanvasElement;
-    ctx: CanvasRenderingContext2D;
+    ctx: EnhancedCanvasRenderingContext2D;
     width: number;
     height: number;
     output: boolean;
