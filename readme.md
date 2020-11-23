@@ -1,6 +1,6 @@
-<h1 align="center">
-anichart.js
-</h1>
+<p align="center">
+    <img height="250px" src="https://github.com/Jannchie/anichart.js/blob/master/public/image/ANI.png?raw=true"><br/>
+</p>
 
 <p align="center">
     <img src="https://data.jsdelivr.com/v1/package/npm/anichart/badge">
