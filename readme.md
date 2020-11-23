@@ -14,9 +14,10 @@
 轻松地制作数据可视化动画视频。
 
 ## 示例
-
 <p align="center">
-    <img src="https://github.com/Jannchie/anichart.js/blob/master/public/image/anichart.js.png?raw=true"><br/>
+    <a href="https://codesandbox.io/s/dreamy-microservice-e8em0?fontsize=14&hidenavigation=1&theme=dark&view=preview">
+        <img alt="Edit e8em0" src="https://codesandbox.io/static/img/play-codesandbox.svg">
+    </a>
 </p>
 
 ## 写在前面
