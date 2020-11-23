@@ -12,18 +12,23 @@ const a = new ani.Scene({
   fps: 30,
   itemCount: 4,
 });
+
 a.setCanvas();
+
 function calPos(n: number) {
   let x = scaleLinear([0, 3], [0, 100]).clamp(true);
   return { x: x(n / a.fps), y: 100 };
 }
+
 let lines = new ani.TextLines({
   fillStyle: "#FFF",
   font: { fontSize: 18, font: "Sarasa Mono SC" },
   lineSpacing: 8,
   pos: { x: 50, y: 50 },
 });
+
 a.addComponent(lines);
+
 lines.addComponent(
   new ani.Text({
     pos: calPos,
@@ -89,7 +94,6 @@ a.addComponent(new ani.LineChart({}));
   await a.loadData(d);
   a.play();
 })();
-
 if (typeof window != "undefined") {
   console.log(a);
 }

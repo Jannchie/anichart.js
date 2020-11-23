@@ -1,3 +1,4 @@
+import { Hintable, DefaultHinter, Hinter } from "./hint";
 import { DefaultFontOptions } from "./../options/font-options";
 import { merge } from "lodash-es";
 import {
@@ -26,11 +27,10 @@ class Scene implements Ani {
   ctx: EnhancedCanvasRenderingContext2D;
   data: DSVRowArray<string>;
   meta: DSVRowArray<string>;
-
-  hint: string;
   player: Timer;
   color: ColorManager = new ColorManager();
   font: FontOptions = new DefaultFontOptions();
+  hinter: Hinter = new DefaultHinter();
 
   constructor(options: object = {}) {
     this.setOptions(options);
@@ -44,15 +44,15 @@ class Scene implements Ani {
   }
 
   async loadData(path: string | any): Promise<void> {
-    this.drawHint("Loading Data...");
+    this.hinter.drawHint("Loading Data...");
     this.data = await this.readCsv(path);
-    this.drawHint("Loading Data...Finished!");
+    this.hinter.drawHint("Loading Data...Finished!");
     if (this.components) {
-      this.drawHint(`Refresh Components...`);
+      this.hinter.drawHint(`Refresh Components...`);
       this.components.forEach((c) => {
         c.reset({});
       });
-      this.drawHint("Refresh Components... Finished!");
+      this.hinter.drawHint("Refresh Components... Finished!");
     }
   }
 
@@ -70,15 +70,15 @@ class Scene implements Ani {
     }
   }
   async loadMeta(path: string | any): Promise<void> {
-    this.drawHint("Loading Meta...");
+    this.hinter.drawHint("Loading Meta...");
     this.meta = await this.readCsv(path);
-    this.drawHint("Loading Data...Finished!");
+    this.hinter.drawHint("Loading Data...Finished!");
     if (this.components) {
-      this.drawHint(`Refresh Components...`);
+      this.hinter.drawHint(`Refresh Components...`);
       this.components.forEach((c) => {
         c.reset({});
       });
-      this.drawHint("Refresh Components... Finished!");
+      this.hinter.drawHint("Refresh Components... Finished!");
     }
   }
 
@@ -101,7 +101,7 @@ class Scene implements Ani {
         this.draw(this.cFrame++);
         if (this.cFrame >= this.totalFrames) {
           this.player.stop();
-          this.drawHint(
+          this.hinter.drawHint(
             `Finished! FPS: ${(
               (this.sec * this.fps) /
               ((new Date().getTime() - start) / 1000)
@@ -120,10 +120,15 @@ class Scene implements Ani {
 
   setOptions(options: object): void {
     merge(this, options);
-    this.calOptions();
+    this.update();
   }
-  calOptions(): void {
+  update(): void {
     this.totalFrames = this.fps * this.sec;
+    this.hinter.width = this.width;
+    this.hinter.height = this.height;
+    this.components.forEach((c) => {
+      c.reset({});
+    });
   }
 
   setCanvas(selector?: string): void {
@@ -137,6 +142,7 @@ class Scene implements Ani {
       this.canvas = createCanvas(this.width, this.height);
     }
     this.ctx = enhanceCtx(this.canvas.getContext("2d"));
+    this.hinter.ctx = this.ctx;
   }
 
   private initCanvas(): void {
@@ -154,19 +160,6 @@ class Scene implements Ani {
     this.ctx.fillStyle = this.color.background;
     this.ctx.fillRect(0, 0, this.width, this.height);
     this.ctx.restore();
-  }
-
-  private drawHint(text: any) {
-    if (this.ctx) {
-      this.drawBackground();
-      this.ctx.save();
-      this.ctx.font = `${18}px Sarasa Mono SC`;
-      this.ctx.fillStyle = "#FFF";
-      this.ctx.fillText(text, 20, 38);
-      this.ctx.restore();
-    }
-    this.hint = text;
-    console.log(text);
   }
 }
 export { Scene };

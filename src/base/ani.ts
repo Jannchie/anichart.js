@@ -1,8 +1,9 @@
+import { Hintable } from "./hint";
 import { Fontable, FontOptions } from "./../options/font-options";
 import { Colorable } from "./color";
 import { Component } from "../components";
 import { EnhancedCanvasRenderingContext2D } from "../utils/enhance-ctx";
-interface Ani extends Fontable {
+interface Ani extends Fontable, Hintable {
   width: number;
   height: number;
   fps: number;
@@ -24,10 +25,8 @@ interface Ani extends Fontable {
 
   output: boolean;
 
-  hint: string;
-
   setOptions(options: Ani): void;
-  calOptions(): void;
+  update(): void;
 
   setCanvas(selector: string): void;
 
