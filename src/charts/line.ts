@@ -111,9 +111,12 @@ export class LineChart extends Base {
       this.ani.ctx.beginPath();
       this.ani.ctx.rect(
         this.cPos.x + this.padding.left,
-        this.cPos.y + this.padding.top,
+        this.cPos.y + this.padding.top - this.lineWidth,
         this.shape.width - this.padding.left - this.padding.right,
-        this.shape.height - this.padding.top - this.padding.bottom + 1
+        this.shape.height -
+          this.padding.top -
+          this.padding.bottom +
+          this.lineWidth * 2
       );
       this.ani.ctx.closePath();
       this.ani.ctx.clip();
@@ -140,7 +143,18 @@ export class LineChart extends Base {
         this.xMax + 15,
         y
       );
+      // tick
     });
+    let ticks = this.scales.x.ticks(5);
+    this.ani.ctx.textBaseline = "bottom";
+    this.ani.ctx.fillStyle = "#FFF";
+    for (let tick of ticks) {
+      this.ani.ctx.fillText(
+        d3.timeFormat("%Y-%m-%d")(new Date(tick)),
+        this.scales.x(tick),
+        this.shape.height
+      );
+    }
   }
 
   private findY(area: Path2D) {
