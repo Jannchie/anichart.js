@@ -1,9 +1,10 @@
+import { Shadowable } from "./../options/shadow-options";
 import { Fontable } from "./../options/font-options";
 import Ani from "../base/ani";
-import Position from "../utils/position";
-interface Component extends Fontable {
+import Pos from "../utils/position";
+interface Component extends Fontable, Shadowable {
     ani: Ani;
-    pos: Position | Function;
+    pos: Pos | Function;
     alpha: number | Function;
     reset(options?: object): void;
     preRender(n: number): void;

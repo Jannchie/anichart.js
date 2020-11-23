@@ -1,14 +1,16 @@
 import Ani from "../base/ani";
 import { FontOptions } from "../options/font-options";
-import Position from "../utils/position";
+import { ShadowOptions } from "../options/shadow-options";
+import Pos from "../utils/position";
 import { Component } from "./component";
 export declare abstract class Base implements Component {
     alpha: number | Function;
     ani: Ani;
-    pos: Position | Function;
+    pos: Pos | Function;
     protected cAlpha: number;
-    protected cPos: Position;
+    protected cPos: Pos;
     constructor(options: any);
+    shadow: ShadowOptions;
     font: FontOptions;
     ctx: CanvasRenderingContext2D;
     reset(options?: any): void;
