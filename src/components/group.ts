@@ -1,6 +1,10 @@
 import { Base } from "./base";
-
-export class Group extends Base {
+import { Component } from "./component";
+export interface groupable {
+  addComponent(c: Component): void;
+  components: Component[];
+}
+export class Group extends Base implements groupable {
   render(n: number): void {
     return;
   }

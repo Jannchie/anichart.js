@@ -1,24 +1,34 @@
+import {
+  FontOptions,
+  DefaultFontOptions,
+  Fontable,
+} from "./../options/font-options";
 import { Base } from ".";
 import { TextOptions } from "../options/text-options";
 import { Position } from "../utils/position";
+import * as _ from "lodash";
 class Text extends Base {
-  font: string;
-  fontSize: number;
   text: string | Function;
   fillStyle: string | CanvasGradient | CanvasPattern;
   offset: Position | Function;
   _text: string;
-  protected _offset: Position;
+  font: FontOptions;
+  protected cOffset: Position;
+  private finalFont: FontOptions;
   constructor(options: TextOptions) {
     super(options);
+  }
+  reset(options: TextOptions) {
+    super.reset(options);
+    this.finalFont = _.merge(new DefaultFontOptions(), this.font);
   }
   preRender(n: number) {
     super.preRender(n);
     this._text = this.getValue(this.text, n);
-    this._offset = this.getValue(this.offset, n);
-    this.ani.ctx.translate(this._offset.x, this._offset.y);
+    this.cOffset = this.getValue(this.offset, n);
+    this.ani.ctx.translate(this.cOffset.x, this.cOffset.y);
     this.ani.ctx.fillStyle = this.fillStyle;
-    this.ani.ctx.font = `${this.fontSize}px ${this.font}`;
+    this.ani.ctx.setFontOptions(this.finalFont);
   }
   public render(n: number): void {
     this.ani.ctx.fillText(this._text, 0, 0);

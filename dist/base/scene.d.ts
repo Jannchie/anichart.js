@@ -3,6 +3,7 @@ import Ani from "./ani";
 import { Component } from "../components";
 import { Timer } from "d3-timer";
 import { ColorManager } from "./color";
+import { FontOptions } from "../options/font-options";
 declare class Scene implements Ani {
     fps: number;
     sec: number;
@@ -19,6 +20,7 @@ declare class Scene implements Ani {
     hint: string;
     player: Timer;
     color: ColorManager;
+    font: FontOptions;
     constructor(options?: object);
     addComponent(c: Component): void;
     loadData(path: string | any): Promise<void>;

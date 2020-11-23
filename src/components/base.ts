@@ -1,5 +1,7 @@
+import { DefaultFontOptions } from "./../options/font-options";
 import { merge } from "lodash-es";
 import Ani from "../base/ani";
+import { FontOptions } from "../options/font-options";
 import Position from "../utils/position";
 import { Component } from "./component";
 export abstract class Base implements Component {
@@ -12,6 +14,8 @@ export abstract class Base implements Component {
   constructor(options: any) {
     this.reset(options);
   }
+  font: FontOptions;
+  ctx: CanvasRenderingContext2D;
 
   reset(options: any): void {
     merge(this, options);

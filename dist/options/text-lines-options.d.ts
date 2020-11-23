@@ -1,7 +1,7 @@
 import { BaseOptions } from "./base-options";
+import { FontOptions } from "./font-options";
 export interface TextLinesOptions extends BaseOptions {
     fillStyle?: string | CanvasGradient | CanvasPattern;
-    font?: string;
-    fontSize?: number;
+    font?: FontOptions;
     lineSpacing?: number;
 }

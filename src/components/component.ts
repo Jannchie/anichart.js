@@ -1,7 +1,8 @@
+import { Fontable } from "./../options/font-options";
 import Ani from "../base/ani";
 import Position from "../utils/position";
 
-interface Component {
+interface Component extends Fontable {
   // 图表对象
   ani: Ani;
   // 位置

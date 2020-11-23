@@ -1,3 +1,4 @@
+import { FontOptions } from "./../options/font-options";
 import * as _ from "lodash";
 
 if (typeof window === "undefined") {
@@ -9,22 +10,22 @@ interface EnhancedCanvasRenderingContext2D extends CanvasRenderingContext2D {
     img: CanvasImageSource,
     x: number,
     y: number,
-    imageHeight: number,
-    imageWidth: number,
+    imgH: number,
+    imgW: number,
     r: number
   ): void;
-  radiusArea(left: number, top: number, w: number, h: number, r: number): void;
-  fillRadiusRect(
-    left: number,
-    top: number,
-    w: number,
-    h: number,
-    r: number
-  ): void;
+  radiusArea(l: number, t: number, w: number, h: number, r: number): void;
+  fillRadiusRect(l: number, t: number, w: number, h: number, r: number): void;
   fillCircle(x: number, y: number, r: number): void;
+  setFontOptions(font: FontOptions): void;
 }
 
 export function enhanceCtx(ctx: any): EnhancedCanvasRenderingContext2D {
+  ctx.setFontOptions = (font: FontOptions) => {
+    ctx.font = `${font.fontStyle} ${font.fontVariant} ${font.fontWeight} ${font.fontSize}px ${font.font}`;
+    ctx.textAlign = font.textAlign;
+    ctx.textBaseline = font.textBaseline;
+  };
   ctx.fillCircle = (x: number, y: number, r: number) => {
     return ctx.fillRadiusRect(x - r, y - r, r * 2, r * 2, r);
   };
@@ -32,28 +33,18 @@ export function enhanceCtx(ctx: any): EnhancedCanvasRenderingContext2D {
     img: CanvasImageSource,
     x = 0,
     y = 0,
-    imageHeight = 100,
-    imageWidth = 100,
+    imgH = 100,
+    imgW = 100,
     r = 4
   ) => {
     if (img != undefined) {
       ctx.save();
       ctx.beginPath();
-      ctx.radiusArea(x, y, imageWidth, imageHeight, r);
-      ctx.clip(); //call the clip method so the next render is clipped in last path
+      ctx.radiusArea(x, y, imgW, imgH, r);
+      ctx.clip();
       ctx.closePath();
       try {
-        ctx.drawImage(
-          img,
-          0,
-          0,
-          img.width,
-          img.height,
-          x,
-          y,
-          imageWidth,
-          imageHeight
-        );
+        ctx.drawImage(img, 0, 0, img.width, img.height, x, y, imgW, imgH);
       } catch (error) {
         console.log(error);
       }

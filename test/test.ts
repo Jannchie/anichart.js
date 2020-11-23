@@ -19,8 +19,7 @@ function calPos(n: number) {
 }
 let lines = new ani.TextLines({
   fillStyle: "#FFF",
-  font: "Sarasa Mono SC",
-  fontSize: 18,
+  font: { fontSize: 18, font: "Sarasa Mono SC" },
   lineSpacing: 8,
   pos: { x: 50, y: 50 },
 });
@@ -39,7 +38,27 @@ lines.addComponent(
     fade: 0.5,
     last: 2,
     text: "淡入淡出文字 - 自定义字号",
-    fontSize: 24,
+    font: { fontSize: 28 },
+  })
+);
+
+lines.addComponent(
+  new ani.FadeText({
+    time: 0.5,
+    fade: 0.5,
+    last: 2,
+    text: "Oblique / Small Caps / Bold",
+    font: { fontStyle: "oblique", fontVariant: "small-caps", fontWeight: 800 },
+  })
+);
+
+lines.addComponent(
+  new ani.FadeText({
+    time: 0.5,
+    fade: 0.5,
+    last: 2,
+    text: "仅仅加粗的字体",
+    font: { fontWeight: "bolder" },
   })
 );
 

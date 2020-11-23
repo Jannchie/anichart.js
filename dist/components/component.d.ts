@@ -1,6 +1,7 @@
+import { Fontable } from "./../options/font-options";
 import Ani from "../base/ani";
 import Position from "../utils/position";
-interface Component {
+interface Component extends Fontable {
     ani: Ani;
     pos: Position | Function;
     alpha: number | Function;

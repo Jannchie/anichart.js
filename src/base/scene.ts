@@ -1,3 +1,4 @@
+import { DefaultFontOptions } from "./../options/font-options";
 import { merge } from "lodash-es";
 import {
   enhanceCtx,
@@ -11,6 +12,7 @@ import { csvParse, DSVRowArray } from "d3-dsv";
 import { interval, Timer } from "d3-timer";
 import * as fs from "fs";
 import { ColorManager } from "./color";
+import { FontOptions } from "../options/font-options";
 class Scene implements Ani {
   fps = 12;
   sec = 6;
@@ -27,12 +29,13 @@ class Scene implements Ani {
 
   hint: string;
   player: Timer;
-
   color: ColorManager = new ColorManager();
+  font: FontOptions = new DefaultFontOptions();
 
   constructor(options: object = {}) {
     this.setOptions(options);
   }
+
   addComponent(c: Component): void {
     c.ani = this;
     this.components.push(c);

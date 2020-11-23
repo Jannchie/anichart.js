@@ -1,5 +1,10 @@
 import { Base } from "./base";
-export declare class Group extends Base {
+import { Component } from "./component";
+export interface groupable {
+    addComponent(c: Component): void;
+    components: Component[];
+}
+export declare class Group extends Base implements groupable {
     render(n: number): void;
     components: Base[];
     constructor(options: any);

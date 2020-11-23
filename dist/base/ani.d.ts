@@ -1,7 +1,8 @@
+import { Fontable, FontOptions } from "./../options/font-options";
 import { Colorable } from "./color";
 import { Component } from "../components";
 import { EnhancedCanvasRenderingContext2D } from "../utils/enhance-ctx";
-interface Ani {
+interface Ani extends Fontable {
     width: number;
     height: number;
     fps: number;
@@ -10,6 +11,7 @@ interface Ani {
     totalFrames: number;
     components: Component[];
     color: Colorable;
+    font: FontOptions;
     data: any;
     meta: any;
     canvas: HTMLCanvasElement;
