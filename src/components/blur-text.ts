@@ -14,7 +14,7 @@ export class BlurText extends FadeText {
     super.preRender(n);
   }
   render(n: number) {
-    this.ani.ctx.filter = `blur(${(1 - this._alpha) * this._blur}px)`;
+    this.ani.ctx.filter = `blur(${(1 - this.cAlpha) * this._blur}px)`;
     super.render(n);
   }
 }

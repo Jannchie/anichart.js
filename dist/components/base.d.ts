@@ -5,8 +5,8 @@ export declare abstract class Base implements Component {
     alpha: number | Function;
     ani: Ani;
     pos: Position | Function;
-    protected _alpha: number;
-    protected _pos: Position;
+    protected cAlpha: number;
+    protected cPos: Position;
     constructor(options: any);
     reset(options: any): void;
     saveCtx(): void;

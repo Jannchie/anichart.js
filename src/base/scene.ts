@@ -10,47 +10,27 @@ import { csv } from "d3-fetch";
 import { csvParse, DSVRowArray } from "d3-dsv";
 import { interval, Timer } from "d3-timer";
 import * as fs from "fs";
+import { ColorManager } from "./color";
 class Scene implements Ani {
-  fps: number;
-  sec: number;
-  totalFrames: number;
-  cFrame: number;
+  fps = 12;
+  sec = 6;
+  width = 1366;
+  height = 768;
+  output = false;
+  cFrame = 0;
   components: Component[] = [];
+  totalFrames: number;
   canvas: HTMLCanvasElement;
   ctx: EnhancedCanvasRenderingContext2D;
-  width: number;
-  height: number;
-  output: boolean;
   data: any;
   meta: any;
 
-  background: string;
-  colorScheme: string[] = [];
   hint: string;
   player: Timer;
 
+  color: ColorManager = new ColorManager();
+
   constructor(options: object = {}) {
-    this.fps = 12;
-    this.sec = 6;
-    this.width = 1366;
-    this.height = 768;
-    this.cFrame = 0;
-    this.colorScheme = [
-      "#27C",
-      "#FB0",
-      "#FFF",
-      "#2C8",
-      "#D23",
-      "#0CE",
-      "#E8A",
-      "#DDA",
-      "#C86",
-      "#F72",
-      "#C8C",
-      "#BCA",
-      "#F27",
-    ];
-    this.background = "1E1E1E";
     this.setOptions(options);
   }
   addComponent(c: Component): void {
@@ -168,7 +148,7 @@ class Scene implements Ani {
 
   private drawBackground() {
     this.ctx.save();
-    this.ctx.fillStyle = this.background;
+    this.ctx.fillStyle = this.color.background;
     this.ctx.fillRect(0, 0, this.width, this.height);
     this.ctx.restore();
   }

@@ -1,5 +1,5 @@
+import { Base } from "./../components/base";
 import * as d3 from "d3";
-import { Base } from "../components";
 import { LineChartOptions } from "../options/line-chart-options";
 export declare class LineChart extends Base {
     shape: {
@@ -11,7 +11,8 @@ export declare class LineChart extends Base {
         y: d3.ScaleLinear<number, number, never>;
     };
     dataGroup: Map<any, any[]>;
-    line: d3.Line<[number, number]>;
+    lineGen: d3.Line<[number, number]>;
+    areaGen: d3.Area<[number, number]>;
     padding: {
         left: number;
         right: number;
@@ -23,7 +24,12 @@ export declare class LineChart extends Base {
     dtRange: [number, number];
     showTime: [number, number];
     count: number;
-    area: d3.Area<[number, number]>;
+    lineWidth: number;
+    private xMax;
+    dateKey: string;
+    valueKey: string;
+    idKey: string;
+    colorKey: string;
     constructor(options: LineChartOptions);
     reset(options: LineChartOptions): void;
     private setLine;

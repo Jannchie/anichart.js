@@ -24,6 +24,7 @@ export class Group extends Base {
     }
   }
   draw(n: number) {
+    super.draw(n);
     this.components.forEach((c) => {
       c.draw(n);
     });

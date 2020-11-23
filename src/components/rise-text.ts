@@ -16,7 +16,7 @@ class RiseText extends FadeText {
   }
   preRender(n: number) {
     super.preRender(n);
-    this.offsetY = this.offsetYFunc(easeBackOut(this._alpha));
+    this.offsetY = this.offsetYFunc(easeBackOut(this.cAlpha));
   }
   render(n: number) {
     this.ani.ctx.fillText(this._text, 0, this.offsetY);

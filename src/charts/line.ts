@@ -1,6 +1,6 @@
+import { Base } from "./../components/base";
 import { scaleLinear, scaleTime } from "d3-scale";
 import * as d3 from "d3";
-import { Base } from "../components";
 import { LineChartOptions } from "../options/line-chart-options";
 
 export class LineChart extends Base {
@@ -10,15 +10,20 @@ export class LineChart extends Base {
     y: d3.ScaleLinear<number, number, never>;
   };
   dataGroup: Map<any, any[]>;
-  line: d3.Line<[number, number]>;
+  lineGen: d3.Line<[number, number]>;
+  areaGen: d3.Area<[number, number]>;
   padding: { left: number; right: number; top: number; bottom: number };
   data: any;
   tsRange: [number, number];
   dtRange: [number, number];
   showTime: [number, number];
-  count: number = 0;
-  area: d3.Area<[number, number]>;
-
+  count = 0;
+  lineWidth = 4;
+  private xMax: number;
+  dateKey = "date";
+  valueKey = "value";
+  idKey = "id";
+  colorKey = "id";
   constructor(options: LineChartOptions) {
     super(options);
     this.reset(options);
@@ -38,8 +43,8 @@ export class LineChart extends Base {
       }
       if (this.data) {
         this.data.map((d: any) => {
-          d["date"] = new Date(d["date"]).getTime();
-          d["value"] = Number(d["value"]);
+          d[this.dateKey] = new Date(d[this.dateKey]).getTime();
+          d[this.valueKey] = Number(d[this.valueKey]);
           return d;
         });
         this.setRange();
@@ -50,21 +55,21 @@ export class LineChart extends Base {
     }
   }
   private setLine() {
-    this.line = d3
+    this.lineGen = d3
       .line()
-      .defined((d: any) => !isNaN(d["value"]))
-      .x((d: any) => this.scales.x(d["date"]))
-      .y((d: any) => this.scales.y(d["value"]));
-    this.area = d3
+      .defined((d: any) => !isNaN(d[this.valueKey]))
+      .x((d: any) => this.scales.x(d[this.dateKey]))
+      .y((d: any) => this.scales.y(d[this.valueKey]));
+    this.areaGen = d3
       .area()
-      .defined((d: any) => !isNaN(d["value"]))
-      .x((d: any) => this.scales.x(d["date"]))
+      .defined((d: any) => !isNaN(d[this.valueKey]))
+      .x((d: any) => this.scales.x(d[this.dateKey]))
       .y0(this.scales.y(0))
-      .y1((d: any) => this.scales.y(d["value"]));
+      .y1((d: any) => this.scales.y(d[this.valueKey]));
   }
 
   private setDataGroup() {
-    this.dataGroup = d3.group(this.ani.data, (d: any) => d["id"]);
+    this.dataGroup = d3.group(this.ani.data, (d: any) => d[this.idKey]);
   }
 
   private setScale() {
@@ -83,8 +88,8 @@ export class LineChart extends Base {
     if (!n) {
       n = this.ani.sec * this.ani.fps - 1;
     }
-    this.tsRange = d3.extent(this.data, (d: any) => <number>d["date"]);
-    this.dtRange = d3.extent(this.data, (d: any) => <number>d["value"]);
+    this.tsRange = d3.extent(this.data, (d: any) => <number>d[this.dateKey]);
+    this.dtRange = d3.extent(this.data, (d: any) => <number>d[this.valueKey]);
   }
   preRender(n: number): void {
     super.preRender(n);
@@ -95,53 +100,46 @@ export class LineChart extends Base {
     this.setScale();
     this.setLine();
     this.setDataGroup();
+    this.xMax = this.cPos.x + this.shape.width - this.padding.right;
   }
   render(n: number): void {
     this.setRange(n);
-    this.dataGroup.forEach((v) => {
-      //----------
+    this.dataGroup.forEach((v, k: string) => {
+      //------------------------------------------------------------
       // 裁剪曲线绘图区域
       this.ani.ctx.save();
       this.ani.ctx.beginPath();
       this.ani.ctx.rect(
-        this._pos.x + this.padding.left,
-        this._pos.y + this.padding.top,
+        this.cPos.x + this.padding.left,
+        this.cPos.y + this.padding.top,
         this.shape.width - this.padding.left - this.padding.right,
         this.shape.height - this.padding.top - this.padding.bottom + 1
       );
       this.ani.ctx.closePath();
       this.ani.ctx.clip();
-      this.ani.ctx.strokeStyle = "#FFF";
-      this.ani.ctx.lineWidth = 2;
+      let color = this.ani.color.getColor(k);
+      this.ani.ctx.strokeStyle = color;
+      this.ani.ctx.lineWidth = this.lineWidth;
       // 绘制曲线
-      let path = new Path2D(this.line.curve(d3.curveMonotoneX)(v));
-      let area = new Path2D(this.area.curve(d3.curveMonotoneX)(v));
+      let path = new Path2D(this.lineGen.curve(d3.curveMonotoneX)(v));
+      let area = new Path2D(this.areaGen.curve(d3.curveMonotoneX)(v));
       this.ani.ctx.stroke(path);
-      // this.ani.ctx.fillStyle = "#FFF";
-      // this.ani.ctx.fill(path);
       // 取消裁剪
       this.ani.ctx.restore();
-      //----------
+      //------------------------------------------------------------
+      // 寻找小圆点的Y轴坐标
       let y = this.findY(area);
-
-      this.ani.ctx.fillStyle = "#fff";
-
-      this.ani.ctx.fillRadiusRect(
-        this._pos.x + this.shape.width - this.padding.right - 5,
-        y - 5,
-        10,
-        10,
-        5
-      );
+      this.ani.ctx.fillStyle = color;
+      this.ani.ctx.fillCircle(this.xMax, y, 10);
     });
   }
 
   private findY(area: Path2D) {
-    let l = this._pos.y + this.padding.top;
-    let r = this._pos.y + this.shape.height - this.padding.bottom + 1;
-    let x = this._pos.x + this.shape.width - this.padding.right;
+    let l = this.cPos.y + this.padding.top;
+    let r = this.cPos.y + this.shape.height - this.padding.bottom + 1;
+    let x = this.xMax;
     // 9w => 4k
-    // 使用中值优化，提升22倍性能
+    // 使用中值优化，提升>22倍的性能
     let b = d3.bisector((d: number) => {
       this.count++;
       return this.ani.ctx.isPointInPath(area, x, d);

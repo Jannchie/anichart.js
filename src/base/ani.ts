@@ -1,3 +1,4 @@
+import { Colorable } from "./color";
 import { Component } from "../components";
 import { EnhancedCanvasRenderingContext2D } from "../utils/enhance-ctx";
 interface Ani {
@@ -11,8 +12,7 @@ interface Ani {
   totalFrames: number;
   components: Component[];
 
-  background: string;
-  colorScheme: string[];
+  color: Colorable;
 
   data: any;
   meta: any;

@@ -21,9 +21,13 @@ interface EnhancedCanvasRenderingContext2D extends CanvasRenderingContext2D {
     h: number,
     r: number
   ): void;
+  fillCircle(x: number, y: number, r: number): void;
 }
 
 export function enhanceCtx(ctx: any): EnhancedCanvasRenderingContext2D {
+  ctx.fillCircle = (x: number, y: number, r: number) => {
+    return ctx.fillRadiusRect(x - r, y - r, r * 2, r * 2, r);
+  };
   ctx.drawClipedImg = (
     img: CanvasImageSource,
     x = 0,
