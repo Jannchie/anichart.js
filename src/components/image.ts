@@ -24,7 +24,6 @@ export class ImageComponent extends Base {
   }
   render(n: number): void {
     if (this.image) {
-      console.log(this.cPos.x);
       this.ani.ctx.drawImage(
         this.image,
         0,

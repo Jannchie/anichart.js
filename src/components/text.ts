@@ -5,15 +5,15 @@ import {
 } from "./../options/font-options";
 import { Base } from ".";
 import { TextOptions } from "../options/text-options";
-import { Position } from "../utils/position";
+import { Pos } from "../utils/position";
 import * as _ from "lodash";
 class Text extends Base {
   text: string | Function;
   fillStyle: string | CanvasGradient | CanvasPattern;
-  offset: Position | Function = { x: 0, y: 0 };
+  offset: Pos | Function = { x: 0, y: 0 };
   _text: string;
   font: FontOptions;
-  protected cOffset: Position;
+  protected cOffset: Pos;
   private finalFont: FontOptions;
   constructor(options: TextOptions) {
     super(options);

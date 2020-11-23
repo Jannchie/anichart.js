@@ -1,6 +1,6 @@
-interface Position {
+interface Pos {
   x: number;
   y: number;
 }
-export default Position;
-export { Position };
+export default Pos;
+export { Pos };

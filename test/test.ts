@@ -1,7 +1,5 @@
-import { ImageComponent } from "./../src/components/image";
 import * as ani from "../src/index";
 import * as path from "path";
-import * as d3 from "d3";
 let d = path.join(__dirname, "./data/test.csv");
 let s = new ani.Series();
 let sceneOptions = {
@@ -105,11 +103,11 @@ logoScene.addComponent(
     last: 2,
     blur: 20,
     fade: 0.3,
+    shadow: {
+      enable: true,
+    },
   })
 );
-
-console.log(sceneOptions.width / 2);
-//
 
 logoScene.addComponent(
   new ani.BlurText({
@@ -126,6 +124,9 @@ logoScene.addComponent(
     last: 1.8,
     blur: 15,
     fade: 1,
+    shadow: {
+      enable: true,
+    },
   })
 );
 logoScene.setCanvas("canvas");

@@ -1,24 +1,29 @@
-import { DefaultFontOptions } from "./../options/font-options";
+import { DefaultShadowOptions } from "./../options/shadow-options";
 import { merge } from "lodash-es";
 import Ani from "../base/ani";
 import { FontOptions } from "../options/font-options";
-import Position from "../utils/position";
+import { ShadowOptions } from "../options/shadow-options";
+import Pos from "../utils/position";
 import { Component } from "./component";
 export abstract class Base implements Component {
   alpha: number | Function;
   ani: Ani;
-  pos: Position | Function;
+  pos: Pos | Function;
   protected cAlpha: number;
-  protected cPos: Position;
+  protected cPos: Pos;
 
   constructor(options: any) {
     this.reset(options);
   }
+  shadow: ShadowOptions;
   font: FontOptions;
   ctx: CanvasRenderingContext2D;
 
   reset(options: any = {}): void {
-    if (options) merge(this, options);
+    if (options) {
+      merge(this, options);
+      this.shadow = merge(new DefaultShadowOptions(), this.shadow);
+    }
   }
 
   saveCtx(): void {
@@ -33,6 +38,12 @@ export abstract class Base implements Component {
     this.cPos = this.getValue(this.pos, n);
     this.ani.ctx.globalAlpha = this.cAlpha;
     this.ani.ctx.translate(this.cPos.x, this.cPos.y);
+    if (this.shadow && this.shadow.enable) {
+      this.ani.ctx.shadowBlur = this.shadow.blur;
+      this.ani.ctx.shadowColor = this.shadow.color;
+      this.ani.ctx.shadowOffsetX = this.shadow.offset.x;
+      this.ani.ctx.shadowOffsetY = this.shadow.offset.y;
+    }
   }
 
   abstract render(n: number): void;
