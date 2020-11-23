@@ -46,7 +46,8 @@ class Scene implements Ani {
   ready(): void {
     throw new Error("Method not implemented.");
   }
-  play(): void {
+  play() {
+    this.update();
     if (this.player) {
       this.player.stop();
       this.player = null;

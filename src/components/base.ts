@@ -17,7 +17,7 @@ export abstract class Base implements Component {
   font: FontOptions;
   ctx: CanvasRenderingContext2D;
 
-  reset(options?: any): void {
+  reset(options: any = {}): void {
     if (options) merge(this, options);
   }
 

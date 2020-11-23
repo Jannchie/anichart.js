@@ -10,7 +10,7 @@ import * as _ from "lodash";
 class Text extends Base {
   text: string | Function;
   fillStyle: string | CanvasGradient | CanvasPattern;
-  offset: Position | Function;
+  offset: Position | Function = { x: 0, y: 0 };
   _text: string;
   font: FontOptions;
   protected cOffset: Position;
@@ -18,7 +18,7 @@ class Text extends Base {
   constructor(options: TextOptions) {
     super(options);
   }
-  reset(options?: TextOptions) {
+  reset(options: TextOptions = {}) {
     super.reset(options);
     this.finalFont = _.merge(new DefaultFontOptions(), this.font);
   }

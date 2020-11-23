@@ -21,7 +21,7 @@ export class GroupComponent extends Base implements Groupable {
     c.reset({});
     this.ani.hinter.drawHint(`Component Added: ${c.constructor.name}`);
   }
-  reset(options?: any) {
+  reset(options: any = {}) {
     super.reset(options);
     if (this.components) {
       this.components.forEach((c) => {

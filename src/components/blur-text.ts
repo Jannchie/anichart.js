@@ -6,7 +6,7 @@ export class BlurText extends FadeText {
   constructor(options: BlurTextOptions) {
     super(options);
   }
-  reset(options?: BlurTextOptions) {
+  reset(options: BlurTextOptions = {}) {
     super.reset(options);
     this._blur = options.blur ? options.blur : 10;
   }

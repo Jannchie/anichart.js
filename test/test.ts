@@ -3,8 +3,8 @@ import * as ani from "../src/index";
 import * as path from "path";
 import { scaleLinear } from "d3-scale";
 let d = path.join(__dirname, "./data/test.csv");
-
-const a = new ani.Scene({
+let s = new ani.Series();
+let sceneOptions = {
   height: 400,
   width: 1600,
   output: false,
@@ -12,7 +12,8 @@ const a = new ani.Scene({
   sec: 8,
   fps: 30,
   itemCount: 4,
-});
+};
+const a = new ani.Scene(sceneOptions);
 
 a.setCanvas();
 
@@ -91,9 +92,49 @@ lines.addComponent(
 );
 let lineChart = new ani.LineChart({});
 a.addComponent(lineChart);
+sceneOptions.sec = 5;
+let logoScene = new ani.Scene(sceneOptions);
+logoScene.addComponent(
+  new ani.BlurText({
+    pos: { x: sceneOptions.width / 2, y: sceneOptions.height / 2 },
+    fillStyle: "#FFF",
+    font: {
+      fontSize: 50,
+      fontWeight: "bolder",
+      textBaseline: "top",
+      textAlign: "center",
+      font: "微软雅黑",
+    },
+    text: "Anichart.js",
+    time: 1,
+    last: 2,
+    blur: 2000,
+    fade: 1.5,
+  })
+);
+logoScene.addComponent(
+  new ani.BlurText({
+    pos: { x: sceneOptions.width / 2, y: sceneOptions.height / 2 },
+    fillStyle: "#777",
+    font: {
+      fontSize: 24,
+      textBaseline: "bottom",
+      textAlign: "center",
+      font: "微软雅黑",
+    },
+    text: "Powered By Jannchie Studio",
+    time: 1,
+    last: 2,
+    blur: 2000,
+    fade: 1.5,
+  })
+);
+logoScene.setCanvas("canvas");
+s.scenes.push(logoScene);
+s.scenes.push(a);
 (async () => {
   await lineChart.loadData(d);
-  a.play();
+  await s.play();
 })();
 
 export default a;

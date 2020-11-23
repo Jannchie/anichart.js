@@ -11,7 +11,7 @@ export class TextLines extends GroupComponent implements Fontable {
     super(options);
     this.reset(options);
   }
-  reset(options?: TextLinesOptions) {
+  reset(options: TextLinesOptions = {}) {
     super.reset(options);
     let offset = 0;
     if (this.components) {

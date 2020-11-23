@@ -42,7 +42,7 @@ export class LineChart extends ChartCompoment {
     this.labelFont.textBaseline = "middle";
     this.labelFont.fontSize = 18;
   }
-  reset(options?: LineChartOptions) {
+  reset(options: LineChartOptions = {}) {
     super.reset(options);
     if (this.ani) {
       if (!this.shape) {

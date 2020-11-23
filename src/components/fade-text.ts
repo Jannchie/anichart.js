@@ -5,9 +5,10 @@ class FadeText extends Text {
   constructor(options: FadeTextOptions) {
     super(options);
   }
-  reset(options?: FadeTextOptions) {
+  reset(options: FadeTextOptions = {}) {
     super.reset(options);
     // 计算显示时间
+    if (!options) return;
     if (options.time !== undefined) {
       let fade = options.fade != undefined ? options.fade : 0;
       let last = options.last != undefined ? options.last : 2;

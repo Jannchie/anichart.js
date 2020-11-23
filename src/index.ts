@@ -1,5 +1,3 @@
-import { GroupComponent } from "./components/group";
-import { TextLines } from "./components/text-lines";
 /**
  * Anichart.js
  *
