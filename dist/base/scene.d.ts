@@ -1,6 +1,7 @@
 import { EnhancedCanvasRenderingContext2D } from "../utils/enhance-ctx";
 import Ani from "./ani";
 import { Component } from "../components";
+import { DSVRowArray } from "d3-dsv";
 import { Timer } from "d3-timer";
 import { ColorManager } from "./color";
 import { FontOptions } from "../options/font-options";
@@ -15,8 +16,8 @@ declare class Scene implements Ani {
     totalFrames: number;
     canvas: HTMLCanvasElement;
     ctx: EnhancedCanvasRenderingContext2D;
-    data: any;
-    meta: any;
+    data: DSVRowArray<string>;
+    meta: DSVRowArray<string>;
     hint: string;
     player: Timer;
     color: ColorManager;

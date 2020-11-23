@@ -30,7 +30,7 @@ class Ctl {
       .attr("value", 0)
       .on("input", () => {
         aniChart.currentFrame = +this.slider.value;
-        this.updatectlCurrentFrame(aniChart);
+        this.updateCtlCFrame(aniChart);
         aniChart.drawFrame(aniChart.currentFrame);
       });
     this.ctlCurrentFrame = ctl
@@ -55,15 +55,15 @@ class Ctl {
     ctl
       .append("text")
       .text(` / ${format(",d")(a.totalTrueFrames + a.freeze + a.frameRate)}`);
-    this.updatectlCurrentFrame(aniChart);
+    this.updateCtlCFrame(aniChart);
     this.slider = slider.node();
   }
   updateCtl(aniChart) {
     aniChart.slider.value = n;
-    this.updatectlCurrentFrame(aniChart);
+    this.updateCtlCFrame(aniChart);
   }
 
-  updatectlCurrentFrame(aniChart) {
+  updateCtlCFrame(aniChart) {
     this.ctlCurrentFrame.node().value = `${aniChart.currentFrame + 1}`;
   }
 }

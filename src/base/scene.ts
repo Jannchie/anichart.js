@@ -24,8 +24,8 @@ class Scene implements Ani {
   totalFrames: number;
   canvas: HTMLCanvasElement;
   ctx: EnhancedCanvasRenderingContext2D;
-  data: any;
-  meta: any;
+  data: DSVRowArray<string>;
+  meta: DSVRowArray<string>;
 
   hint: string;
   player: Timer;

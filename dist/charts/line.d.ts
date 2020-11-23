@@ -1,6 +1,8 @@
+import { DefaultFontOptions } from "./../options/font-options";
 import { Base } from "./../components/base";
 import * as d3 from "d3";
 import { LineChartOptions } from "../options/line-chart-options";
+import { DSVRowArray } from "d3";
 export declare class LineChart extends Base {
     shape: {
         width: number;
@@ -19,17 +21,27 @@ export declare class LineChart extends Base {
         top: number;
         bottom: number;
     };
-    data: any;
+    margin: {
+        left: number;
+        right: number;
+        top: number;
+        bottom: number;
+    };
+    data: DSVRowArray<string>;
     tsRange: [number, number];
     dtRange: [number, number];
     showTime: [number, number];
-    count: number;
     lineWidth: number;
-    private xMax;
     dateKey: string;
     valueKey: string;
     idKey: string;
     colorKey: string;
+    pointR: number;
+    labelFont: DefaultFontOptions;
+    timeFormat: string;
+    valueFormat: string;
+    private xMax;
+    getLabel(k: string, y: number): string;
     constructor(options: LineChartOptions);
     reset(options: LineChartOptions): void;
     private setLine;

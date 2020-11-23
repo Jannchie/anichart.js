@@ -100,7 +100,7 @@ class BaseAniChart {
       try {
         if (this.useCtl) {
           this.ctl.slider.value = this.currentFrame;
-          this.ctl.updatectlCurrentFrame(this);
+          this.ctl.updateCtlCFrame(this);
         }
         await this.drawFrame(this.currentFrame);
         if (this.output) {
