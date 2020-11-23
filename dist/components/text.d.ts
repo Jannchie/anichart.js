@@ -11,7 +11,7 @@ declare class Text extends Base {
     protected cOffset: Position;
     private finalFont;
     constructor(options: TextOptions);
-    reset(options: TextOptions): void;
+    reset(options?: TextOptions): void;
     preRender(n: number): void;
     render(n: number): void;
 }

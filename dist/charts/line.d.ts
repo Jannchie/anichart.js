@@ -1,9 +1,9 @@
 import { DefaultFontOptions } from "./../options/font-options";
-import { Base } from "./../components/base";
 import * as d3 from "d3";
 import { LineChartOptions } from "../options/line-chart-options";
 import { DSVRowArray } from "d3";
-export declare class LineChart extends Base {
+import { ChartCompoment } from "../components/chart";
+export declare class LineChart extends ChartCompoment {
     shape: {
         width: number;
         height: number;
@@ -43,7 +43,7 @@ export declare class LineChart extends Base {
     private xMax;
     getLabel(k: string, y: number): string;
     constructor(options: LineChartOptions);
-    reset(options: LineChartOptions): void;
+    reset(options?: LineChartOptions): void;
     private setLine;
     private setDataGroup;
     private setScale;

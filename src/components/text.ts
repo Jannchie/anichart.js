@@ -18,7 +18,7 @@ class Text extends Base {
   constructor(options: TextOptions) {
     super(options);
   }
-  reset(options: TextOptions) {
+  reset(options?: TextOptions) {
     super.reset(options);
     this.finalFont = _.merge(new DefaultFontOptions(), this.font);
   }

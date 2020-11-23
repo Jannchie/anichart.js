@@ -8,7 +8,7 @@ class RiseText extends FadeText {
   constructor(options: RiseTextOptions) {
     super(options);
   }
-  reset(options: RiseTextOptions) {
+  reset(options?: RiseTextOptions) {
     super.reset(options);
     if (options.offsetY == undefined) options.offsetY = 20;
     if (options.reverse) options.offsetY = -options.offsetY;

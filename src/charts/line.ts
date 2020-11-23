@@ -4,8 +4,9 @@ import { scaleLinear } from "d3-scale";
 import * as d3 from "d3";
 import { LineChartOptions } from "../options/line-chart-options";
 import { DSVRowArray } from "d3";
+import { ChartCompoment } from "../components/chart";
 
-export class LineChart extends Base {
+export class LineChart extends ChartCompoment {
   shape: { width: number; height: number };
   scales: {
     x: d3.ScaleLinear<number, number, never>;
@@ -41,10 +42,9 @@ export class LineChart extends Base {
     this.labelFont.textBaseline = "middle";
     this.labelFont.fontSize = 18;
   }
-  reset(options: LineChartOptions) {
+  reset(options?: LineChartOptions) {
     super.reset(options);
     if (this.ani) {
-      this.data = this.ani.data;
       if (!this.shape) {
         this.shape = { width: this.ani.width, height: this.ani.height };
       }
@@ -79,7 +79,6 @@ export class LineChart extends Base {
           this.dataGroup.forEach((_, k) => {
             this.ani.ctx.setFontOptions(this.labelFont);
             let current = this.ani.ctx.measureText(this.getLabel(k, y));
-            console.log(this.getLabel(k, y));
             if (current.width > max) max = current.width;
           });
           return max;
@@ -102,7 +101,7 @@ export class LineChart extends Base {
   }
 
   private setDataGroup() {
-    this.dataGroup = d3.group(this.ani.data, (d: any) => d[this.idKey]);
+    this.dataGroup = d3.group(this.data, (d: any) => d[this.idKey]);
   }
 
   private setScale() {

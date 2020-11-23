@@ -2,7 +2,6 @@ const ani = require("../dist/anichart");
 const path = require("path");
 const { scaleLinear } = require("d3-scale");
 let d = path.join(__dirname, "./data/test.csv");
-console.log(d);
 
 const a = new ani.Scene({
   height: 400,
@@ -70,7 +69,4 @@ lines.addComponent(
   a.play();
 })();
 
-if (typeof window != "undefined") {
-  console.log(a);
-}
 module.exports = a;

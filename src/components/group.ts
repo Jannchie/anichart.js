@@ -1,10 +1,11 @@
 import { Base } from "./base";
 import { Component } from "./component";
-export interface groupable {
+export interface Groupable {
   addComponent(c: Component): void;
   components: Component[];
 }
-export class Group extends Base implements groupable {
+
+export class GroupComponent extends Base implements Groupable {
   render(n: number): void {
     return;
   }
@@ -20,7 +21,7 @@ export class Group extends Base implements groupable {
     c.reset({});
     this.ani.hinter.drawHint(`Component Added: ${c.constructor.name}`);
   }
-  reset(options: any) {
+  reset(options?: any) {
     super.reset(options);
     if (this.components) {
       this.components.forEach((c) => {

@@ -17,8 +17,8 @@ export abstract class Base implements Component {
   font: FontOptions;
   ctx: CanvasRenderingContext2D;
 
-  reset(options: any): void {
-    merge(this, options);
+  reset(options?: any): void {
+    if (options) merge(this, options);
   }
 
   saveCtx(): void {
@@ -42,10 +42,15 @@ export abstract class Base implements Component {
   }
 
   draw(n: number) {
-    this.saveCtx();
-    this.preRender(n);
-    this.render(n);
-    this.restoreCtx();
+    try {
+      this.saveCtx();
+      this.preRender(n);
+      this.render(n);
+      this.restoreCtx();
+    } catch (e) {
+      console.error(e);
+      this.ani.play();
+    }
   }
 
   protected getValue(obj: any, n: number): any {

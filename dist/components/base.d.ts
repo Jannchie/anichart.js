@@ -11,7 +11,7 @@ export declare abstract class Base implements Component {
     constructor(options: any);
     font: FontOptions;
     ctx: CanvasRenderingContext2D;
-    reset(options: any): void;
+    reset(options?: any): void;
     saveCtx(): void;
     preRender(n: number): void;
     abstract render(n: number): void;

@@ -10,7 +10,7 @@ interface Component extends Fontable {
   // alpha
   alpha: number | Function;
   // 重新设置
-  reset(options: object): void;
+  reset(options?: object): void;
   // 预渲染，计算属性
   preRender(n: number): void;
   // 渲染

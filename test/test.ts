@@ -1,3 +1,4 @@
+import { LineChart } from "./../src/charts/line";
 import * as ani from "../src/index";
 import * as path from "path";
 import { scaleLinear } from "d3-scale";
@@ -88,13 +89,11 @@ lines.addComponent(
     blur: 4,
   })
 );
-
-a.addComponent(new ani.LineChart({}));
+let lineChart = new ani.LineChart({});
+a.addComponent(lineChart);
 (async () => {
-  await a.loadData(d);
+  await lineChart.loadData(d);
   a.play();
 })();
-if (typeof window != "undefined") {
-  console.log(a);
-}
+
 export default a;

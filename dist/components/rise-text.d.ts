@@ -4,7 +4,7 @@ declare class RiseText extends FadeText {
     offsetYFunc: Function;
     private offsetY;
     constructor(options: RiseTextOptions);
-    reset(options: RiseTextOptions): void;
+    reset(options?: RiseTextOptions): void;
     preRender(n: number): void;
     render(n: number): void;
 }

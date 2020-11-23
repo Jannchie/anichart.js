@@ -1,3 +1,4 @@
+import { Hinter } from "./hint";
 import { EnhancedCanvasRenderingContext2D } from "../utils/enhance-ctx";
 import Ani from "./ani";
 import { Component } from "../components";
@@ -18,24 +19,20 @@ declare class Scene implements Ani {
     ctx: EnhancedCanvasRenderingContext2D;
     data: DSVRowArray<string>;
     meta: DSVRowArray<string>;
-    hint: string;
     player: Timer;
     color: ColorManager;
     font: FontOptions;
+    hinter: Hinter;
     constructor(options?: object);
     addComponent(c: Component): void;
-    loadData(path: string | any): Promise<void>;
-    private readCsv;
-    loadMeta(path: string | any): Promise<void>;
     ready(): void;
     play(): void;
     draw(frame: number): void;
-    setOptions(options: object): void;
-    calOptions(): void;
+    setOptions(options?: object): void;
+    update(): void;
     setCanvas(selector?: string): void;
     private initCanvas;
     preRender(): void;
     private drawBackground;
-    private drawHint;
 }
 export { Scene };

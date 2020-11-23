@@ -11,7 +11,6 @@ import { Component } from "../components";
 import { csv } from "d3-fetch";
 import { csvParse, DSVRowArray } from "d3-dsv";
 import { interval, Timer } from "d3-timer";
-import * as fs from "fs";
 import { ColorManager } from "./color";
 import { FontOptions } from "../options/font-options";
 class Scene implements Ani {
@@ -40,47 +39,8 @@ class Scene implements Ani {
     c.ani = this;
     this.components.push(c);
     this.setOptions({});
-    c.reset({});
+    c.reset();
     this.hinter.drawHint(`Component Added: ${c.constructor.name}`);
-  }
-
-  async loadData(path: string | any): Promise<void> {
-    this.hinter.drawHint("Loading Data...");
-    this.data = await this.readCsv(path);
-    this.hinter.drawHint("Loading Data...Finished!");
-    if (this.components) {
-      this.hinter.drawHint(`Refresh Components...`);
-      this.components.forEach((c) => {
-        c.reset({});
-      });
-      this.hinter.drawHint("Refresh Components... Finished!");
-    }
-  }
-
-  private async readCsv(path: string | any): Promise<DSVRowArray<string>> {
-    if (typeof path !== "string") {
-      path = path.default;
-    }
-    if (typeof window === "undefined") {
-      return csvParse(fs.readFileSync(path).toString());
-    } else {
-      if ("object" == typeof path) {
-        return csv(path);
-      }
-      return csv(path);
-    }
-  }
-  async loadMeta(path: string | any): Promise<void> {
-    this.hinter.drawHint("Loading Meta...");
-    this.meta = await this.readCsv(path);
-    this.hinter.drawHint("Loading Data...Finished!");
-    if (this.components) {
-      this.hinter.drawHint(`Refresh Components...`);
-      this.components.forEach((c) => {
-        c.reset({});
-      });
-      this.hinter.drawHint("Refresh Components... Finished!");
-    }
   }
 
   ready(): void {
@@ -113,14 +73,19 @@ class Scene implements Ani {
     }
   }
   draw(frame: number): void {
-    this.drawBackground();
-    this.components.forEach((component) => {
-      component.draw(frame);
-    });
+    try {
+      this.drawBackground();
+      this.components.forEach((component) => {
+        component.draw(frame);
+      });
+    } catch (error) {
+      console.error(error);
+      this.player.stop();
+    }
   }
 
-  setOptions(options: object): void {
-    merge(this, options);
+  setOptions(options?: object): void {
+    if (options) merge(this, options);
     this.update();
   }
   update(): void {
