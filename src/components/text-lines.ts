@@ -1,5 +1,4 @@
 import { TextLinesOptions } from "../options/text-lines-options";
-import Position from "../utils/position";
 import { Group } from "./group";
 import { Text } from "./Text";
 export class TextLines extends Group {

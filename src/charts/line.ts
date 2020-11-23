@@ -36,7 +36,7 @@ export class LineChart extends Base {
         this.shape = { width: this.ani.width, height: this.ani.height };
       }
       if (!this.padding) {
-        this.padding = { left: 50, right: 50, top: 50, bottom: 50 };
+        this.padding = { left: 50, right: 200, top: 50, bottom: 50 };
       }
       if (!this.showTime) {
         this.showTime = [0, this.ani.sec];
@@ -129,8 +129,17 @@ export class LineChart extends Base {
       //------------------------------------------------------------
       // 寻找小圆点的Y轴坐标
       let y = this.findY(area);
+      // 绘制圆点
       this.ani.ctx.fillStyle = color;
       this.ani.ctx.fillCircle(this.xMax, y, 10);
+      this.ani.ctx.textBaseline = "middle";
+      this.ani.ctx.font = "20px Sarasa Mono SC";
+      // 绘制Label
+      this.ani.ctx.fillText(
+        `${k}: ${d3.format(",d")(this.scales.y.invert(y))}`,
+        this.xMax + 15,
+        y
+      );
     });
   }
 
