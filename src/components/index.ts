@@ -8,3 +8,4 @@ export * from "./rise-text";
 
 export * from "./group";
 export * from "./text-lines";
+export * from "./image";

@@ -1,6 +1,5 @@
 const ani = require("../dist/anichart");
 const path = require("path");
-const { scaleLinear } = require("d3-scale");
 let d = path.join(__dirname, "./data/test.csv");
 
 const a = new ani.Scene({
@@ -12,10 +11,6 @@ const a = new ani.Scene({
   itemCount: 4,
 });
 a.setCanvas();
-function calPos(n) {
-  let x = scaleLinear([0, 3], [0, 100]).clamp(true);
-  return { x: x(n / a.fps), y: 100 };
-}
 let lines = new ani.TextLines({
   fillStyle: "#FFF",
   font: "Sarasa Mono SC",
@@ -26,7 +21,6 @@ let lines = new ani.TextLines({
 a.addComponent(lines);
 lines.addComponent(
   new ani.Text({
-    pos: calPos,
     alpha: scaleLinear([0, 1, 2, 3], [0, 1, 1, 0]).clamp(true),
     text: "基础设置文字 - 在lines中无法设置position",
   })

@@ -1,5 +1,5 @@
 let load;
-import async from "async";
+import * as async from "async";
 
 if (typeof window != "undefined") {
   const { Image } = require("@canvas/image");

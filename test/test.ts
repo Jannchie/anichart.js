@@ -1,7 +1,7 @@
-import { LineChart } from "./../src/charts/line";
+import { ImageComponent } from "./../src/components/image";
 import * as ani from "../src/index";
 import * as path from "path";
-import { scaleLinear } from "d3-scale";
+import * as d3 from "d3";
 let d = path.join(__dirname, "./data/test.csv");
 let s = new ani.Series();
 let sceneOptions = {
@@ -17,11 +17,6 @@ const a = new ani.Scene(sceneOptions);
 
 a.setCanvas();
 
-function calPos(n: number) {
-  let x = scaleLinear([0, 3], [0, 100]).clamp(true);
-  return { x: x(n / a.fps), y: 100 };
-}
-
 let lines = new ani.TextLines({
   fillStyle: "#FFF",
   font: { fontSize: 18, font: "Sarasa Mono SC" },
@@ -30,14 +25,6 @@ let lines = new ani.TextLines({
 });
 
 a.addComponent(lines);
-
-lines.addComponent(
-  new ani.Text({
-    pos: calPos,
-    alpha: scaleLinear([0, 1, 2, 3], [0, 1, 1, 0]).clamp(true),
-    text: "基础设置文字 - 在lines中无法设置position",
-  })
-);
 
 lines.addComponent(
   new ani.FadeText({
@@ -94,12 +81,20 @@ let lineChart = new ani.LineChart({});
 a.addComponent(lineChart);
 sceneOptions.sec = 5;
 let logoScene = new ani.Scene(sceneOptions);
+
+logoScene.addComponent(
+  new ani.ImageComponent({
+    imagePath: "./data/ANI.png",
+    shape: { width: 120, height: 120 },
+    pos: { x: sceneOptions.width / 2 - 60, y: sceneOptions.height / 2 - 60 },
+  })
+);
 logoScene.addComponent(
   new ani.BlurText({
     pos: { x: sceneOptions.width / 2, y: sceneOptions.height / 2 },
     fillStyle: "#FFF",
     font: {
-      fontSize: 50,
+      fontSize: 80,
       fontWeight: "bolder",
       textBaseline: "top",
       textAlign: "center",
@@ -108,10 +103,14 @@ logoScene.addComponent(
     text: "Anichart.js",
     time: 1,
     last: 2,
-    blur: 2000,
-    fade: 1.5,
+    blur: 20,
+    fade: 0.3,
   })
 );
+
+console.log(sceneOptions.width / 2);
+//
+
 logoScene.addComponent(
   new ani.BlurText({
     pos: { x: sceneOptions.width / 2, y: sceneOptions.height / 2 },
@@ -123,10 +122,10 @@ logoScene.addComponent(
       font: "微软雅黑",
     },
     text: "Powered By Jannchie Studio",
-    time: 1,
-    last: 2,
-    blur: 2000,
-    fade: 1.5,
+    time: 1.2,
+    last: 1.8,
+    blur: 15,
+    fade: 1,
   })
 );
 logoScene.setCanvas("canvas");
@@ -134,7 +133,7 @@ s.scenes.push(logoScene);
 s.scenes.push(a);
 (async () => {
   await lineChart.loadData(d);
-  await s.play();
+  s.play();
 })();
 
 export default a;

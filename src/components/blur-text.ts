@@ -2,19 +2,19 @@ import { BlurTextOptions } from "../options/blur-text-options";
 import { FadeText } from "./fade-text";
 
 export class BlurText extends FadeText {
-  private _blur: number;
+  blur = 10;
   constructor(options: BlurTextOptions) {
     super(options);
+    this.reset(options);
   }
   reset(options: BlurTextOptions = {}) {
     super.reset(options);
-    this._blur = options.blur ? options.blur : 10;
   }
   preRender(n: number) {
     super.preRender(n);
   }
   render(n: number) {
-    this.ani.ctx.filter = `blur(${(1 - this.cAlpha) * this._blur}px)`;
+    this.ani.ctx.filter = `blur(${(1 - this.cAlpha) * this.blur}px)`;
     super.render(n);
   }
 }
