@@ -41,6 +41,7 @@ class Scene implements Ani {
     this.components.push(c);
     this.setOptions({});
     c.reset({});
+    this.hinter.drawHint(`Component Added: ${c.constructor.name}`);
   }
 
   async loadData(path: string | any): Promise<void> {

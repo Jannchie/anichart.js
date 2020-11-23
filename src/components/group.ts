@@ -18,6 +18,7 @@ export class Group extends Base implements groupable {
     c.ani = this.ani;
     this.reset({});
     c.reset({});
+    this.ani.hinter.drawHint(`Component Added: ${c.constructor.name}`);
   }
   reset(options: any) {
     super.reset(options);
