@@ -1,6 +1,4 @@
-interface LoadImageFunc {
-  (url: string): Promise<CanvasImageSource>;
-}
+type LoadImageFunc = (url: string) => Promise<CanvasImageSource>;
 export class ImageLoader {
   load: LoadImageFunc;
   constructor() {
@@ -18,7 +16,7 @@ export class ImageLoader {
       };
     } else {
       // Node.js
-      let { loadImage } = require("canvas");
+      const { loadImage } = require("canvas");
       this.load = loadImage;
     }
   }

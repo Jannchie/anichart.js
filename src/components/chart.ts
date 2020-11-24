@@ -5,9 +5,7 @@ import { Base } from "./base";
 import { GroupComponent } from "./group";
 import * as fs from "fs";
 import { Component } from ".";
-interface LoadCsvFunc {
-  (path: string | any): Promise<void>;
-}
+type LoadCsvFunc = (path: string | any) => Promise<void>;
 export interface ChartInterface {
   data: DSVRowArray<string>;
   meta: DSVRowArray<string>;

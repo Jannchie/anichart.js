@@ -1,8 +1,6 @@
 import { ImageLoader } from "./../image-loader";
 import { EnhancedCanvasRenderingContext2D } from "../utils/enhance-ctx";
-interface DrawHint {
-    (msg: string): void;
-}
+declare type DrawHint = (msg: string) => void;
 export interface Hinter {
     hint: string;
     ctx: CanvasRenderingContext2D | EnhancedCanvasRenderingContext2D;

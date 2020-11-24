@@ -1,6 +1,8 @@
 import { Hintable, Hinter } from "./hint";
 import { Component } from "../components";
-import { DefaultComponentManager, Playable, Player, Renderer, Shape } from "./base";
+import { DefaultComponentManager, Renderer, Shape } from "./base";
+import { Playable } from "./playable";
+import { Player } from "./player";
 export interface PlayerOptions {
     sec?: number;
     fps?: number;

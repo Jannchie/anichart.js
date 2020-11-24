@@ -6,7 +6,8 @@ import { FontOptions } from "../options/font-options";
 import { ShadowOptions } from "../options/shadow-options";
 import Pos from "../utils/position";
 import { Component } from "./component";
-import { Player, Renderer } from "../base/base";
+import { Renderer } from "../base/base";
+import { Player } from "../base/player";
 import { EnhancedCanvasRenderingContext2D } from "../utils/enhance-ctx";
 export abstract class Base implements Component, Hintable {
   alpha: number | Function;
@@ -34,7 +35,7 @@ export abstract class Base implements Component, Hintable {
     this.ctx.save();
   }
   preRender() {
-    let n = this.player.cFrame;
+    const n = this.player.cFrame;
 
     if (this.pos == undefined) this.pos = { x: 0, y: 0 };
     this.cAlpha =

@@ -3,9 +3,7 @@ import { FontOptions } from "./font-options";
 /**
  * 通过给定id和value，获得label
  */
-interface GetLabel {
-    (key: string, value: number): string;
-}
+declare type GetLabel = (key: string, value: number) => string;
 export interface LineChartOptions extends BaseOptions {
     padding?: {
         left: number;

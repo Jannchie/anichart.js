@@ -1,14 +1,10 @@
 import { DefaultHinter, Hintable, Hinter } from "./hint";
 import { Component } from "../components";
-import {
-  DefaultComponentManager,
-  DefaultPlayer,
-  DefaultRenderer,
-  Playable,
-  Player,
-  Renderer,
-  Shape,
-} from "./base";
+import { DefaultComponentManager, Renderer, Shape } from "./base";
+import { DefaultPlayer } from "./default-player";
+import { Playable } from "./playable";
+import { Player } from "./player";
+import { DefaultRenderer } from "./defaut-renderer";
 import * as _ from "lodash";
 import { EnhancedCanvasRenderingContext2D } from "../utils/enhance-ctx";
 export interface PlayerOptions {

@@ -2,9 +2,7 @@ import { ImageLoader } from "./../image-loader";
 import * as d3 from "d3";
 import { EnhancedCanvasRenderingContext2D } from "../utils/enhance-ctx";
 
-interface DrawHint {
-  (msg: string): void;
-}
+type DrawHint = (msg: string) => void;
 export interface Hinter {
   hint: string;
   ctx: CanvasRenderingContext2D | EnhancedCanvasRenderingContext2D;
@@ -23,7 +21,7 @@ export class DefaultHinter implements Hinter {
   height: number;
   public async drawHint(msg: string) {
     if (!this.canvas) {
-      this.canvas = <HTMLCanvasElement>d3.select("canvas").node();
+      this.canvas = (d3.select("canvas").node() as HTMLCanvasElement);
     }
     if (this.ctx) {
       this.ctx.save();

@@ -1,5 +1,6 @@
 import { Hintable, Hinter } from "./../base/hint";
-import { Player, Renderer } from "./../base/base";
+import { Renderer } from "./../base/base";
+import { Player } from "../base/player";
 import { Shadowable } from "./../options/shadow-options";
 import { Fontable } from "./../options/font-options";
 import Pos from "../utils/position";

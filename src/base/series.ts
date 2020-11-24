@@ -1,14 +1,9 @@
 import * as d3 from "d3";
 import * as _ from "lodash";
 import { BaseScene, Scene, SceneOptions } from "./scene";
-import {
-  DefaultPlayer,
-  DefaultRenderer,
-  Playable,
-  Player,
-  Renderer,
-} from "./base";
-import { DefaultHinter, Hintable, Hinter } from "./hint";
+import { DefaultPlayer } from "./default-player";
+import { DefaultRenderer } from "./defaut-renderer";
+import { DefaultHinter } from "./hint";
 
 export class Series extends BaseScene {
   private scenes: Scene[] = [];

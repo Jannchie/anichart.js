@@ -12,8 +12,8 @@ class FadeText extends Text {
     super.update(options);
     // 计算显示时间
     if (this.time !== undefined) {
-      let fade = this.fade != undefined ? this.fade : 0;
-      let last = this.last != undefined ? this.last : 2;
+      const fade = this.fade != undefined ? this.fade : 0;
+      const last = this.last != undefined ? this.last : 2;
       this.alpha = scaleLinear(
         [
           this.time - fade,

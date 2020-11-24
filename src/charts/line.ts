@@ -75,10 +75,10 @@ export class LineChart extends ChartCompoment {
         this.padding.right = (() => {
           if (!this.dataGroup) return 0;
           let max = 0;
-          let y = d3.max(this.data, (d) => Number(d[this.valueKey]));
+          const y = d3.max(this.data, (d) => Number(d[this.valueKey]));
           this.dataGroup.forEach((_, k) => {
             this.ctx.setFontOptions(this.labelFont);
-            let current = this.ctx.measureText(this.getLabel(k, y));
+            const current = this.ctx.measureText(this.getLabel(k, y));
             if (current.width > max) max = current.width;
           });
           return max;
@@ -120,8 +120,8 @@ export class LineChart extends ChartCompoment {
     if (!n) {
       n = this.player.sec * this.player.fps - 1;
     }
-    this.tsRange = d3.extent(this.data, (d: any) => <number>d[this.dateKey]);
-    this.dtRange = d3.extent(this.data, (d: any) => <number>d[this.valueKey]);
+    this.tsRange = d3.extent(this.data, (d: any) => d[this.dateKey] as number);
+    this.dtRange = d3.extent(this.data, (d: any) => d[this.valueKey] as number);
   }
   preRender(): void {
     super.preRender();
@@ -138,7 +138,7 @@ export class LineChart extends ChartCompoment {
   render(): void {
     this.setRange();
     this.dataGroup.forEach((v, k: string) => {
-      //------------------------------------------------------------
+      // ------------------------------------------------------------
       // 裁剪曲线绘图区域
       this.ctx.save();
       this.ctx.beginPath();
@@ -159,18 +159,18 @@ export class LineChart extends ChartCompoment {
       );
       this.ctx.closePath();
       this.ctx.clip();
-      let color = this.renderer.colorPicker.getColor(k);
+      const color = this.renderer.colorPicker.getColor(k);
       this.ctx.strokeStyle = color;
       this.ctx.lineWidth = this.lineWidth;
       // 绘制曲线
-      let path = new Path2D(this.lineGen.curve(d3.curveMonotoneX)(v));
-      let area = new Path2D(this.areaGen.curve(d3.curveMonotoneX)(v));
+      const path = new Path2D(this.lineGen.curve(d3.curveMonotoneX)(v));
+      const area = new Path2D(this.areaGen.curve(d3.curveMonotoneX)(v));
       this.ctx.stroke(path);
       // 取消裁剪
       this.ctx.restore();
-      //------------------------------------------------------------
+      // ------------------------------------------------------------
       // 寻找小圆点的Y轴坐标
-      let y = this.findY(area);
+      const y = this.findY(area);
       // 绘制圆点
       this.ctx.fillStyle = color;
       this.ctx.fillCircle(this.xMax, y, this.pointR);
@@ -179,10 +179,10 @@ export class LineChart extends ChartCompoment {
       this.ctx.fillText(this.getLabel(k, y), this.xMax + 15, y);
       // tick
     });
-    let ticks = this.scales.x.ticks(5);
+    const ticks = this.scales.x.ticks(5);
     this.ctx.textBaseline = "bottom";
     this.ctx.fillStyle = "#FFF";
-    for (let tick of ticks) {
+    for (const tick of ticks) {
       this.ctx.fillText(
         d3.timeFormat(this.timeFormat)(new Date(tick)),
         this.scales.x(tick),
@@ -192,21 +192,21 @@ export class LineChart extends ChartCompoment {
   }
 
   private findY(area: Path2D) {
-    let l = this.cPos.y + this.padding.top + this.margin.top;
-    let r =
+    const l = this.cPos.y + this.padding.top + this.margin.top;
+    const r =
       this.cPos.y +
       this.shape.height -
       this.padding.bottom -
       this.margin.bottom +
       1;
-    let x = this.xMax;
+    const x = this.xMax;
     // 9w => 4k
     // 使用中值优化，提升>22倍的性能
-    let b = d3.bisector((d: number) => {
+    const b = d3.bisector((d: number) => {
       return this.ctx.isPointInPath(area, x, d);
     }).left;
-    let range = d3.range(l, r, 1);
-    let index = b(range, true);
+    const range = d3.range(l, r, 1);
+    const index = b(range, true);
     return range[index];
   }
 }
