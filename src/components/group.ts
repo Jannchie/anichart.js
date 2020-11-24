@@ -6,33 +6,36 @@ export interface Groupable {
 }
 
 export class GroupComponent extends Base implements Groupable {
-  render(n: number): void {
+  render(): void {
     return;
   }
-  components: Base[] = [];
+  components: Component[] = [];
   constructor(options: any) {
     super(options);
-    this.reset(options);
+    this.update(options);
   }
   addComponent(c: Base) {
     this.components.push(c);
+    c.hinter = this.hinter;
     c.ani = this.ani;
-    this.reset({});
-    c.reset({});
-    this.ani.hinter.drawHint(`Component Added: ${c.constructor.name}`);
+    this.hinter.drawHint(`Component Added: ${c.constructor.name}`);
   }
-  reset(options: any = {}) {
-    super.reset(options);
+  update(options: any = {}) {
+    super.update(options);
     if (this.components) {
       this.components.forEach((c) => {
-        c.reset(options);
+        c.player = this.player;
+        c.ctx = this.ctx;
+        c.renderer = this.renderer;
+        this.hinter.drawHint(`Update Component: ${c.constructor.name}`);
+        c.update(options);
       });
     }
   }
-  draw(n: number) {
-    super.draw(n);
+  draw() {
+    super.draw();
     this.components.forEach((c) => {
-      c.draw(n);
+      c.draw();
     });
   }
 }

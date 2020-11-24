@@ -8,18 +8,19 @@ class RiseText extends FadeText {
   constructor(options: RiseTextOptions) {
     super(options);
   }
-  reset(options: RiseTextOptions = {}) {
-    super.reset(options);
+  update(options: RiseTextOptions = {}) {
+    super.update(options);
     if (options.offsetY == undefined) options.offsetY = 20;
     if (options.reverse) options.offsetY = -options.offsetY;
+
     this.offsetYFunc = scaleLinear([0, 1], [options.offsetY, 0]);
   }
-  preRender(n: number) {
-    super.preRender(n);
+  preRender() {
+    super.preRender();
     this.offsetY = this.offsetYFunc(easeBackOut(this.cAlpha));
   }
-  render(n: number) {
-    this.ani.ctx.fillText(this._text, 0, this.offsetY);
+  render() {
+    this.player.renderer.ctx.fillText(this._text, 0, this.offsetY);
   }
 }
 export { RiseText };

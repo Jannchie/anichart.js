@@ -42,13 +42,13 @@ export declare class LineChart extends ChartCompoment {
     valueFormat: string;
     private xMax;
     getLabel(k: string, y: number): string;
-    constructor(options: LineChartOptions);
-    reset(options?: LineChartOptions): void;
+    constructor(options?: LineChartOptions);
+    update(options?: LineChartOptions): void;
     private setLine;
     private setDataGroup;
     private setScale;
     private setRange;
-    preRender(n: number): void;
-    render(n: number): void;
+    preRender(): void;
+    render(): void;
     private findY;
 }

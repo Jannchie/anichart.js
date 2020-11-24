@@ -2,22 +2,24 @@ import { scaleLinear } from "d3-scale";
 import { FadeTextOptions } from "../options/fade-text-options";
 import { Text } from "./text";
 class FadeText extends Text {
+  time: number;
+  fade: number;
+  last: number;
   constructor(options: FadeTextOptions) {
     super(options);
   }
-  reset(options: FadeTextOptions = {}) {
-    super.reset(options);
+  update(options: FadeTextOptions = {}) {
+    super.update(options);
     // 计算显示时间
-    if (!options) return;
-    if (options.time !== undefined) {
-      let fade = options.fade != undefined ? options.fade : 0;
-      let last = options.last != undefined ? options.last : 2;
+    if (this.time !== undefined) {
+      let fade = this.fade != undefined ? this.fade : 0;
+      let last = this.last != undefined ? this.last : 2;
       this.alpha = scaleLinear(
         [
-          options.time - fade,
-          options.time,
-          options.time + last,
-          options.time + last + fade,
+          this.time - fade,
+          this.time,
+          this.time + last,
+          this.time + last + fade,
         ],
         [0, 1, 1, 0]
       ).clamp(true);

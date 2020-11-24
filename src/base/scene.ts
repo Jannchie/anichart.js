@@ -1,130 +1,80 @@
-import { Hintable, DefaultHinter, Hinter } from "./hint";
-import { DefaultFontOptions } from "./../options/font-options";
-import { merge } from "lodash-es";
-import {
-  enhanceCtx,
-  EnhancedCanvasRenderingContext2D,
-} from "../utils/enhance-ctx";
-import { select } from "d3-selection";
-import Ani from "./ani";
+import { DefaultHinter, Hintable, Hinter } from "./hint";
 import { Component } from "../components";
-import { csv } from "d3-fetch";
-import { csvParse, DSVRowArray } from "d3-dsv";
-import { interval, Timer } from "d3-timer";
-import { ColorPicker, DefaultColorPicker } from "./color";
-import { FontOptions } from "../options/font-options";
-class Scene implements Ani {
-  fps = 12;
-  sec = 6;
-  width = 1366;
-  height = 768;
-  output = false;
-  cFrame = 0;
-  components: Component[] = [];
-  totalFrames: number;
-  canvas: HTMLCanvasElement;
-  ctx: EnhancedCanvasRenderingContext2D;
-  data: DSVRowArray<string>;
-  meta: DSVRowArray<string>;
-  player: Timer;
-  color: ColorPicker = new DefaultColorPicker();
-  font: FontOptions = new DefaultFontOptions();
-  hinter: Hinter = new DefaultHinter();
+import {
+  DefaultComponentManager,
+  DefaultPlayer,
+  DefaultRenderer,
+  Playable,
+  Player,
+  Renderer,
+  Shape,
+} from "./base";
+import * as _ from "lodash";
+import { EnhancedCanvasRenderingContext2D } from "../utils/enhance-ctx";
+export interface PlayerOptions {
+  sec?: number;
+  fps?: number;
+}
 
-  constructor(options: object = {}) {
-    this.setOptions(options);
-  }
-  colorPicker: ColorPicker;
+export interface SceneOptions {
+  renderer?: {
+    shape?: Shape;
+  };
+  player?: PlayerOptions;
+}
+export class DefaultSceneOptions {
+  renderer: {
+    shape: { height: 1366; weight: 768 };
+  };
+  player: {
+    fps: 60;
+    sec: 5;
+  };
+}
+export abstract class BaseScene implements Playable, Hintable {
+  renderer: Renderer;
+  componentManager: DefaultComponentManager;
+  hinter: Hinter;
+  player: Player;
+  output: boolean = false;
 
-  addComponent(c: Component): void {
-    c.ani = this;
-    this.components.push(c);
-    this.setOptions({});
-    c.reset();
-    this.hinter.drawHint(`Component Added: ${c.constructor.name}`);
+  setCanvas(selector: string = "canvas") {
+    this.renderer.setCanvas(selector);
   }
-
-  play() {
-    this.update();
-    if (this.player) {
-      this.player.stop();
-      this.player = null;
-      return;
-    }
-    if (this.output) {
-      while (this.cFrame < this.totalFrames) {
-        this.draw(this.cFrame++);
-      }
-    } else {
-      let start = new Date().getTime();
-      this.player = interval(async () => {
-        this.draw(this.cFrame++);
-        if (this.cFrame >= this.totalFrames) {
-          this.player.stop();
-          this.hinter.drawHint(
-            `Finished! FPS: ${(
-              (this.sec * this.fps) /
-              ((new Date().getTime() - start) / 1000)
-            ).toFixed(2)}`
-          );
-        }
-      }, (1 / this.fps) * 1000);
-    }
-  }
-  draw(frame: number): void {
-    try {
-      this.drawBackground();
-      this.components.forEach((component) => {
-        component.draw(frame);
-      });
-    } catch (error) {
-      console.error(error);
-      this.player.stop();
-    }
-  }
-
-  setOptions(options?: object): void {
-    if (options) merge(this, options);
-    this.update();
-  }
-  update(): void {
-    this.totalFrames = this.fps * this.sec;
-    this.hinter.width = this.width;
-    this.hinter.height = this.height;
-    this.components.forEach((c) => {
-      c.reset({});
+  update() {
+    this.player.renderer = this.renderer;
+    this.componentManager.components.forEach((c) => {
+      c.player = this.player;
+      c.renderer = this.renderer;
+      c.ctx = this.renderer.ctx;
+      this.hinter.drawHint(`Update Component: ${c.constructor.name}`);
+      c.update();
     });
-  }
-
-  setCanvas(selector?: string): void {
-    if (typeof window != "undefined") {
-      this.canvas = <HTMLCanvasElement>select(selector).node();
-      if (!this.canvas || this.canvas.getContext == undefined) {
-        this.initCanvas();
-      }
-    } else {
-      const { createCanvas } = require("canvas");
-      this.canvas = createCanvas(this.width, this.height);
+    if (this.renderer.canvas) {
+      this.renderer.canvas.width = this.renderer.shape.width;
+      this.renderer.canvas.height = this.renderer.shape.height;
     }
-    this.ctx = enhanceCtx(this.canvas.getContext("2d"));
-    this.hinter.ctx = this.ctx;
-  }
-
-  private initCanvas(): void {
-    this.canvas = select("body")
-      .append("canvas")
-      .attr("width", this.width)
-      .attr("height", this.height)
-      .node();
-  }
-
-  preRender() {}
-
-  private drawBackground() {
-    this.ctx.save();
-    this.ctx.fillStyle = this.color.background;
-    this.ctx.fillRect(0, 0, this.width, this.height);
-    this.ctx.restore();
   }
 }
-export { Scene };
+export class Scene extends BaseScene {
+  constructor(options: SceneOptions = {}) {
+    super();
+    this.init(options);
+    this.update();
+  }
+  private init(options: SceneOptions) {
+    this.hinter = new DefaultHinter();
+    this.componentManager = new DefaultComponentManager();
+    this.renderer = new DefaultRenderer(this.hinter, this.componentManager);
+    this.player = new DefaultPlayer(this.renderer, this.hinter);
+    _.merge(this, options);
+  }
+
+  addComponent(c: Component) {
+    this.componentManager.addComponent(c);
+    c.player = this.player;
+    c.renderer = this.renderer;
+    c.update();
+    this.hinter.drawHint(`Component Added: ${c.constructor.name}`);
+  }
+}

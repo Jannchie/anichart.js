@@ -1,19 +1,26 @@
 import * as ani from "../src/index";
 import * as path from "path";
 let d = path.join(__dirname, "./data/test.csv");
-let s = new ani.Series();
-let sceneOptions = {
-  height: 400,
-  width: 1600,
-  output: false,
-  useCtl: true,
-  sec: 8,
-  fps: 30,
-  itemCount: 4,
+let seriesOptions = {
+  player: {
+    fps: 144,
+  },
+  renderer: {
+    shape: { height: 400, width: 800 },
+  },
 };
-const a = new ani.Scene(sceneOptions);
+let s = new ani.Series(seriesOptions);
+let sceneOptions = {
+  player: {
+    sec: 5,
+    fps: 30,
+  },
+  renderer: {
+    shape: { height: 400, width: 1600 },
+  },
+};
 
-a.setCanvas();
+const a = new ani.Scene(sceneOptions);
 
 let lines = new ani.TextLines({
   fillStyle: "#FFF",
@@ -77,19 +84,26 @@ lines.addComponent(
 );
 let lineChart = new ani.LineChart({});
 a.addComponent(lineChart);
-sceneOptions.sec = 5;
+sceneOptions.player.sec = 5;
 let logoScene = new ani.Scene(sceneOptions);
 
 logoScene.addComponent(
   new ani.ImageComponent({
-    imagePath: "./data/ANI.png",
+    imagePath:
+      "https://github.com/Jannchie/anichart.js/blob/master/public/image/ANI.png?raw=true",
     shape: { width: 120, height: 120 },
-    pos: { x: sceneOptions.width / 2 - 60, y: sceneOptions.height / 2 - 60 },
+    pos: {
+      x: seriesOptions.renderer.shape.width / 2 - 60,
+      y: seriesOptions.renderer.shape.height / 2 - 60,
+    },
   })
 );
 logoScene.addComponent(
   new ani.BlurText({
-    pos: { x: sceneOptions.width / 2, y: sceneOptions.height / 2 },
+    pos: {
+      x: seriesOptions.renderer.shape.width / 2,
+      y: seriesOptions.renderer.shape.height / 2,
+    },
     fillStyle: "#FFF",
     font: {
       fontSize: 80,
@@ -105,13 +119,18 @@ logoScene.addComponent(
     fade: 0.3,
     shadow: {
       enable: true,
+      color: "#FFF6",
+      blur: 15,
     },
   })
 );
 
 logoScene.addComponent(
   new ani.BlurText({
-    pos: { x: sceneOptions.width / 2, y: sceneOptions.height / 2 },
+    pos: {
+      x: seriesOptions.renderer.shape.width / 2,
+      y: seriesOptions.renderer.shape.height / 2,
+    },
     fillStyle: "#777",
     font: {
       fontSize: 24,
@@ -125,16 +144,21 @@ logoScene.addComponent(
     blur: 15,
     fade: 1,
     shadow: {
+      color: "#FFF6",
+      blur: 12,
       enable: true,
     },
   })
 );
-logoScene.setCanvas("canvas");
-s.scenes.push(logoScene);
-s.scenes.push(a);
+// logoScene.setCanvas("canvas");
+s.addScene(logoScene);
+s.addScene(a);
+// a.setCanvas();
+s.setCanvas();
 (async () => {
   await lineChart.loadData(d);
   s.play();
 })();
+console.log(s);
 
 export default a;

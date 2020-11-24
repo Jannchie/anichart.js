@@ -5,10 +5,10 @@ export interface Groupable {
     components: Component[];
 }
 export declare class GroupComponent extends Base implements Groupable {
-    render(n: number): void;
-    components: Base[];
+    render(): void;
+    components: Component[];
     constructor(options: any);
     addComponent(c: Base): void;
-    reset(options?: any): void;
-    draw(n: number): void;
+    update(options?: any): void;
+    draw(): void;
 }

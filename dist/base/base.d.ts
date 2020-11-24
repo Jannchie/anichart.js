@@ -1,36 +1,70 @@
-import { ColorPicker } from "./color";
-import { Groupable } from "./../components/group";
-declare type Shape = {
+import { Hintable, Hinter } from "./hint";
+import { Timer } from "d3";
+import { Component } from "../components";
+import { EnhancedCanvasRenderingContext2D } from "../utils/enhance-ctx";
+import { Colorable, ColorPicker } from "./color";
+export declare type Shape = {
     width: number;
     height: number;
 };
-export interface Render extends Groupable, ColorPicker {
+export interface ComponentManager {
+    components: Component[];
+    addComponent(c: Component): void;
+}
+export declare class DefaultComponentManager implements ComponentManager {
+    components: Component[];
+    addComponent(c: Component): void;
+}
+export interface Combinable {
+    componentManager: ComponentManager;
+}
+export interface Renderer extends Colorable, Combinable, Hintable {
     shape: Shape;
+    canvas: HTMLCanvasElement;
+    ctx: EnhancedCanvasRenderingContext2D;
+    draw(): void;
+    setCanvas(selector?: string): EnhancedCanvasRenderingContext2D;
 }
 export interface Renderable {
-    render: Render;
-    draw(): void;
+    renderer: Renderer;
 }
-export declare class DefaultRender implements Renderable {
-    render: Render;
+export declare class DefaultRenderer implements Renderer {
+    hinter: Hinter;
+    componentManager: ComponentManager;
+    shape: {
+        width: number;
+        height: number;
+    };
+    canvas: HTMLCanvasElement;
+    ctx: EnhancedCanvasRenderingContext2D;
+    colorPicker: ColorPicker;
+    constructor(hinter: Hinter, componentManager?: ComponentManager);
     draw(): void;
+    setCanvas(selector?: string): EnhancedCanvasRenderingContext2D;
+    private initCanvas;
 }
-export interface Player {
+export interface Player extends Renderable, Hintable {
     fps: number;
     sec: number;
     cFrame: number;
     totalFrames: number;
-}
-export interface Playable extends Renderable {
-    player: Player;
+    timer: Timer;
+    drawFrame(frame: number): void;
     play(): void;
 }
-export declare class Scene implements Playable {
+export interface Playable {
     player: Player;
+}
+export declare class DefaultPlayer implements Player {
+    fps: number;
+    sec: number;
+    constructor(renderer: Renderer, hinter: Hinter);
+    renderer: Renderer;
+    hinter: Hinter;
+    cFrame: number;
+    get totalFrames(): number;
+    timer: Timer;
+    output: boolean;
+    drawFrame(frame: number): void;
     play(): void;
-    render: Render;
-    draw(): void;
 }
-export declare class Series extends Scene {
-}
-export {};

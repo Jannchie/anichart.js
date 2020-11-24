@@ -1,8 +1,10 @@
+import { DefaultHinter } from "./../base/hint";
 import { csv } from "d3";
 import { csvParse, DSVRowArray } from "d3-dsv";
 import { Base } from "./base";
 import { GroupComponent } from "./group";
 import * as fs from "fs";
+import { Component } from ".";
 interface LoadCsvFunc {
   (path: string | any): Promise<void>;
 }
@@ -15,20 +17,26 @@ export interface ChartInterface {
 export abstract class ChartCompoment
   extends GroupComponent
   implements ChartInterface {
+  components: Component[] = [];
   async loadData(path: string | any): Promise<void> {
-    this.ani.hinter.drawHint("Loading Data...");
+    this.hinter.drawHint("Loading Data...");
     this.data = await this.readCsv(path);
-    this.ani.hinter.drawHint("Loading Data...Finished!");
+    this.hinter.drawHint("Loading Data...Finished!");
     if (this.components) {
-      this.ani.hinter.drawHint(`Refresh Components...`);
-      this.reset();
+      this.hinter.drawHint(`Refresh Components...`);
+      this.update();
       this.components.forEach((c) => {
-        c.reset();
+        c.update();
       });
-      this.ani.hinter.drawHint("Refresh Components... Finished!");
+      this.hinter.drawHint("Refresh Components... Finished!");
     }
   }
-
+  update(option?: any) {
+    super.update(option);
+    if (this.components) {
+      this.components.forEach((c) => {});
+    }
+  }
   private async readCsv(path: string | any): Promise<DSVRowArray<string>> {
     if (typeof path !== "string") {
       path = path.default;
@@ -43,15 +51,15 @@ export abstract class ChartCompoment
     }
   }
   async loadMeta(path: string | any): Promise<void> {
-    this.ani.hinter.drawHint("Loading Meta...");
+    this.player.renderer.hinter.drawHint("Loading Meta...");
     this.meta = await this.readCsv(path);
-    this.ani.hinter.drawHint("Loading Data...Finished!");
+    this.player.renderer.hinter.drawHint("Loading Data...Finished!");
     if (this.components) {
-      this.ani.hinter.drawHint(`Refresh Components...`);
+      this.player.renderer.hinter.drawHint(`Refresh Components...`);
       this.components.forEach((c) => {
-        c.reset();
+        c.update();
       });
-      this.ani.hinter.drawHint("Refresh Components... Finished!");
+      this.player.renderer.hinter.drawHint("Refresh Components... Finished!");
     }
   }
   data: DSVRowArray<string>;

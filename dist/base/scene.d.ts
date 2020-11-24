@@ -1,38 +1,39 @@
-import { Hinter } from "./hint";
-import { EnhancedCanvasRenderingContext2D } from "../utils/enhance-ctx";
-import Ani from "./ani";
+import { Hintable, Hinter } from "./hint";
 import { Component } from "../components";
-import { DSVRowArray } from "d3-dsv";
-import { Timer } from "d3-timer";
-import { ColorPicker } from "./color";
-import { FontOptions } from "../options/font-options";
-declare class Scene implements Ani {
-    fps: number;
-    sec: number;
-    width: number;
-    height: number;
-    output: boolean;
-    cFrame: number;
-    components: Component[];
-    totalFrames: number;
-    canvas: HTMLCanvasElement;
-    ctx: EnhancedCanvasRenderingContext2D;
-    data: DSVRowArray<string>;
-    meta: DSVRowArray<string>;
-    player: Timer;
-    color: ColorPicker;
-    font: FontOptions;
-    hinter: Hinter;
-    constructor(options?: object);
-    colorPicker: ColorPicker;
-    addComponent(c: Component): void;
-    play(): void;
-    draw(frame: number): void;
-    setOptions(options?: object): void;
-    update(): void;
-    setCanvas(selector?: string): void;
-    private initCanvas;
-    preRender(): void;
-    private drawBackground;
+import { DefaultComponentManager, Playable, Player, Renderer, Shape } from "./base";
+export interface PlayerOptions {
+    sec?: number;
+    fps?: number;
 }
-export { Scene };
+export interface SceneOptions {
+    renderer?: {
+        shape?: Shape;
+    };
+    player?: PlayerOptions;
+}
+export declare class DefaultSceneOptions {
+    renderer: {
+        shape: {
+            height: 1366;
+            weight: 768;
+        };
+    };
+    player: {
+        fps: 60;
+        sec: 5;
+    };
+}
+export declare abstract class BaseScene implements Playable, Hintable {
+    renderer: Renderer;
+    componentManager: DefaultComponentManager;
+    hinter: Hinter;
+    player: Player;
+    output: boolean;
+    setCanvas(selector?: string): void;
+    update(): void;
+}
+export declare class Scene extends BaseScene {
+    constructor(options?: SceneOptions);
+    private init;
+    addComponent(c: Component): void;
+}

@@ -10,7 +10,7 @@ export interface Colorable {
 }
 export class DefaultColorPicker implements ColorPicker {
   private colorIndex = 0;
-  background: string = "1E1E1E";
+  background: string = "#1E1E1E";
   colorMap: Map<string, string> = new Map<string, string>();
   colorScheme: string[] = [
     "#27C",

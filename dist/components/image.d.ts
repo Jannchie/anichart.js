@@ -16,6 +16,6 @@ export declare class ImageComponent extends Base {
         height: number;
     };
     constructor(options: ImageComponentOptions);
-    reset(options?: ImageComponentOptions): Promise<void>;
-    render(n: number): void;
+    update(options?: ImageComponentOptions): Promise<void>;
+    render(): void;
 }

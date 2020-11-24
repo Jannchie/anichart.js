@@ -12,19 +12,19 @@ export class ImageComponent extends Base {
   shape: { width: number; height: number };
   constructor(options: ImageComponentOptions) {
     super(options);
-    this.reset(options);
+    this.update(options);
   }
 
-  async reset(options: ImageComponentOptions = {}) {
-    super.reset(options);
+  async update(options: ImageComponentOptions = {}) {
+    super.update(options);
     if (!this.image && this.imageLoader) {
       this.image = await this.imageLoader.load(this.imagePath);
-      this.ani.hinter.drawHint(`Load Image: ${this.imagePath}`);
+      this.hinter.drawHint(`Load Image: ${this.imagePath}`);
     }
   }
-  render(n: number): void {
+  render(): void {
     if (this.image) {
-      this.ani.ctx.drawImage(
+      this.player.renderer.ctx.drawImage(
         this.image,
         0,
         0,

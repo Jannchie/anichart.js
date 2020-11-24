@@ -18,20 +18,20 @@ class Text extends Base {
   constructor(options: TextOptions) {
     super(options);
   }
-  reset(options: TextOptions = {}) {
-    super.reset(options);
+  update(options: TextOptions = {}) {
+    super.update(options);
     this.finalFont = _.merge(new DefaultFontOptions(), this.font);
   }
-  preRender(n: number) {
-    super.preRender(n);
-    this._text = this.getValue(this.text, n);
-    this.cOffset = this.getValue(this.offset, n);
-    this.ani.ctx.translate(this.cOffset.x, this.cOffset.y);
-    this.ani.ctx.fillStyle = this.fillStyle;
-    this.ani.ctx.setFontOptions(this.finalFont);
+  preRender() {
+    super.preRender();
+    this._text = this.getValue(this.text, this.player.cFrame);
+    this.cOffset = this.getValue(this.offset, this.player.cFrame);
+    this.player.renderer.ctx.translate(this.cOffset.x, this.cOffset.y);
+    this.player.renderer.ctx.fillStyle = this.fillStyle;
+    this.player.renderer.ctx.setFontOptions(this.finalFont);
   }
-  public render(n: number): void {
-    this.ani.ctx.fillText(this._text, 0, 0);
+  public render(): void {
+    this.player.renderer.ctx.fillText(this._text, 0, 0);
   }
 }
 export { Text };

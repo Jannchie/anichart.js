@@ -5,16 +5,18 @@ export class BlurText extends FadeText {
   blur = 10;
   constructor(options: BlurTextOptions) {
     super(options);
-    this.reset(options);
+    this.update(options);
   }
-  reset(options: BlurTextOptions = {}) {
-    super.reset(options);
+  update(options: BlurTextOptions = {}) {
+    super.update(options);
   }
-  preRender(n: number) {
-    super.preRender(n);
+  preRender() {
+    super.preRender();
   }
-  render(n: number) {
-    this.ani.ctx.filter = `blur(${(1 - this.cAlpha) * this.blur}px)`;
-    super.render(n);
+  render() {
+    this.player.renderer.ctx.filter = `blur(${
+      (1 - this.cAlpha) * this.blur
+    }px)`;
+    super.render();
   }
 }
