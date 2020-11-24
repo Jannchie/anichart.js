@@ -13,7 +13,7 @@ export class DefaultPlayer implements Player {
   renderer: Renderer;
   hinter: Hinter;
   cFrame: number = 0;
-  public get totalFrames(): number {
+  get totalFrames(): number {
     return this.fps * this.sec;
   }
   timer: d3.Timer;
@@ -38,6 +38,7 @@ export class DefaultPlayer implements Player {
       this.timer = d3.interval(async () => {
         this.cFrame++;
         this.renderer.draw();
+
         if (this.cFrame >= this.totalFrames) {
           this.timer.stop();
           this.hinter.drawHint(

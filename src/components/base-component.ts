@@ -1,15 +1,13 @@
-import { DefaultHinter } from "../base/hint";
-import { Hintable, Hinter } from "../../dist/base/hint";
-import { DefaultShadowOptions } from "../options/shadow-options";
 import { merge } from "lodash-es";
+import { Scene } from "../base";
+import { DefaultHinter, Hintable, Hinter } from "../base/hint";
+import { Player } from "../base/player";
+import { Renderer } from "../base/renderer";
 import { FontOptions } from "../options/font-options";
-import { ShadowOptions } from "../options/shadow-options";
+import { DefaultShadowOptions, ShadowOptions } from "../options/shadow-options";
+import { EnhancedCanvasRenderingContext2D } from "../utils/enhance-ctx";
 import Pos from "../utils/position";
 import { Component } from "./component";
-import { Renderer } from "../base/renderer";
-import { Player } from "../base/player";
-import { EnhancedCanvasRenderingContext2D } from "../utils/enhance-ctx";
-import { Scene } from "../base";
 export abstract class BaseComponent implements Component, Hintable {
   alpha: number | ((n: number) => number);
   pos: Pos | ((n: number) => Pos);

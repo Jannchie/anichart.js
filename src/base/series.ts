@@ -48,10 +48,6 @@ export class Series extends BaseScene {
   update() {
     if (this.scenes)
       this.scenes.forEach((s) => {
-        _.merge(s.hinter, this.hinter);
-        _.merge(s.player, this.player);
-        _.merge(s.renderer, this.renderer);
-        // 场景选项覆盖
         s.update();
       });
   }

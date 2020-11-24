@@ -1,9 +1,9 @@
-import { DefaultFontOptions } from "./../options/font-options";
-import { scaleLinear } from "d3-scale";
 import * as d3 from "d3";
-import { LineChartOptions } from "../options/line-chart-options";
 import { DSVRowArray } from "d3";
+import { scaleLinear } from "d3-scale";
 import { ChartCompoment } from "../components/chart-compoment";
+import { LineChartOptions } from "../options/line-chart-options";
+import { DefaultFontOptions } from "./../options/font-options";
 
 export class LineChart extends ChartCompoment {
   shape: { width: number; height: number };
@@ -30,6 +30,7 @@ export class LineChart extends ChartCompoment {
   timeFormat = "%Y-%m-%d";
   valueFormat = ",d";
   private xMax: number;
+  days: number;
 
   getLabel(k: string, y: number): string {
     return `${k}: ${d3.format(this.valueFormat)(this.scales.y.invert(y))}`;
@@ -125,10 +126,12 @@ export class LineChart extends ChartCompoment {
   }
   preRender(): void {
     super.preRender();
-    this.tsRange[1] =
-      this.tsRange[0] +
-      (this.tsRange[1] - this.tsRange[0]) *
-        (this.player.cFrame / (this.player.fps * this.player.sec - 1));
+    const delta = this.tsRange[1] - this.tsRange[0];
+    const frames = this.player.fps * this.player.sec - 1;
+    this.tsRange[1] = this.tsRange[0] + delta * (this.player.cFrame / frames);
+    if (this.days) {
+      this.tsRange[0] = this.tsRange[1] - this.days * 86400 * 1000;
+    }
     this.setScale();
     this.setLine();
     this.setDataGroup();
@@ -166,6 +169,7 @@ export class LineChart extends ChartCompoment {
       const path = new Path2D(this.lineGen.curve(d3.curveMonotoneX)(v));
       const area = new Path2D(this.areaGen.curve(d3.curveMonotoneX)(v));
       this.ctx.stroke(path);
+      // this.ctx.stroke(area);
       // 取消裁剪
       this.ctx.restore();
       // ------------------------------------------------------------
@@ -177,8 +181,8 @@ export class LineChart extends ChartCompoment {
       this.ctx.setFontOptions(this.labelFont);
       // 绘制Label
       this.ctx.fillText(this.getLabel(k, y), this.xMax + 15, y);
-      // tick
     });
+    // tick
     const ticks = this.scales.x.ticks(5);
     this.ctx.textBaseline = "bottom";
     this.ctx.fillStyle = "#FFF";

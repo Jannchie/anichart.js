@@ -1,16 +1,16 @@
-import * as _ from "lodash-es";
-import ColorThiefUmd from "colorthief/dist/color-thief.umd.js";
 import colorThief from "colorthief";
-import fs from "fs";
-import { BaseAniChart } from "../anichart";
-import { format } from "d3-format";
-import { timeFormat } from "d3-time-format";
-import { csv } from "d3-fetch";
+import ColorThiefUmd from "colorthief/dist/color-thief.umd.js";
+import { extent, group, max, mean, range } from "d3-array";
 import { csvParse } from "d3-dsv";
-import { scaleLinear } from "d3-scale";
-import { group, range, extent, max, mean } from "d3-array";
+import { easePolyInOut, easePolyOut } from "d3-ease";
+import { csv } from "d3-fetch";
+import { format } from "d3-format";
 import { interpolateNumber } from "d3-interpolate";
-import { easePolyOut, easePolyInOut } from "d3-ease";
+import { scaleLinear } from "d3-scale";
+import { timeFormat } from "d3-time-format";
+import fs from "fs";
+import * as _ from "lodash-es";
+import { BaseAniChart } from "../anichart";
 class AniBarChart extends BaseAniChart {
   constructor(options = {}) {
     super();

@@ -1,8 +1,8 @@
-import { DefaultFontOptions } from "./../options/font-options";
 import * as d3 from "d3";
-import { LineChartOptions } from "../options/line-chart-options";
 import { DSVRowArray } from "d3";
 import { ChartCompoment } from "../components/chart-compoment";
+import { LineChartOptions } from "../options/line-chart-options";
+import { DefaultFontOptions } from "./../options/font-options";
 export declare class LineChart extends ChartCompoment {
     shape: {
         width: number;
@@ -41,6 +41,7 @@ export declare class LineChart extends ChartCompoment {
     timeFormat: string;
     valueFormat: string;
     private xMax;
+    days: number;
     getLabel(k: string, y: number): string;
     constructor(options?: LineChartOptions);
     update(options?: LineChartOptions): void;

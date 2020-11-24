@@ -5,11 +5,11 @@ export class DefaultColorPicker implements ColorPicker {
   background: string = "#1E1E1E";
   colorMap: Map<string, string> = new Map<string, string>();
   colorScheme: string[] = [
+    "#D23",
     "#27C",
     "#FB0",
-    "#FFF",
     "#2C8",
-    "#D23",
+    "#FFF",
     "#0CE",
     "#E8A",
     "#DDA",

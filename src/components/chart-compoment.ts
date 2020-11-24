@@ -1,9 +1,9 @@
 import { csv } from "d3";
 import { csvParse, DSVRowArray } from "d3-dsv";
-import { GroupComponent } from "./group";
 import * as fs from "fs";
-import { Component } from "./component";
 import { ChartInterface } from "./chart-interface";
+import { Component } from "./component";
+import { GroupComponent } from "./group";
 
 export abstract class ChartCompoment
   extends GroupComponent
@@ -35,7 +35,7 @@ export abstract class ChartCompoment
     if (typeof window === "undefined") {
       return csvParse(fs.readFileSync(path).toString());
     } else {
-      if ("object" == typeof path) {
+      if ("object" === typeof path) {
         return csv(path);
       }
       return csv(path);

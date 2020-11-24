@@ -1,7 +1,7 @@
 import * as ani from "../src/index";
 import * as path from "path";
-let d = path.join(__dirname, "./data/test.csv");
-let seriesOptions = {
+const d = path.join(__dirname, "./data/test.csv");
+const seriesOptions = {
   player: {
     fps: 144,
   },
@@ -9,20 +9,18 @@ let seriesOptions = {
     shape: { height: 400, width: 800 },
   },
 };
-let s = new ani.Series(seriesOptions);
-let sceneOptions = {
+const s = new ani.Series(seriesOptions);
+const sceneOptions = {
   player: {
-    sec: 5,
-    fps: 30,
-  },
-  renderer: {
-    shape: { height: 400, width: 1600 },
+    sec: 30,
+    fps: 144,
   },
 };
 
 const a = new ani.Scene(sceneOptions);
-
-let lines = new ani.TextLines({
+sceneOptions.player.fps = 30;
+sceneOptions.player.sec = 0;
+const lines = new ani.TextLines({
   fillStyle: "#FFF",
   font: { fontSize: 18, font: "Sarasa Mono SC" },
   lineSpacing: 8,
@@ -82,11 +80,10 @@ lines.addComponent(
     blur: 4,
   })
 );
-let lineChart = new ani.LineChart({});
+const lineChart = new ani.LineChart({ days: 2 });
 a.addComponent(lineChart);
-sceneOptions.player.sec = 5;
-let logoScene = new ani.Scene(sceneOptions);
-
+const logoScene = new ani.Scene(sceneOptions);
+logoScene.update();
 logoScene.addComponent(
   new ani.ImageComponent({
     imagePath:
@@ -150,15 +147,12 @@ logoScene.addComponent(
     },
   })
 );
-// logoScene.setCanvas("canvas");
 s.addScene(logoScene);
 s.addScene(a);
-// a.setCanvas();
 s.setCanvas();
 (async () => {
   await lineChart.loadData(d);
   s.play();
 })();
-console.log(s);
 
 export default a;

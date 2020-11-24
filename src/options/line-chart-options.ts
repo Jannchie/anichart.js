@@ -19,4 +19,5 @@ export interface LineChartOptions extends BaseOptions {
   valueKey?: string;
   idKey?: string;
   showTime?: [number, number];
+  days?: number;
 }

@@ -1,6 +1,6 @@
-import { ImageLoader } from "./../image-loader";
 import * as d3 from "d3";
 import { EnhancedCanvasRenderingContext2D } from "../utils/enhance-ctx";
+import { ImageLoader } from "./../image-loader";
 
 type DrawHint = (msg: string) => void;
 export interface Hinter {
