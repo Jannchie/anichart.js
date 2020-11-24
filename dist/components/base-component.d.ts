@@ -1,20 +1,22 @@
-import { Hintable, Hinter } from "./../../dist/base/hint.d";
+import { Hintable, Hinter } from "../../dist/base/hint";
 import { FontOptions } from "../options/font-options";
 import { ShadowOptions } from "../options/shadow-options";
 import Pos from "../utils/position";
 import { Component } from "./component";
-import { Renderer } from "../base/base";
+import { Renderer } from "../base/renderer";
 import { Player } from "../base/player";
 import { EnhancedCanvasRenderingContext2D } from "../utils/enhance-ctx";
-export declare abstract class Base implements Component, Hintable {
-    alpha: number | Function;
-    pos: Pos | Function;
+import { Scene } from "../base";
+export declare abstract class BaseComponent implements Component, Hintable {
+    alpha: number | ((n: number) => number);
+    pos: Pos | ((n: number) => Pos);
     protected cAlpha: number;
     protected cPos: Pos;
     hinter: Hinter;
     renderer: Renderer;
     player: Player;
-    constructor(init?: Partial<Base>);
+    constructor(init?: Partial<BaseComponent>);
+    scene: Scene;
     shadow: ShadowOptions;
     font: FontOptions;
     ctx: EnhancedCanvasRenderingContext2D;

@@ -2,7 +2,7 @@ import { DefaultFontOptions } from "./../options/font-options";
 import * as d3 from "d3";
 import { LineChartOptions } from "../options/line-chart-options";
 import { DSVRowArray } from "d3";
-import { ChartCompoment } from "../components/chart";
+import { ChartCompoment } from "../components/chart-compoment";
 export declare class LineChart extends ChartCompoment {
     shape: {
         width: number;

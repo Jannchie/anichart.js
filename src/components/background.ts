@@ -1,6 +1,6 @@
-import { Base } from "./base";
+import { BaseComponent } from "./base-component";
 
-export class Background extends Base {
+export class Background extends BaseComponent {
   backgroundColor: string;
   update() {
     this.pos = { x: 0, y: 0 };

@@ -1,7 +1,7 @@
-import { Hinter } from "./hint";
-import { interval, Timer } from "d3";
-import { Player } from "./player";
-import { Renderer } from "./base";
+import * as d3 from "d3";
+import { Hinter } from "../base/hint";
+import { Player } from "../base/player";
+import { Renderer } from "../base/renderer";
 
 export class DefaultPlayer implements Player {
   fps: number = 30;
@@ -16,7 +16,7 @@ export class DefaultPlayer implements Player {
   public get totalFrames(): number {
     return this.fps * this.sec;
   }
-  timer: Timer;
+  timer: d3.Timer;
   output: boolean = false;
   drawFrame(frame: number) {
     this.cFrame = frame;
@@ -35,7 +35,7 @@ export class DefaultPlayer implements Player {
       }
     } else {
       const start = new Date().getTime();
-      this.timer = interval(async () => {
+      this.timer = d3.interval(async () => {
         this.cFrame++;
         this.renderer.draw();
         if (this.cFrame >= this.totalFrames) {

@@ -1,8 +1,10 @@
 import * as d3 from "d3";
 import * as _ from "lodash";
-import { BaseScene, Scene, SceneOptions } from "./scene";
-import { DefaultPlayer } from "./default-player";
-import { DefaultRenderer } from "./defaut-renderer";
+import { Scene } from ".";
+import { DefaultPlayer } from "../default/default-player";
+import { DefaultRenderer } from "../default/defaut-renderer";
+import { SceneOptions } from "../options/scene-options";
+import { BaseScene } from "./base-scene";
 import { DefaultHinter } from "./hint";
 
 export class Series extends BaseScene {

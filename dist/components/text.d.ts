@@ -1,9 +1,9 @@
 import { FontOptions } from "./../options/font-options";
-import { Base } from ".";
+import { BaseComponent } from "./base-component";
 import { TextOptions } from "../options/text-options";
 import { Pos } from "../utils/position";
-declare class Text extends Base {
-    text: string | Function;
+declare class Text extends BaseComponent {
+    text: string | ((n: number) => string);
     fillStyle: string | CanvasGradient | CanvasPattern;
     offset: Pos | Function;
     _text: string;

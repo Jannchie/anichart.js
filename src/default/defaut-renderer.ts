@@ -1,11 +1,13 @@
-import { Hinter } from "./hint";
 import { select } from "d3";
+import { ColorPicker } from "../base/color-picker";
+import { ComponentManager } from "../base/component-manager";
+import { Hinter } from "../base/hint";
+import { Renderer } from "../base/renderer";
 import {
   enhanceCtx,
   EnhancedCanvasRenderingContext2D,
 } from "../utils/enhance-ctx";
-import { ColorPicker, DefaultColorPicker } from "./color";
-import { Renderer, ComponentManager } from "./base";
+import { DefaultColorPicker } from "./default-color-picker";
 
 export class DefaultRenderer implements Renderer {
   hinter: Hinter;
@@ -26,9 +28,9 @@ export class DefaultRenderer implements Renderer {
     }
   }
   setCanvas(selector?: string): EnhancedCanvasRenderingContext2D {
-    if (typeof window != "undefined") {
-      this.canvas = (select(selector).node() as HTMLCanvasElement);
-      if (!this.canvas || this.canvas.getContext == undefined) {
+    if (typeof window !== "undefined") {
+      this.canvas = select(selector).node() as HTMLCanvasElement;
+      if (!this.canvas || this.canvas.getContext === undefined) {
         this.initCanvas();
       }
     } else {

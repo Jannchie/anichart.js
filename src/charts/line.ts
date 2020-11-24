@@ -3,7 +3,7 @@ import { scaleLinear } from "d3-scale";
 import * as d3 from "d3";
 import { LineChartOptions } from "../options/line-chart-options";
 import { DSVRowArray } from "d3";
-import { ChartCompoment } from "../components/chart";
+import { ChartCompoment } from "../components/chart-compoment";
 
 export class LineChart extends ChartCompoment {
   shape: { width: number; height: number };

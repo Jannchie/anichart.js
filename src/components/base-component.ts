@@ -1,26 +1,32 @@
-import { DefaultHinter } from "./../base/hint";
-import { Hintable, Hinter } from "./../../dist/base/hint.d";
-import { DefaultShadowOptions } from "./../options/shadow-options";
+import { DefaultHinter } from "../base/hint";
+import { Hintable, Hinter } from "../../dist/base/hint";
+import { DefaultShadowOptions } from "../options/shadow-options";
 import { merge } from "lodash-es";
 import { FontOptions } from "../options/font-options";
 import { ShadowOptions } from "../options/shadow-options";
 import Pos from "../utils/position";
 import { Component } from "./component";
-import { Renderer } from "../base/base";
+import { Renderer } from "../base/renderer";
 import { Player } from "../base/player";
 import { EnhancedCanvasRenderingContext2D } from "../utils/enhance-ctx";
-export abstract class Base implements Component, Hintable {
-  alpha: number | Function;
-  pos: Pos | Function;
+import { Scene } from "../base";
+export abstract class BaseComponent implements Component, Hintable {
+  alpha: number | ((n: number) => number);
+  pos: Pos | ((n: number) => Pos);
   protected cAlpha: number;
   protected cPos: Pos;
   hinter: Hinter = new DefaultHinter();
   renderer: Renderer;
   player: Player;
 
-  constructor(init?: Partial<Base>) {
+  constructor(init?: Partial<BaseComponent>) {
     Object.assign(this, init);
+    if (this.scene) {
+      this.renderer = this.scene.renderer;
+      this.player = this.scene.player;
+    }
   }
+  scene: Scene;
 
   shadow: ShadowOptions;
   font: FontOptions;
@@ -37,7 +43,7 @@ export abstract class Base implements Component, Hintable {
   preRender() {
     const n = this.player.cFrame;
 
-    if (this.pos == undefined) this.pos = { x: 0, y: 0 };
+    if (this.pos === undefined) this.pos = { x: 0, y: 0 };
     this.cAlpha =
       this.alpha instanceof Function
         ? this.alpha(n / this.player.fps)

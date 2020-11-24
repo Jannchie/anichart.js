@@ -1,11 +1,7 @@
 import { ImageLoader } from "../image-loader";
-import { BaseOptions } from "./../options/base-options";
-import { Base } from "./base";
-export interface ImageComponentOptions extends BaseOptions {
-  imagePath?: string;
-  shape?: { width: number; height: number };
-}
-export class ImageComponent extends Base {
+import { BaseComponent } from "./base-component";
+import { ImageComponentOptions } from "../options/image-component-options";
+export class ImageComponent extends BaseComponent {
   image: CanvasImageSource;
   imagePath: string;
   private imageLoader = new ImageLoader();

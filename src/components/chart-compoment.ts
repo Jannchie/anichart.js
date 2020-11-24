@@ -1,17 +1,10 @@
-import { DefaultHinter } from "./../base/hint";
 import { csv } from "d3";
 import { csvParse, DSVRowArray } from "d3-dsv";
-import { Base } from "./base";
 import { GroupComponent } from "./group";
 import * as fs from "fs";
-import { Component } from ".";
-type LoadCsvFunc = (path: string | any) => Promise<void>;
-export interface ChartInterface {
-  data: DSVRowArray<string>;
-  meta: DSVRowArray<string>;
-  loadData: LoadCsvFunc;
-  loadMeta: LoadCsvFunc;
-}
+import { Component } from "./component";
+import { ChartInterface } from "./chart-interface";
+
 export abstract class ChartCompoment
   extends GroupComponent
   implements ChartInterface {

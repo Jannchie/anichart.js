@@ -21,7 +21,7 @@ export class DefaultHinter implements Hinter {
   height: number;
   public async drawHint(msg: string) {
     if (!this.canvas) {
-      this.canvas = (d3.select("canvas").node() as HTMLCanvasElement);
+      this.canvas = d3.select("canvas").node() as HTMLCanvasElement;
     }
     if (this.ctx) {
       this.ctx.save();

@@ -1,14 +1,10 @@
-import {
-  FontOptions,
-  DefaultFontOptions,
-  Fontable,
-} from "./../options/font-options";
-import { Base } from ".";
+import { FontOptions, DefaultFontOptions } from "./../options/font-options";
+import { BaseComponent } from "./base-component";
 import { TextOptions } from "../options/text-options";
 import { Pos } from "../utils/position";
 import * as _ from "lodash";
-class Text extends Base {
-  text: string | Function;
+class Text extends BaseComponent {
+  text: string | ((n: number) => string);
   fillStyle: string | CanvasGradient | CanvasPattern;
   offset: Pos | Function = { x: 0, y: 0 };
   _text: string;

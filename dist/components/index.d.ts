@@ -1,5 +1,5 @@
 export * from "./component";
-export * from "./base";
+export * from "./base-component";
 export * from "./text";
 export * from "./blur-text";
 export * from "./fade-text";
