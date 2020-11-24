@@ -11,7 +11,7 @@ import { Component } from "../components";
 import { csv } from "d3-fetch";
 import { csvParse, DSVRowArray } from "d3-dsv";
 import { interval, Timer } from "d3-timer";
-import { ColorManager } from "./color";
+import { ColorPicker, DefaultColorPicker } from "./color";
 import { FontOptions } from "../options/font-options";
 class Scene implements Ani {
   fps = 12;
@@ -27,13 +27,14 @@ class Scene implements Ani {
   data: DSVRowArray<string>;
   meta: DSVRowArray<string>;
   player: Timer;
-  color: ColorManager = new ColorManager();
+  color: ColorPicker = new DefaultColorPicker();
   font: FontOptions = new DefaultFontOptions();
   hinter: Hinter = new DefaultHinter();
 
   constructor(options: object = {}) {
     this.setOptions(options);
   }
+  colorPicker: ColorPicker;
 
   addComponent(c: Component): void {
     c.ani = this;
@@ -43,9 +44,6 @@ class Scene implements Ani {
     this.hinter.drawHint(`Component Added: ${c.constructor.name}`);
   }
 
-  ready(): void {
-    throw new Error("Method not implemented.");
-  }
   play() {
     this.update();
     if (this.player) {

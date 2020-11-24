@@ -1,11 +1,14 @@
-export interface Colorable {
+export interface ColorPicker {
   background: string;
   colorMap: Map<string, string>;
   colorScheme: string[];
   getNewColor(): string;
   getColor(key: string): string;
 }
-export class ColorManager implements Colorable {
+export interface Colorable {
+  colorPicker: ColorPicker;
+}
+export class DefaultColorPicker implements ColorPicker {
   private colorIndex = 0;
   background: string = "1E1E1E";
   colorMap: Map<string, string> = new Map<string, string>();

@@ -1,10 +1,10 @@
 import { Groupable } from "./../components/group";
 import { Hintable } from "./hint";
 import { Fontable, FontOptions } from "./../options/font-options";
-import { Colorable } from "./color";
+import { Colorable, ColorPicker } from "./color";
 import { Component } from "../components";
 import { EnhancedCanvasRenderingContext2D } from "../utils/enhance-ctx";
-interface Ani extends Fontable, Hintable, Groupable {
+interface Ani extends Fontable, Hintable, Groupable, Colorable {
   width: number;
   height: number;
   fps: number;
@@ -15,11 +15,8 @@ interface Ani extends Fontable, Hintable, Groupable {
   totalFrames: number;
   components: Component[];
 
-  color: Colorable;
+  color: ColorPicker;
   font: FontOptions;
-
-  data: any;
-  meta: any;
 
   canvas: HTMLCanvasElement;
   ctx: EnhancedCanvasRenderingContext2D;
@@ -33,7 +30,6 @@ interface Ani extends Fontable, Hintable, Groupable {
 
   addComponent(c: Component): void;
 
-  ready(): void;
   draw(frame: number): void;
   play(): void;
 }

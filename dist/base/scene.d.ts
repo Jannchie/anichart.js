@@ -4,7 +4,7 @@ import Ani from "./ani";
 import { Component } from "../components";
 import { DSVRowArray } from "d3-dsv";
 import { Timer } from "d3-timer";
-import { ColorManager } from "./color";
+import { ColorPicker } from "./color";
 import { FontOptions } from "../options/font-options";
 declare class Scene implements Ani {
     fps: number;
@@ -20,12 +20,12 @@ declare class Scene implements Ani {
     data: DSVRowArray<string>;
     meta: DSVRowArray<string>;
     player: Timer;
-    color: ColorManager;
+    color: ColorPicker;
     font: FontOptions;
     hinter: Hinter;
     constructor(options?: object);
+    colorPicker: ColorPicker;
     addComponent(c: Component): void;
-    ready(): void;
     play(): void;
     draw(frame: number): void;
     setOptions(options?: object): void;
