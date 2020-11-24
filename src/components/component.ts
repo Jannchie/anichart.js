@@ -2,7 +2,6 @@ import { Hintable, Hinter } from "./../base/hint";
 import { Player, Renderer } from "./../base/base";
 import { Shadowable } from "./../options/shadow-options";
 import { Fontable } from "./../options/font-options";
-import Ani from "../base/ani";
 import Pos from "../utils/position";
 import { EnhancedCanvasRenderingContext2D } from "../utils/enhance-ctx";
 
@@ -10,8 +9,6 @@ interface Component extends Fontable, Shadowable, Hintable {
   ctx: EnhancedCanvasRenderingContext2D | CanvasRenderingContext2D;
   renderer: Renderer;
   player: Player;
-  // 图表对象
-  ani: Ani;
   // 位置
   pos: Pos | Function;
   // alpha

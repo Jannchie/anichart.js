@@ -2,7 +2,6 @@ import { DefaultHinter } from "./../base/hint";
 import { Hintable, Hinter } from "./../../dist/base/hint.d";
 import { DefaultShadowOptions } from "./../options/shadow-options";
 import { merge } from "lodash-es";
-import Ani from "../base/ani";
 import { FontOptions } from "../options/font-options";
 import { ShadowOptions } from "../options/shadow-options";
 import Pos from "../utils/position";
@@ -11,7 +10,6 @@ import { Player, Renderer } from "../base/base";
 import { EnhancedCanvasRenderingContext2D } from "../utils/enhance-ctx";
 export abstract class Base implements Component, Hintable {
   alpha: number | Function;
-  ani: Ani;
   pos: Pos | Function;
   protected cAlpha: number;
   protected cPos: Pos;

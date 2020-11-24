@@ -17,7 +17,6 @@ export class GroupComponent extends Base implements Groupable {
   addComponent(c: Base) {
     this.components.push(c);
     c.hinter = this.hinter;
-    c.ani = this.ani;
     this.hinter.drawHint(`Component Added: ${c.constructor.name}`);
   }
   update(options: any = {}) {
