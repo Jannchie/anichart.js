@@ -10,14 +10,17 @@ export class ImageComponent extends Base {
   imagePath: string;
   private imageLoader = new ImageLoader();
   shape: { width: number; height: number };
+  private loading: boolean;
   constructor(options: ImageComponentOptions) {
     super(options);
     this.update(options);
+    this.loading = false;
   }
 
   async update(options: ImageComponentOptions = {}) {
     super.update(options);
-    if (!this.image && this.imageLoader) {
+    if (!this.image && this.imageLoader && !this.loading) {
+      this.loading = true;
       this.image = await this.imageLoader.load(this.imagePath);
       this.hinter.drawHint(`Load Image: ${this.imagePath}`);
     }
