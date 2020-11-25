@@ -1,6 +1,7 @@
 {
     "compilerOptions": {
-        "outDir": "./types/",
+        "outDir": "./lib/",
+        "declarationDir": "./types",
         "sourceMap": true,
         "noImplicitAny": true,
         "module": "es6",
@@ -11,7 +12,9 @@
             "./types/**/*",
             "./node_modules/@types"
         ],
-        "moduleResolution":"Node"
+        "moduleResolution":"Node",
+        "esModuleInterop": true,
+        "allowUmdGlobalAccess": true
     },
     "include": [
         "./src/**/*", "@types", "./types/**/*"
