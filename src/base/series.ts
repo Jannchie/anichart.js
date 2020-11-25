@@ -48,6 +48,7 @@ export class Series extends BaseScene {
   update() {
     if (this.scenes)
       this.scenes.forEach((s) => {
+        s.renderer.shape = this.renderer.shape;
         s.update();
       });
   }

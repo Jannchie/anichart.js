@@ -5,14 +5,11 @@ const seriesOptions = {
   player: {
     fps: 144,
   },
-  renderer: {
-    shape: { height: 400, width: 800 },
-  },
 };
 const s = new ani.Series(seriesOptions);
 const sceneOptions = {
   player: {
-    sec: 30,
+    sec: 10,
     fps: 144,
   },
 };
@@ -26,6 +23,7 @@ const lines = new ani.TextLines({
   lineSpacing: 8,
   pos: { x: 50, y: 50 },
 });
+const shape = { height: 400, width: 800 };
 
 a.addComponent(lines);
 
@@ -90,16 +88,16 @@ logoScene.addComponent(
       "https://github.com/Jannchie/anichart.js/blob/master/public/image/ANI.png?raw=true",
     shape: { width: 120, height: 120 },
     pos: {
-      x: seriesOptions.renderer.shape.width / 2 - 60,
-      y: seriesOptions.renderer.shape.height / 2 - 60,
+      x: shape.width / 2 - 60,
+      y: shape.height / 2 - 60,
     },
   })
 );
 logoScene.addComponent(
   new ani.BlurText({
     pos: {
-      x: seriesOptions.renderer.shape.width / 2,
-      y: seriesOptions.renderer.shape.height / 2,
+      x: shape.width / 2,
+      y: shape.height / 2,
     },
     fillStyle: "#FFF",
     font: {
@@ -125,8 +123,8 @@ logoScene.addComponent(
 logoScene.addComponent(
   new ani.BlurText({
     pos: {
-      x: seriesOptions.renderer.shape.width / 2,
-      y: seriesOptions.renderer.shape.height / 2,
+      x: shape.width / 2,
+      y: shape.height / 2,
     },
     fillStyle: "#777",
     font: {
@@ -150,6 +148,7 @@ logoScene.addComponent(
 s.addScene(logoScene);
 s.addScene(a);
 s.setCanvas();
+s.renderer.shape = shape;
 (async () => {
   await lineChart.loadData(d);
   s.play();

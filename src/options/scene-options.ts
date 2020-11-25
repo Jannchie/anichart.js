@@ -1,4 +1,4 @@
-import { Shape } from "../base/Shape";
+import { Shape } from "../base/shape";
 import { PlayerOptions } from "./player-options";
 
 export interface SceneOptions {
