@@ -9,8 +9,8 @@ import { EnhancedCanvasRenderingContext2D } from "../utils/enhance-ctx";
 import Pos from "../utils/position";
 import { Component } from "./component";
 export abstract class BaseComponent implements Component, Hintable {
-  alpha: number | ((n: number) => number);
-  pos: Pos | ((n: number) => Pos);
+  alpha: number | ((n: number) => number) = 1;
+  pos: Pos | ((n: number) => Pos) = { x: 0, y: 0 };
   protected cAlpha: number;
   protected cPos: Pos;
   hinter: Hinter = new DefaultHinter();
@@ -40,7 +40,6 @@ export abstract class BaseComponent implements Component, Hintable {
   }
   preRender() {
     const n = this.player.cFrame;
-
     if (this.pos === undefined) this.pos = { x: 0, y: 0 };
     this.cAlpha =
       this.alpha instanceof Function
@@ -70,6 +69,7 @@ export abstract class BaseComponent implements Component, Hintable {
       this.render();
       this.restoreCtx();
     } catch (e) {
+      // tslint:disable-next-line:no-console
       console.error(e);
     }
   }

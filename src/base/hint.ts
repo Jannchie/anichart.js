@@ -44,6 +44,7 @@ export class DefaultHinter implements Hinter {
       this.ctx.restore();
     }
     this.hint = msg;
+    // tslint:disable-next-line:no-console
     console.log(msg);
   }
 }

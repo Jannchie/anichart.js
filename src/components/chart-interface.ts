@@ -1,7 +1,7 @@
 import { DSVRowArray } from "d3-dsv";
 import { LoadCsvFunc } from "../options/load-csv-func";
 
-export interface ChartInterface {
+export interface Chart {
   data: DSVRowArray<string>;
   meta: DSVRowArray<string>;
   loadData: LoadCsvFunc;

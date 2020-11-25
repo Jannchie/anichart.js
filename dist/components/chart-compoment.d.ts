@@ -1,8 +1,12 @@
 import { DSVRowArray } from "d3-dsv";
-import { ChartInterface } from "./chart-interface";
+import { Chart } from "./chart-interface";
 import { Component } from "./component";
-import { GroupComponent } from "./group";
-export declare abstract class ChartCompoment extends GroupComponent implements ChartInterface {
+import { GroupComponent as Group } from "./group";
+export declare abstract class ChartCompoment extends Group implements Chart {
+    dateKey: string;
+    valueKey: string;
+    idKey: string;
+    colorKey: string;
     components: Component[];
     loadData(path: string | any): Promise<void>;
     update(option?: any): void;

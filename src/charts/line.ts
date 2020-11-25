@@ -21,16 +21,14 @@ export class LineChart extends ChartCompoment {
   dtRange: [number, number];
   showTime: [number, number];
   lineWidth = 4;
-  dateKey = "date";
-  valueKey = "value";
-  idKey = "id";
-  colorKey = "id";
   pointR = 8;
   labelFont = new DefaultFontOptions();
   timeFormat = "%Y-%m-%d";
   valueFormat = ",d";
-  private xMax: number;
   days: number;
+  tickFadeThreshold = 100;
+  private xMax: number;
+  private tickAlpha: d3.ScaleLinear<number, number, never>;
 
   getLabel(k: string, y: number): string {
     return `${k}: ${d3.format(this.valueFormat)(this.scales.y.invert(y))}`;
@@ -107,16 +105,26 @@ export class LineChart extends ChartCompoment {
 
   private setScale() {
     this.scales = {
-      x: scaleLinear(this.tsRange, [
-        this.padding.left + this.margin.left,
-        this.shape.width - this.padding.right - this.margin.right,
-      ]),
-      y: scaleLinear(this.dtRange, [
-        this.shape.height - this.padding.bottom - this.margin.bottom,
-        this.padding.top + this.margin.top,
-      ]),
+      x: scaleLinear(this.tsRange, [this.xLeft, this.xRight]),
+      y: scaleLinear(this.dtRange, [this.yTop, this.yBottom]),
     };
   }
+  private get yBottom() {
+    return this.padding.top + this.margin.top;
+  }
+
+  private get yTop() {
+    return this.shape.height - this.padding.bottom - this.margin.bottom;
+  }
+
+  private get xRight() {
+    return this.shape.width - this.padding.right - this.margin.right;
+  }
+
+  private get xLeft() {
+    return this.padding.left + this.margin.left;
+  }
+
   private setRange(n?: number) {
     if (!n) {
       n = this.player.sec * this.player.fps - 1;
@@ -137,6 +145,15 @@ export class LineChart extends ChartCompoment {
     this.setDataGroup();
     this.xMax =
       this.cPos.x + this.shape.width - this.padding.right - this.margin.right;
+    const xLeftShow = this.xLeft + this.tickFadeThreshold;
+    const xRightShow = this.xRight - this.tickFadeThreshold;
+
+    this.tickAlpha = d3
+      .scaleLinear(
+        [this.xLeft, xLeftShow, xRightShow, this.xRight],
+        [0, 1, 1, 0]
+      )
+      .clamp(true);
   }
   render(): void {
     this.setRange();
@@ -187,9 +204,13 @@ export class LineChart extends ChartCompoment {
     this.ctx.textBaseline = "bottom";
     this.ctx.fillStyle = "#FFF";
     for (const tick of ticks) {
+      const x = this.scales.x(tick);
+      if (this.days) {
+        this.ctx.globalAlpha = this.cAlpha * this.tickAlpha(x);
+      }
       this.ctx.fillText(
         d3.timeFormat(this.timeFormat)(new Date(tick)),
-        this.scales.x(tick),
+        x,
         this.shape.height - this.margin.bottom
       );
     }

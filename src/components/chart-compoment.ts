@@ -1,13 +1,15 @@
 import { csv } from "d3";
 import { csvParse, DSVRowArray } from "d3-dsv";
 import * as fs from "fs";
-import { ChartInterface } from "./chart-interface";
+import { Chart } from "./chart-interface";
 import { Component } from "./component";
-import { GroupComponent } from "./group";
+import { GroupComponent as Group } from "./group";
 
-export abstract class ChartCompoment
-  extends GroupComponent
-  implements ChartInterface {
+export abstract class ChartCompoment extends Group implements Chart {
+  dateKey = "date";
+  valueKey = "value";
+  idKey = "id";
+  colorKey = "id";
   components: Component[] = [];
   async loadData(path: string | any): Promise<void> {
     this.hinter.drawHint("Loading Data...");
@@ -25,7 +27,7 @@ export abstract class ChartCompoment
   update(option?: any) {
     super.update(option);
     if (this.components) {
-      this.components.forEach((c) => {});
+      // this.components.forEach((c) => {});
     }
   }
   private async readCsv(path: string | any): Promise<DSVRowArray<string>> {
