@@ -28,8 +28,5 @@ module.exports = {
       },
     ],
   },
-  externals: {
-    fs: "fs",
-    canvas: "canvas",
-  },
+  node: { fs: "empty", canvas: "empty" },
 };
