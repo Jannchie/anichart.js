@@ -5,7 +5,7 @@ import { DefaultPlayer } from "../default/default-player";
 import { DefaultRenderer } from "../default/defaut-renderer";
 import { SceneOptions } from "../options/scene-options";
 import { BaseScene } from "./base-scene";
-import { DefaultHinter } from "./hint";
+import { DefaultHinter } from "../default/default-hinter";
 
 export class Scene extends BaseScene {
   constructor(options: SceneOptions = {}) {

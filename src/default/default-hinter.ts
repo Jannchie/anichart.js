@@ -1,14 +1,9 @@
 import * as d3 from "d3";
+import { ImageLoader } from "../image-loader";
+import { Hinter } from "../interface/hinter";
 import { EnhancedCanvasRenderingContext2D } from "../utils/enhance-ctx";
-import { ImageLoader } from "./../image-loader";
 
-type DrawHint = (msg: string) => void;
-export interface Hinter {
-  hint: string;
-  ctx: CanvasRenderingContext2D | EnhancedCanvasRenderingContext2D;
-  drawHint: DrawHint;
-}
-
+export type DrawHint = (msg: string) => void;
 export class DefaultHinter implements Hinter {
   canvas: HTMLCanvasElement;
   imageLoader: ImageLoader;
@@ -47,7 +42,4 @@ export class DefaultHinter implements Hinter {
     // tslint:disable-next-line:no-console
     console.log(msg);
   }
-}
-export interface Hintable {
-  hinter: Hinter;
 }

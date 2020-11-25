@@ -1,7 +1,7 @@
 import * as d3 from "d3";
-import { Hinter } from "../base/hint";
-import { Player } from "../base/player";
-import { Renderer } from "../base/renderer";
+import { Hinter } from "../interface/hinter";
+import { Player } from "../interface/player";
+import { Renderer } from "../interface/renderer";
 
 export class DefaultPlayer implements Player {
   fps: number = 30;

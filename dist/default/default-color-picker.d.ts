@@ -1,4 +1,4 @@
-import { ColorPicker } from "../base/color-picker";
+import { ColorPicker } from "../interface/color-picker";
 export declare class DefaultColorPicker implements ColorPicker {
     private colorIndex;
     background: string;

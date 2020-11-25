@@ -1,4 +1,4 @@
-import Pos from "../utils/position";
+import Pos from "../types/position";
 export interface ShadowOptions {
     enable?: boolean;
     color?: string;

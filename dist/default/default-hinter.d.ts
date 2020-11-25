@@ -1,11 +1,7 @@
+import { ImageLoader } from "../image-loader";
+import { Hinter } from "../interface/hinter";
 import { EnhancedCanvasRenderingContext2D } from "../utils/enhance-ctx";
-import { ImageLoader } from "./../image-loader";
-declare type DrawHint = (msg: string) => void;
-export interface Hinter {
-    hint: string;
-    ctx: CanvasRenderingContext2D | EnhancedCanvasRenderingContext2D;
-    drawHint: DrawHint;
-}
+export declare type DrawHint = (msg: string) => void;
 export declare class DefaultHinter implements Hinter {
     canvas: HTMLCanvasElement;
     imageLoader: ImageLoader;
@@ -15,7 +11,3 @@ export declare class DefaultHinter implements Hinter {
     height: number;
     drawHint(msg: string): Promise<void>;
 }
-export interface Hintable {
-    hinter: Hinter;
-}
-export {};

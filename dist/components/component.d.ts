@@ -1,11 +1,9 @@
-import { Hintable, Hinter } from "./../base/hint";
-import { Renderer } from "../base/renderer";
-import { Player } from "../base/player";
-import { Shadowable } from "./../options/shadow-options";
-import { Fontable } from "./../options/font-options";
-import Pos from "../utils/position";
-import { EnhancedCanvasRenderingContext2D } from "../utils/enhance-ctx";
 import { Scene } from "../base";
+import { Hintable, Hinter, Player, Renderer } from "../interface";
+import Pos from "../types/position";
+import { EnhancedCanvasRenderingContext2D } from "../utils/enhance-ctx";
+import { Fontable } from "./../options/font-options";
+import { Shadowable } from "./../options/shadow-options";
 interface Component extends Fontable, Shadowable, Hintable {
     scene: Scene;
     ctx: EnhancedCanvasRenderingContext2D | CanvasRenderingContext2D;

@@ -1,8 +1,9 @@
 import { DefaultComponentManager } from "../default/default-component-manager";
-import { Hintable, Hinter } from "./hint";
-import { Playable } from "./playable";
-import { Player } from "./player";
-import { Renderer } from "./renderer";
+import { Hintable } from "../interface/hintable";
+import { Hinter } from "../interface/hinter";
+import { Playable } from "../interface/playable";
+import { Player } from "../interface/player";
+import { Renderer } from "../interface/renderer";
 
 export abstract class BaseScene implements Playable, Hintable {
   renderer: Renderer;

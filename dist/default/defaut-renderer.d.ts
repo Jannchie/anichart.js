@@ -1,7 +1,5 @@
-import { ColorPicker } from "../base/color-picker";
-import { ComponentManager } from "../base/component-manager";
-import { Hinter } from "../base/hint";
-import { Renderer } from "../base/renderer";
+import { ComponentManager, Hinter, Renderer } from "../interface";
+import { ColorPicker } from "../interface/color-picker";
 import { EnhancedCanvasRenderingContext2D } from "../utils/enhance-ctx";
 export declare class DefaultRenderer implements Renderer {
     hinter: Hinter;

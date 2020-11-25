@@ -1,8 +1,8 @@
-import { Hintable } from "./hint";
 import { EnhancedCanvasRenderingContext2D } from "../utils/enhance-ctx";
-import { Colorable } from "./colorable";
+import { Colorable } from "../interface/colorable";
 import { Combinable } from "./combinable";
-import { Shape } from "./shape";
+import { Shape } from "../types/shape";
+import { Hintable } from "./hintable";
 
 export interface Renderer extends Colorable, Combinable, Hintable {
   shape: Shape;

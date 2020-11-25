@@ -1,6 +1,6 @@
-import { Background } from "../components/background";
 import { Component } from "../components";
-import { ComponentManager } from "../base/component-manager";
+import { Background } from "../components/background";
+import { ComponentManager } from "../interface";
 
 export class DefaultComponentManager implements ComponentManager {
   components: Component[] = [new Background()];

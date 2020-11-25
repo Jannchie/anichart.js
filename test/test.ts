@@ -1,7 +1,7 @@
 import * as ani from "../src/index";
 import * as path from "path";
 import * as d3 from "d3";
-import Pos from "../src/utils/position";
+import Pos from "../src/types/position";
 const d = path.join(__dirname, "./data/test.csv");
 const seriesOptions = {
   player: {

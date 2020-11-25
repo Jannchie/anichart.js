@@ -1,13 +1,13 @@
 import { merge } from "lodash-es";
 import { Scene } from "../base";
-import { DefaultHinter, Hintable, Hinter } from "../base/hint";
-import { Player } from "../base/player";
-import { Renderer } from "../base/renderer";
+import { DefaultHinter } from "../default/default-hinter";
+import { Hintable, Hinter, Player, Renderer } from "../interface";
 import { FontOptions } from "../options/font-options";
 import { DefaultShadowOptions, ShadowOptions } from "../options/shadow-options";
+import Pos from "../types/position";
 import { EnhancedCanvasRenderingContext2D } from "../utils/enhance-ctx";
-import Pos from "../utils/position";
 import { Component } from "./component";
+
 export abstract class BaseComponent implements Component, Hintable {
   alpha: number | ((n: number) => number) = 1;
   pos: Pos | ((n: number) => Pos) = { x: 0, y: 0 };

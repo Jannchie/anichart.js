@@ -1,7 +1,7 @@
 import { FontOptions, DefaultFontOptions } from "./../options/font-options";
 import { BaseComponent } from "./base-component";
 import { TextOptions } from "../options/text-options";
-import { Pos } from "../utils/position";
+import { Pos } from "../types/position";
 import * as _ from "lodash";
 class Text extends BaseComponent {
   text: string | ((n: number) => string);
