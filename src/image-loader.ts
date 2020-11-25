@@ -5,15 +5,14 @@ export class ImageLoader {
     if (typeof window !== "undefined") {
       // Browser
       const { Image } = require("@canvas/image");
-      this.load = function (url: string) {
-        return new Promise((resolve) => {
+      this.load = (url: string) =>
+        new Promise((resolve) => {
           const image = new Image();
           image.onload = () => {
             resolve(image);
           };
           image.src = url;
         });
-      };
     } else {
       // Node.js
       const { loadImage } = require("canvas");
