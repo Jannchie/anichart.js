@@ -1,8 +1,6 @@
 let fs;
 if (typeof window === "undefined") {
   fs = require("fs");
-} else {
-  fs = {};
 }
 import { createFFmpeg } from "@ffmpeg/ffmpeg";
 

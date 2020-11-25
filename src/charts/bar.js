@@ -13,8 +13,6 @@ import { BaseAniChart } from "../anichart";
 let fs;
 if (typeof window === "undefined") {
   fs = require("fs");
-} else {
-  fs = {};
 }
 class AniBarChart extends BaseAniChart {
   constructor(options = {}) {
