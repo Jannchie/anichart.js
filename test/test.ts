@@ -1,5 +1,7 @@
 import * as ani from "../src/index";
 import * as path from "path";
+import * as d3 from "d3";
+import Pos from "../src/utils/position";
 const d = path.join(__dirname, "./data/test.csv");
 const seriesOptions = {
   player: {
@@ -16,7 +18,7 @@ const sceneOptions = {
 
 const a = new ani.Scene(sceneOptions);
 sceneOptions.player.fps = 30;
-sceneOptions.player.sec = 0;
+sceneOptions.player.sec = 5;
 const lines = new ani.TextLines({
   fillStyle: "#FFF",
   font: { fontSize: 18, font: "Sarasa Mono SC" },
@@ -82,15 +84,31 @@ const lineChart = new ani.LineChart({ days: 2 });
 a.addComponent(lineChart);
 const logoScene = new ani.Scene(sceneOptions);
 logoScene.update();
+
+const scalePos = d3
+  .scaleLinear(
+    [0, 5],
+    [
+      { x: shape.width / 2 - 60, y: shape.height / 2 - 100 } as Pos,
+      { x: shape.width / 2 - 60, y: shape.height / 2 - 60 } as Pos,
+    ]
+  )
+  .clamp(true);
+const posCal = (sec: number) => {
+  return scalePos(d3.easeCubicOut(sec / 5) * 5);
+};
+const scaleAlpha = d3.scaleLinear([1, 2, 4.9, 5], [0, 1, 1, 0]).clamp(true);
+const alpha = (sec: number) => {
+  return scaleAlpha(d3.easeCubicOut(sec / 5) * 5);
+};
+
 logoScene.addComponent(
   new ani.ImageComponent({
     imagePath:
       "https://github.com/Jannchie/anichart.js/blob/master/public/image/ANI.png?raw=true",
     shape: { width: 120, height: 120 },
-    pos: {
-      x: shape.width / 2 - 60,
-      y: shape.height / 2 - 60,
-    },
+    pos: posCal,
+    alpha,
   })
 );
 logoScene.addComponent(

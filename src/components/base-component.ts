@@ -75,6 +75,7 @@ export abstract class BaseComponent implements Component, Hintable {
   }
 
   protected getValue(obj: any, n: number): any {
+    n /= this.player.fps;
     return obj instanceof Function ? obj(n) : obj;
   }
 }

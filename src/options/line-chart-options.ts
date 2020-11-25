@@ -15,9 +15,11 @@ export interface LineChartOptions extends BaseOptions {
   lineWidth?: number;
   pointR?: number;
   getLabel?: GetLabel;
+
   dateKey?: string;
   valueKey?: string;
   idKey?: string;
+
   showTime?: [number, number];
   days?: number;
 }

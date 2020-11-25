@@ -2,6 +2,7 @@ import { FontOptions } from "./../options/font-options";
 import * as _ from "lodash";
 
 if (typeof window === "undefined") {
+  // tslint:disable-next-line:no-var-requires
   global.CanvasRenderingContext2D = require("canvas").CanvasRenderingContext2D;
 }
 
@@ -37,7 +38,7 @@ export function enhanceCtx(ctx: any): EnhancedCanvasRenderingContext2D {
     imgW = 100,
     r = 4
   ) => {
-    if (img != undefined) {
+    if (img !== undefined) {
       ctx.save();
       ctx.beginPath();
       ctx.radiusArea(x, y, imgW, imgH, r);

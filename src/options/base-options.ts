@@ -3,9 +3,9 @@ import { ShadowOptions } from "./shadow-options";
 import Pos from "../utils/position";
 export interface BaseOptions {
   // 位置
-  pos?: Pos | ((n: number) => Pos);
+  pos?: Pos | ((sec: number) => Pos);
   // 透明度
-  alpha?: number | ((n: number) => number);
+  alpha?: number | ((sec: number) => number);
 
   font?: FontOptions;
   shadow?: ShadowOptions;
