@@ -7,3 +7,5 @@
 export * from "./charts";
 export * from "./base";
 export * from "./components";
+import Bar from "./charts/bar";
+export { Bar };
