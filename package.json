@@ -16,7 +16,7 @@
   },
   "files": [
     "dist/**/*.js",
-    "type/**/*.d.ts"
+    "types/**/*.d.ts"
   ],
   "scripts": {
     "build": "webpack  --config webpack.prod.js --optimize-minimize",
