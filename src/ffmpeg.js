@@ -1,4 +1,7 @@
-import fs from "fs";
+let fs;
+if (typeof window === "undefined") {
+  fs = require("fs");
+}
 import { createFFmpeg } from "@ffmpeg/ffmpeg";
 
 const ffmpeg = createFFmpeg({

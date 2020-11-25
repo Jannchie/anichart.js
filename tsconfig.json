@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "outDir": "./dist/",
+        "outDir": "./@types/",
         "sourceMap": true,
         "noImplicitAny": true,
         "module": "es6",
@@ -8,12 +8,12 @@
         "declaration": true,
         "typeRoots": [
             "./src/**/*",
-            "./dist/**/*",
+            "./@types/**/*",
             "./node_modules/@types"
         ],
         "moduleResolution":"Node"
     },
     "include": [
-        "./src/**/*"
+        "./src/**/*", "@types", "./@types/**/*"
     ],
 }

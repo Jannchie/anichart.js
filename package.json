@@ -1,7 +1,7 @@
 {
   "name": "anichart",
   "sideEffects": false,
-  "version": "1.3.2",
+  "version": "1.3.3",
   "description": "",
   "author": "jannchie <jannchie@gmail.com>",
   "license": "MIT",
@@ -9,13 +9,14 @@
   "main": "dist/anichart.js",
   "unpkg": "dist/anichart.js",
   "jsdelivr": "dist/anichart.js",
+  "types": "@types/index.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/Jannchie/anichart.js.git"
   },
   "files": [
-    "dist/*.js",
-    "dist/*.d.ts"
+    "dist/**/*.js",
+    "@types/**/*.d.ts"
   ],
   "scripts": {
     "build": "webpack  --config webpack.prod.js --optimize-minimize",

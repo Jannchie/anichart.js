@@ -8,9 +8,12 @@ import { format } from "d3-format";
 import { interpolateNumber } from "d3-interpolate";
 import { scaleLinear } from "d3-scale";
 import { timeFormat } from "d3-time-format";
-import fs from "fs";
 import * as _ from "lodash-es";
 import { BaseAniChart } from "../anichart";
+let fs;
+if (typeof window === "undefined") {
+  fs = require("fs");
+}
 class AniBarChart extends BaseAniChart {
   constructor(options = {}) {
     super();
