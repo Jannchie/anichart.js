@@ -29,9 +29,10 @@ export class LineChart extends ChartCompoment {
   tickFadeThreshold = 100;
   private xMax: number;
   private tickAlpha: d3.ScaleLinear<number, number, never>;
+  strict = false;
 
   getLabel(k: string, y: number): string {
-    return `${k}: ${d3.format(this.valueFormat)(this.scales.y.invert(y))}`;
+    return `${k}: ${d3.format(this.valueFormat)(y)}`;
   }
 
   constructor(options?: LineChartOptions) {
@@ -67,6 +68,28 @@ export class LineChart extends ChartCompoment {
           d[this.valueKey] = Number(d[this.valueKey]);
           return d;
         });
+        if (this.strict === true) {
+          const dts = Array.from(
+            d3.group(this.data, (d) => d[this.dateKey]).keys()
+          ).sort((a, b) => Number(a) - Number(b));
+          const idG = d3.group(this.data, (d) => d[this.idKey]);
+          const ids = Array.from(idG.keys());
+          for (const id of ids) {
+            const list = d3.group(idG.get(id), (d) => d[this.dateKey]);
+            for (let i = 0; i < dts.length - 1; i++) {
+              if (list.get(dts[i]) && !list.get(dts[i + 1])) {
+                const a = list.get(dts[i]) as any;
+                const tmp = {} as any;
+                tmp[this.dateKey] = dts[i + 1];
+                tmp[this.idKey] = a[0][this.idKey];
+                tmp[this.valueKey] = "-";
+                this.data.push(tmp);
+              }
+            }
+          }
+        }
+
+        this.data.sort((a: any, b: any) => a[this.dateKey] - b[this.dateKey]);
         this.setRange();
         this.setScale();
         this.setLine();
@@ -77,7 +100,9 @@ export class LineChart extends ChartCompoment {
           const y = d3.max(this.data, (d) => Number(d[this.valueKey]));
           this.dataGroup.forEach((_, k) => {
             this.ctx.setFontOptions(this.labelFont);
-            const current = this.ctx.measureText(this.getLabel(k, y));
+            const current = this.ctx.measureText(
+              this.getLabel(k, this.scales.y.invert(y))
+            );
             if (current.width > max) max = current.width;
           });
           return max;
@@ -197,7 +222,11 @@ export class LineChart extends ChartCompoment {
       this.ctx.fillCircle(this.xMax, y, this.pointR);
       this.ctx.setFontOptions(this.labelFont);
       // 绘制Label
-      this.ctx.fillText(this.getLabel(k, y), this.xMax + 15, y);
+      this.ctx.fillText(
+        this.getLabel(k, this.scales.y.invert(y)),
+        this.xMax + 15,
+        y
+      );
     });
     // tick
     const ticks = this.scales.x.ticks(5);

@@ -1,9 +1,5 @@
 import { BaseOptions } from "./base-options";
 import { FontOptions } from "./font-options";
-/**
- * 通过给定id和value，获得label
- */
-declare type GetLabel = (key: string, value: number) => string;
 export interface LineChartOptions extends BaseOptions {
     padding?: {
         left: number;
@@ -22,11 +18,11 @@ export interface LineChartOptions extends BaseOptions {
     valueFormat?: string;
     lineWidth?: number;
     pointR?: number;
-    getLabel?: GetLabel;
+    strict?: boolean;
+    getLabel?: (id: string, value: number) => string;
     dateKey?: string;
     valueKey?: string;
     idKey?: string;
     showTime?: [number, number];
     days?: number;
 }
-export {};

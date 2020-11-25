@@ -40,6 +40,7 @@ export declare class LineChart extends ChartCompoment {
     tickFadeThreshold: number;
     private xMax;
     private tickAlpha;
+    strict: boolean;
     getLabel(k: string, y: number): string;
     constructor(options?: LineChartOptions);
     update(options?: LineChartOptions): void;
