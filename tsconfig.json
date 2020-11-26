@@ -14,6 +14,8 @@
             "./node_modules/@types"
         ],
         "moduleResolution":"Node",
+        "allowUmdGlobalAccess": true,
+        "esModuleInterop": true,
         "allowJs": true
     },
     "compileOnSave": true,
