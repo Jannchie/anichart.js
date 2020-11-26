@@ -22,7 +22,7 @@
   ],
   "scripts": {
     "build": "tsc & webpack --config webpack.prod.js",
-    "deploy": "yarn build & npm version prerelease",
+    "deploy": "npm version prerelease",
     "serve": "webpack-dev-server --open  --config webpack.dev.js",
     "dev": "webpack  --config webpack.dev.js",
     "watch": "webpack --watch  --config webpack.dev.js"
