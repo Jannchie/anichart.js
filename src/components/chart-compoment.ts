@@ -10,7 +10,6 @@ export abstract class ChartCompoment extends Group implements Chart {
   valueKey = "value";
   idKey = "id";
   colorKey = "id";
-  components: Component[] = [];
   async loadData(path: string | any): Promise<void> {
     this.hinter.drawHint("Loading Data...");
     this.data = await this.readCsv(path);

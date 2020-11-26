@@ -121,3 +121,9 @@ test/data/country-meta.csv
 *.csv
 *.mp4
 *.temp.*
+
+lib
+
+dist
+
+*.map

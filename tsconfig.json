@@ -1,19 +1,23 @@
 {
     "compilerOptions": {
-        "outDir": "./types/",
-        "sourceMap": true,
+        "outDir": "lib",
+        "declarationDir": "typings",
         "noImplicitAny": true,
         "module": "es6",
         "target": "es5",
+        "declarationMap": true,
         "declaration": true,
+        "inlineSourceMap": true,
         "typeRoots": [
             "./src/**/*",
-            "./types/**/*",
+            "./typings/**/*",
             "./node_modules/@types"
         ],
-        "moduleResolution":"Node"
+        "moduleResolution":"Node",
+        "allowJs": true
     },
+    "compileOnSave": true,
     "include": [
-        "./src/**/*", "@types", "./types/**/*"
+        "./src/**/*", "@types", "typings/**/*"
     ],
 }

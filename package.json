@@ -6,20 +6,23 @@
   "author": "jannchie <jannchie@gmail.com>",
   "license": "MIT",
   "private": false,
-  "main": "dist/anichart.js",
+  "main": "lib/index.js",
   "unpkg": "dist/anichart.js",
   "jsdelivr": "dist/anichart.js",
-  "types": "type/index.d.ts",
+  "types": "typings/index.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/Jannchie/anichart.js.git"
   },
   "files": [
     "dist/**/*.js",
-    "type/**/*.d.ts"
+    "lib/**/*",
+    "typings/**/*",
+    "src/**/*"
   ],
   "scripts": {
-    "build": "webpack  --config webpack.prod.js --optimize-minimize",
+    "build": "tsc & webpack --config webpack.prod.js",
+    "deploy": "npm version prerelease & npm publish",
     "serve": "webpack-dev-server --open  --config webpack.dev.js",
     "dev": "webpack  --config webpack.dev.js",
     "watch": "webpack --watch  --config webpack.dev.js"

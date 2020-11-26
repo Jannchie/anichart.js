@@ -6,14 +6,8 @@ module.exports = merge(common, {
     anichart: "./src/index.ts",
     test: "./test/index.ts",
   },
-  optimization: {
-    splitChunks: {
-      chunks: "all",
-    },
-  },
   output: {
     filename: "[name].js",
-    chunkFilename: "[name].bundle.js",
   },
   mode: "development",
   devtool: "inline-source-map",
