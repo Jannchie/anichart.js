@@ -1,5 +1,4 @@
-export default AniBarChart;
-declare class AniBarChart extends BaseAniChart {
+export class Bar extends BaseAniChart {
     constructor(options?: {});
     imagePath: string;
     language: string;
@@ -83,5 +82,6 @@ declare class AniBarChart extends BaseAniChart {
     calRenderSort(): void;
     fixAlpha(): Promise<void>;
 }
+export default Bar;
 import { BaseAniChart } from "../anichart";
 //# sourceMappingURL=bar.d.ts.map

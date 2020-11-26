@@ -14,7 +14,7 @@ let fs;
 if (typeof window === "undefined") {
   fs = require("fs");
 }
-class AniBarChart extends BaseAniChart {
+export class Bar extends BaseAniChart {
   constructor(options = {}) {
     super();
     this.imagePath = "image/";
@@ -733,4 +733,4 @@ class AniBarChart extends BaseAniChart {
     }
   }
 }
-export default AniBarChart;
+export default Bar;
