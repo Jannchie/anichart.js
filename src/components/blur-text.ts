@@ -5,10 +5,10 @@ export class BlurText extends FadeText {
   blur = 10;
   constructor(options: BlurTextOptions) {
     super(options);
-    this.update(options);
+    this.update();
   }
-  update(options: BlurTextOptions = {}) {
-    super.update(options);
+  update() {
+    super.update();
   }
   preRender() {
     super.preRender();

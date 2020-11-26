@@ -8,8 +8,8 @@ class FadeText extends Text {
   constructor(options: FadeTextOptions) {
     super(options);
   }
-  update(options: FadeTextOptions = {}) {
-    super.update(options);
+  update() {
+    super.update();
     // 计算显示时间
     if (this.time !== undefined) {
       const fade = this.fade !== undefined ? this.fade : 0;

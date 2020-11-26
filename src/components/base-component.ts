@@ -30,8 +30,7 @@ export abstract class BaseComponent implements Component, Hintable {
   font: FontOptions;
   ctx: EnhancedCanvasRenderingContext2D;
 
-  update(options: any = {}): void {
-    merge(this, options);
+  update(): void {
     this.shadow = merge(new DefaultShadowOptions(), this.shadow);
   }
 

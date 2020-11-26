@@ -9,12 +9,12 @@ export class ImageComponent extends BaseComponent {
   private loading: boolean;
   constructor(options: ImageComponentOptions) {
     super(options);
-    this.update(options);
     this.loading = false;
+    this.update();
   }
 
-  async update(options: ImageComponentOptions = {}) {
-    super.update(options);
+  async update() {
+    super.update();
     if (!this.image && this.imageLoader && !this.loading) {
       this.loading = true;
       this.image = await this.imageLoader.load(this.imagePath);

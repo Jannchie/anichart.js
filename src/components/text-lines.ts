@@ -9,10 +9,10 @@ export class TextLines extends GroupComponent implements Fontable {
   fillStyle: string | CanvasGradient | CanvasPattern;
   constructor(options: TextLinesOptions) {
     super(options);
-    this.update(options);
+    this.update();
   }
-  update(options: TextLinesOptions = {}) {
-    super.update(options);
+  update() {
+    super.update();
     let offset = 0;
     if (this.components) {
       this.components.forEach((c) => {

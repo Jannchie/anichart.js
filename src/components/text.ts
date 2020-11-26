@@ -6,7 +6,7 @@ import * as _ from "lodash";
 class Text extends BaseComponent {
   text: string | ((n: number) => string);
   fillStyle: string | CanvasGradient | CanvasPattern;
-  offset: Pos | Function = { x: 0, y: 0 };
+  offset: Pos | ((sec: number) => Pos);
   _text: string;
   font: FontOptions;
   protected cOffset: Pos;
@@ -14,9 +14,10 @@ class Text extends BaseComponent {
   constructor(options: TextOptions) {
     super(options);
   }
-  update(options: TextOptions = {}) {
-    super.update(options);
+  update() {
+    super.update();
     this.finalFont = _.merge(new DefaultFontOptions(), this.font);
+    if (!this.offset) this.offset = { x: 0, y: 0 };
   }
   preRender() {
     super.preRender();

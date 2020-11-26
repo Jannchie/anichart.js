@@ -21,10 +21,12 @@ export abstract class ChartCompoment extends Group implements Chart {
       this.hinter.drawHint("Refresh Components... Finished!");
     }
   }
-  update(option?: any) {
-    super.update(option);
+  update() {
+    super.update();
     if (this.components) {
-      // this.components.forEach((c) => {});
+      this.components.forEach((c) => {
+        c.update();
+      });
     }
   }
   private async readCsv(path: string | any): Promise<DSVRowArray<string>> {
