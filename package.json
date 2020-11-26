@@ -22,7 +22,7 @@
   ],
   "scripts": {
     "build": "tsc & webpack --config webpack.prod.js",
-    "deploy": "npm version prerelease & npm publish",
+    "deploy": "yarn build & npm version prerelease",
     "serve": "webpack-dev-server --open  --config webpack.dev.js",
     "dev": "webpack  --config webpack.dev.js",
     "watch": "webpack --watch  --config webpack.dev.js"
@@ -65,6 +65,7 @@
     "@types/lodash-es": "^4.17.3",
     "async": "^3.2.0",
     "canvas": "^2.6.1",
+    "canvas-5-polyfill": "^0.1.5",
     "colorthief": "^2.3.2",
     "d3": "^6.2.0",
     "d3-array": "^2.8.0",
