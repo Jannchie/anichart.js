@@ -1,5 +1,6 @@
 const ani = require("../dist/anichart");
 const path = require("path");
+const d3 = require("d3");
 let d = path.join(__dirname, "./data/test.csv");
 
 const a = new ani.Scene({
@@ -21,7 +22,7 @@ let lines = new ani.TextLines({
 a.addComponent(lines);
 lines.addComponent(
   new ani.Text({
-    alpha: scaleLinear([0, 1, 2, 3], [0, 1, 1, 0]).clamp(true),
+    alpha: d3.scaleLinear([0, 1, 2, 3], [0, 1, 1, 0]).clamp(true),
     text: "基础设置文字 - 在lines中无法设置position",
   })
 );
@@ -57,10 +58,12 @@ lines.addComponent(
     blur: 4,
   })
 );
-
+const lineChart = new ani.LineChart();
+a.addComponent(lineChart);
 (async () => {
-  await a.loadData(d);
-  a.play();
+  lineChart.loadData(d);
+  a.update();
+  a.player.play();
 })();
 
 module.exports = a;
