@@ -1,8 +1,6 @@
 import { csv } from "d3";
 import { csvParse, DSVRowArray } from "d3-dsv";
-import * as fs from "fs";
 import { Chart } from "./chart-interface";
-import { Component } from "./component";
 import { GroupComponent as Group } from "./group";
 
 export abstract class ChartCompoment extends Group implements Chart {
@@ -34,6 +32,7 @@ export abstract class ChartCompoment extends Group implements Chart {
       path = path.default;
     }
     if (typeof window === "undefined") {
+      const fs = require("fs");
       return csvParse(fs.readFileSync(path).toString());
     } else {
       if ("object" === typeof path) {
