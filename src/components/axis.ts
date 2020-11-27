@@ -14,6 +14,7 @@ export class Axis extends GroupComponent {
   labelFont = new DefaultFontOptions();
   data: any[];
   xScaleY: number;
+  yScaleX: number;
   constructor() {
     super();
   }
@@ -34,14 +35,11 @@ export class Axis extends GroupComponent {
     this.ctx.fillStyle = "#FFF";
     for (const tick of ticks) {
       const x = this.scales.x(tick);
-      // if (this.days) {
-
       this.ctx.globalAlpha = this.cAlpha * this.tickAlpha(x);
-      // }
       this.ctx.fillText(
         d3.timeFormat(this.timeFormat)(new Date(tick)),
         x,
-        this.xScaleY
+        this.scales.y.range()[1]
       );
     }
   }

@@ -14,7 +14,7 @@ let fs;
 if (typeof window === "undefined") {
   fs = require("fs");
 }
-export class Bar extends BaseAniChart {
+export class BarChart extends BaseAniChart {
   constructor(options = {}) {
     super();
     this.imagePath = "image/";
@@ -44,7 +44,7 @@ export class Bar extends BaseAniChart {
 
     this.colorData = [];
 
-    this.barInfo = (data) => {
+    this.barInfo = (data, meta, self) => {
       if (data.name != undefined) {
         if (data.type != undefined) {
           return `${data.type} - ${data.name}`;
@@ -111,8 +111,8 @@ export class Bar extends BaseAniChart {
       bottom: this.outerMargin.bottom,
     };
 
-    this.drawBarExt = () => {};
-    this.drawExt = () => {};
+    this.drawBarExt = (ctx, data, series, self) => {};
+    this.drawExt = (ctx, data, series, self) => {};
     this.setOptions(options);
 
     this.barHeight = Math.round(
@@ -193,18 +193,24 @@ export class Bar extends BaseAniChart {
         .map((d) => d[0])
         .sort((a, b) => a.date - b.date);
       let scales = {};
-      _.keys(valList[0]).forEach((key) => {
-        if (
-          valList[0][key] != id &&
-          Number(valList[0][key]) == Number(valList[0][key]) &&
-          Number(valList[0][key]) != 0
-        ) {
-          this.numberKey.add(key);
-          scales[key] = scaleLinear()
-            .domain(dtList)
-            .range(valList.map((d) => d[key]));
-        }
+      for (let i = 0; i < valList.length; i++) {
+        _.keys(valList[0]).forEach((key) => {
+          if (
+            valList[0][key] != id &&
+            Number(valList[0][key]) == Number(valList[0][key]) &&
+            Number(valList[0][key]) != 0
+          ) {
+            this.numberKey.add(key);
+          }
+        });
+        const element = valList[i];
+      }
+      this.numberKey.forEach((key) => {
+        scales[key] = scaleLinear()
+          .domain(dtList)
+          .range(valList.map((d) => d[key]));
       });
+      const startDt = dtList[0];
       let obj = valList[0];
       // 对每一个关键帧
       for (let i = 0; i < tsList.length; i++) {
@@ -733,4 +739,4 @@ export class Bar extends BaseAniChart {
     }
   }
 }
-export default Bar;
+export default BarChart;

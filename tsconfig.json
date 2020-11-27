@@ -5,7 +5,7 @@
         "noImplicitAny": true,
         "module": "es6",
         "target": "es5",
-        "declarationMap": true,
+        "declarationMap": false,
         "declaration": true,
         "inlineSourceMap": true,
         "typeRoots": [

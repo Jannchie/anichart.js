@@ -54,14 +54,13 @@ export class LineChart extends ChartCompoment {
         this.padding = {
           left: 0,
           right: 0,
-          top: 0,
-          bottom: this.labelFont.fontSize + 10,
+          top: this.labelFont.fontSize,
+          bottom: 0,
         };
       }
       if (!this.margin) {
         this.margin = { left: 20, right: 20, top: 20, bottom: 20 };
       }
-      this.axis.xScaleY = this.shape.height - this.margin.bottom;
       if (!this.showTime) {
         this.showTime = [0, this.player.sec];
       }
