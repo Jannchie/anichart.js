@@ -25,7 +25,10 @@ class Ctl {
       .style("flex-grow", 1)
       .attr("type", "range")
       .attr("min", 0)
-      .attr("max", a.totalTrueFrames + a.freeze + a.frameRate - 1)
+      .attr(
+        "max",
+        aniChart.totalTrueFrames + aniChart.freeze + aniChart.frameRate - 1
+      )
       .attr("step", 1)
       .attr("value", 0)
       .on("input", () => {
@@ -54,7 +57,11 @@ class Ctl {
       });
     ctl
       .append("text")
-      .text(` / ${format(",d")(a.totalTrueFrames + a.freeze + a.frameRate)}`);
+      .text(
+        ` / ${format(",d")(
+          aniChart.totalTrueFrames + aniChart.freeze + aniChart.frameRate
+        )}`
+      );
     this.updateCtlCFrame(aniChart);
     this.slider = slider.node();
   }
