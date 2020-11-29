@@ -6,4 +6,3 @@ export declare class Scene extends BaseScene {
     private init;
     addComponent(c: Component): void;
 }
-//# sourceMappingURL=scene.d.ts.map

@@ -5,4 +5,3 @@ export declare class Background extends BaseComponent {
     preRender(): void;
     render(): void;
 }
-//# sourceMappingURL=background.d.ts.map

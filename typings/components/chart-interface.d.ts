@@ -6,4 +6,3 @@ export interface Chart {
     loadData: LoadCsvFunc;
     loadMeta: LoadCsvFunc;
 }
-//# sourceMappingURL=chart-interface.d.ts.map

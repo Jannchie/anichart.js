@@ -8,4 +8,3 @@ interface EnhancedCanvasRenderingContext2D extends CanvasRenderingContext2D {
 }
 export declare function enhanceCtx(ctx: any): EnhancedCanvasRenderingContext2D;
 export { EnhancedCanvasRenderingContext2D };
-//# sourceMappingURL=enhance-ctx.d.ts.map

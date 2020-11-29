@@ -15,4 +15,3 @@ export declare class DefaultPlayer implements Player {
     drawFrame(frame: number): void;
     play(): void;
 }
-//# sourceMappingURL=default-player.d.ts.map

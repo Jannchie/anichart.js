@@ -5,4 +5,3 @@ export interface TextLinesOptions extends BaseOptions {
     font?: FontOptions;
     lineSpacing?: number;
 }
-//# sourceMappingURL=text-lines-options.d.ts.map

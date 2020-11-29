@@ -34,4 +34,3 @@ export class BaseAniChart {
 }
 import { pngToMp4 } from "./ffmpeg";
 import Ctl from "./ctl";
-//# sourceMappingURL=anichart.d.ts.map

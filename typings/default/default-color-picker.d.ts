@@ -7,4 +7,3 @@ export declare class DefaultColorPicker implements ColorPicker {
     getColor(key: string): string;
     getNewColor(): string;
 }
-//# sourceMappingURL=default-color-picker.d.ts.map

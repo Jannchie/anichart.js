@@ -4,4 +4,3 @@ interface Pos {
 }
 export default Pos;
 export { Pos };
-//# sourceMappingURL=position.d.ts.map

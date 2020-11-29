@@ -26,4 +26,3 @@ export interface LineChartOptions extends BaseOptions {
     showTime?: [number, number];
     days?: number;
 }
-//# sourceMappingURL=line-chart-options.d.ts.map

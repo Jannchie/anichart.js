@@ -5,15 +5,14 @@ import { Pos } from "../types/position";
 declare class Text extends BaseComponent {
     text: string | ((n: number) => string);
     fillStyle: string | CanvasGradient | CanvasPattern;
-    offset: Pos | Function;
+    offset: Pos | ((sec: number) => Pos);
     _text: string;
     font: FontOptions;
     protected cOffset: Pos;
     private finalFont;
     constructor(options: TextOptions);
-    update(options?: TextOptions): void;
+    update(): void;
     preRender(): void;
     render(): void;
 }
 export { Text };
-//# sourceMappingURL=text.d.ts.map

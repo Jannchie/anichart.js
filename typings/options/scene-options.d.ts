@@ -6,4 +6,3 @@ export interface SceneOptions {
     };
     player?: PlayerOptions;
 }
-//# sourceMappingURL=scene-options.d.ts.map

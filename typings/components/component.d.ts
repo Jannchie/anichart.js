@@ -11,11 +11,10 @@ interface Component extends Fontable, Shadowable, Hintable {
     player: Player;
     pos: Pos | ((n: number) => Pos);
     alpha: number | ((n: number) => number);
-    update(options?: object): void;
+    update(): void;
     preRender(): void;
     render(): void;
     draw(): void;
     hinter: Hinter;
 }
 export { Component };
-//# sourceMappingURL=component.d.ts.map

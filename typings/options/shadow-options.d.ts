@@ -14,4 +14,3 @@ export declare class DefaultShadowOptions implements ShadowOptions {
 export interface Shadowable {
     shadow: ShadowOptions;
 }
-//# sourceMappingURL=shadow-options.d.ts.map

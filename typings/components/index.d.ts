@@ -10,4 +10,3 @@ export { ImageComponent } from "./image";
 export { RiseText } from "./rise-text";
 export { TextLines } from "./text-lines";
 export { Text } from "./text";
-//# sourceMappingURL=index.d.ts.map

@@ -4,4 +4,3 @@ export interface FadeTextOptions extends TextOptions {
     last?: number;
     fade?: number;
 }
-//# sourceMappingURL=fade-text-options.d.ts.map

@@ -10,7 +10,6 @@ export declare class ImageComponent extends BaseComponent {
     };
     private loading;
     constructor(options: ImageComponentOptions);
-    update(options?: ImageComponentOptions): Promise<void>;
+    update(): Promise<void>;
     render(): void;
 }
-//# sourceMappingURL=image.d.ts.map

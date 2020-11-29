@@ -13,4 +13,3 @@ export declare abstract class BaseScene implements Playable, Hintable {
     setCanvas(selector?: string): void;
     update(): void;
 }
-//# sourceMappingURL=base-scene.d.ts.map

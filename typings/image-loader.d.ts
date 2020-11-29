@@ -4,4 +4,3 @@ export declare class ImageLoader {
     constructor();
 }
 export {};
-//# sourceMappingURL=image-loader.d.ts.map

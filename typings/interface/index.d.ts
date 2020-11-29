@@ -8,4 +8,3 @@ export { Playable } from "./playable";
 export { Player } from "./player";
 export { Renderable } from "./renderable";
 export { Renderer } from "./renderer";
-//# sourceMappingURL=index.d.ts.map

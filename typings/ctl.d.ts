@@ -6,4 +6,3 @@ declare class Ctl {
     updateCtl(aniChart: any): void;
     updateCtlCFrame(aniChart: any): void;
 }
-//# sourceMappingURL=ctl.d.ts.map

@@ -1,4 +1,4 @@
-export class Bar extends BaseAniChart {
+export class BarChart extends BaseAniChart {
     constructor(options?: {});
     imagePath: string;
     language: string;
@@ -26,7 +26,7 @@ export class Bar extends BaseAniChart {
     idField: string;
     keyFrameDeltaTime: any;
     colorData: any[];
-    barInfo: (data: any) => any;
+    barInfo: (data: any, meta: any, self: any) => any;
     xDomain: (series: any) => any[];
     sort: number;
     valueFormat: (d: any) => string;
@@ -40,8 +40,8 @@ export class Bar extends BaseAniChart {
     };
     colorGener: Generator<string, never, unknown>;
     numberKey: Set<any>;
-    drawBarExt: () => void;
-    drawExt: () => void;
+    drawBarExt: (ctx: any, data: any, series: any, self: any) => void;
+    drawExt: (ctx: any, data: any, series: any, self: any) => void;
     barHeight: number;
     loadMetaData(path: any): Promise<void>;
     readCsv(path: any): Promise<import("d3-dsv").DSVRowArray<string>>;
@@ -82,6 +82,5 @@ export class Bar extends BaseAniChart {
     calRenderSort(): void;
     fixAlpha(): Promise<void>;
 }
-export default Bar;
+export default BarChart;
 import { BaseAniChart } from "../anichart";
-//# sourceMappingURL=bar.d.ts.map

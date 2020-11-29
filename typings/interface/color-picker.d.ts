@@ -5,4 +5,3 @@ export interface ColorPicker {
     getNewColor(): string;
     getColor(key: string): string;
 }
-//# sourceMappingURL=color-picker.d.ts.map

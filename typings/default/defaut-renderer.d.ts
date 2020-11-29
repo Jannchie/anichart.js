@@ -16,4 +16,3 @@ export declare class DefaultRenderer implements Renderer {
     setCanvas(selector?: string): EnhancedCanvasRenderingContext2D;
     private initCanvas;
 }
-//# sourceMappingURL=defaut-renderer.d.ts.map

@@ -10,4 +10,3 @@ export interface Player extends Renderable, Hintable {
     drawFrame(frame: number): void;
     play(): void;
 }
-//# sourceMappingURL=player.d.ts.map

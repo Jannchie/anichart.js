@@ -6,4 +6,3 @@ export interface ImageComponentOptions extends BaseOptions {
         height: number;
     };
 }
-//# sourceMappingURL=image-component-options.d.ts.map

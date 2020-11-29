@@ -5,7 +5,6 @@ declare class FadeText extends Text {
     fade: number;
     last: number;
     constructor(options: FadeTextOptions);
-    update(options?: FadeTextOptions): void;
+    update(): void;
 }
 export { FadeText };
-//# sourceMappingURL=fade-text.d.ts.map

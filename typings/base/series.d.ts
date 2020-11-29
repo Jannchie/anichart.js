@@ -10,4 +10,3 @@ export declare class Series extends BaseScene {
     addScene(s: Scene): void;
     update(): void;
 }
-//# sourceMappingURL=series.d.ts.map

@@ -3,8 +3,7 @@ import { FadeText } from "./fade-text";
 export declare class BlurText extends FadeText {
     blur: number;
     constructor(options: BlurTextOptions);
-    update(options?: BlurTextOptions): void;
+    update(): void;
     preRender(): void;
     render(): void;
 }
-//# sourceMappingURL=blur-text.d.ts.map

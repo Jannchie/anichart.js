@@ -5,4 +5,3 @@ export interface TextOptions extends BaseOptions {
     fillStyle?: string | CanvasGradient | CanvasPattern;
     font?: FontOptions;
 }
-//# sourceMappingURL=text-options.d.ts.map

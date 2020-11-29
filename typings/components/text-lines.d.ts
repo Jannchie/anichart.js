@@ -7,6 +7,5 @@ export declare class TextLines extends GroupComponent implements Fontable {
     lineSpacing: number;
     fillStyle: string | CanvasGradient | CanvasPattern;
     constructor(options: TextLinesOptions);
-    update(options?: TextLinesOptions): void;
+    update(): void;
 }
-//# sourceMappingURL=text-lines.d.ts.map

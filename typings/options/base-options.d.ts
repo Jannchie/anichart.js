@@ -7,4 +7,3 @@ export interface BaseOptions {
     font?: FontOptions;
     shadow?: ShadowOptions;
 }
-//# sourceMappingURL=base-options.d.ts.map

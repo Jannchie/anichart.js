@@ -10,4 +10,3 @@ export interface Renderer extends Colorable, Combinable, Hintable {
     draw(): void;
     setCanvas(selector?: string): EnhancedCanvasRenderingContext2D;
 }
-//# sourceMappingURL=renderer.d.ts.map

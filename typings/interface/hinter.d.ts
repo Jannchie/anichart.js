@@ -5,4 +5,3 @@ export interface Hinter {
     ctx: CanvasRenderingContext2D | EnhancedCanvasRenderingContext2D;
     drawHint: DrawHint;
 }
-//# sourceMappingURL=hinter.d.ts.map

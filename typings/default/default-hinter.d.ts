@@ -11,4 +11,3 @@ export declare class DefaultHinter implements Hinter {
     height: number;
     drawHint(msg: string): Promise<void>;
 }
-//# sourceMappingURL=default-hinter.d.ts.map

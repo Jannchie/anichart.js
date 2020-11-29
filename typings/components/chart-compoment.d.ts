@@ -7,10 +7,9 @@ export declare abstract class ChartCompoment extends Group implements Chart {
     idKey: string;
     colorKey: string;
     loadData(path: string | any): Promise<void>;
-    update(option?: any): void;
+    update(): void;
     private readCsv;
     loadMeta(path: string | any): Promise<void>;
     data: DSVRowArray<string>;
     meta: DSVRowArray<string>;
 }
-//# sourceMappingURL=chart-compoment.d.ts.map

@@ -22,4 +22,3 @@ export declare class DefaultFontOptions implements FontOptions {
 export interface Fontable {
     font: FontOptions;
 }
-//# sourceMappingURL=font-options.d.ts.map

@@ -18,7 +18,7 @@ export declare abstract class BaseComponent implements Component, Hintable {
     shadow: ShadowOptions;
     font: FontOptions;
     ctx: EnhancedCanvasRenderingContext2D;
-    update(options?: any): void;
+    update(): void;
     saveCtx(): void;
     preRender(): void;
     abstract render(): void;
@@ -26,4 +26,3 @@ export declare abstract class BaseComponent implements Component, Hintable {
     draw(): void;
     protected getValue(obj: any, n: number): any;
 }
-//# sourceMappingURL=base-component.d.ts.map
