@@ -250,151 +250,65 @@ export class BarChart extends BaseAniChart {
     let idSet = new Set();
     this.maxValue = -Infinity;
     this.minValue = Infinity;
-    // 对每组数据
-    let idMap = group(data, (d) => d[this.idField]);
-    for (let [id, dataList] of idMap) {
-      idSet.add(id);
-      // 对每个数据区间
-      dataList.sort((a, b) => a.date - b.date);
-      for (let i = 0; i < dataList.length - 1; i++) {
-        const lData = dataList[i];
-        const rData = dataList[i + 1];
-        let ints = _.reduce(
-          [...this.numberKey],
-          (dict, key) => {
-            dict[key] = {
-              lValue: lData[key] == undefined ? NaN : lData[key],
-              rValue: rData[key] == undefined ? NaN : rData[key],
-            };
-            return dict;
-          },
-          {}
-        );
-        const lValue = lData.value == undefined ? NaN : lData.value;
-        const rValue = rData.value == undefined ? NaN : rData.value;
-        const lDate = lData.date;
-        const rDate = rData.date;
-        let state = "normal";
-        if (lValue != lValue && rValue != rValue) {
-          state = "null";
-        } else if (lValue != lValue && rValue == rValue) {
-          state = "in";
-        } else if (lValue == lValue && rValue != rValue) {
-          state = "out";
-        }
-        _.keys(ints).forEach((key) => {
-          ints[key].int = scaleLinear()
-            .range([ints[key].lValue, ints[key].rValue])
-            .domain([0, 1])
-            .clamp(true);
-        });
-        let aint = interpolateNumber(1, 1);
-        let offsetInt = () => 0;
-        switch (state) {
-          case "null":
-            aint = interpolateNumber(0, 0);
-            break;
-          case "out":
-            offsetInt = scaleLinear().domain([0, 1]).range([0, 1]).clamp(true);
-            _.keys(ints).forEach((key) => {
-              ints[key].int = interpolateNumber(
-                ints[key].lValue,
-                ints[key].lValue * 0.1
-              );
-            });
-            aint = scaleLinear().domain([0, 0.4]).range([1, 0]).clamp(true);
-            break;
-          case "in":
-            _.keys(ints).forEach((key) => {
-              ints[key].int = interpolateNumber(
-                ints[key].rValue * 0.3,
-                ints[key].rValue
-              );
-            });
-            aint = scaleLinear().domain([0, 0.2]).range([0, 1]).clamp(true);
-            offsetInt = scaleLinear()
-              .domain([0.2, 1])
-              .range([1, 0])
-              .clamp(true);
-            break;
-          default:
-            break;
-        }
-
-        if (
-          this.colorData[this.colorKey(lData, this.metaData, this)] == undefined
-        ) {
-          this.colorData[
-            this.colorKey(lData, this.metaData, this)
-          ] = this.colorGener.next().value;
-        }
-        // 对每一帧
-        // f: 帧号
-        for (let f of range(
-          Math.round(this.tsToFi(lDate)),
-          Math.round(this.tsToFi(rDate))
-        )) {
-          if (frameData[f] == undefined) {
-            frameData[f] = [];
-          }
-          let r =
-            (f % (this.frameRate * this.interval)) /
-            (this.frameRate * this.interval);
-          let val = ints.value.int(r);
-          let alpha = aint(easePolyOut(r));
-          if (alpha == 0 && state != "out") continue;
-          let offset = offsetInt(easePolyOut(r));
-          let fd = {
-            ...lData,
-            alpha: alpha,
-            state: state,
-            pos: offset,
-          };
-          _.keys(ints).forEach((key) => {
-            fd[key] = ints[key].int(r);
-          });
-          frameData[f].push(fd);
-          // 全局最大值
-          if (val > this.maxValue) {
-            this.maxValue = val;
-            this.maxData = fd;
-          }
-          // 全局最小值
-          if (val < this.maxValue) {
-            this.minValue = val;
-            this.minData = fd;
-          }
-          // 获取每一帧的最大值和最小值
-          if (frameData[f].max == undefined) frameData[f].max = val;
-          if (frameData[f].max < val) {
-            frameData[f].max = val;
-          }
-          if (frameData[f].min == undefined) frameData[f].min = val;
-          if (frameData[f].min > val) {
-            frameData[f].min = val;
+    const group = d3.group(data, (d) => d[this.idField]);
+    const dataScales = new Map();
+    group.forEach((items, id) => {
+      const scales = new Map();
+      const dateList = d3.map(items, (d) => d["date"]);
+      const alphaList = d3.map(items, (d) => 1);
+      const posList = d3.map(items, (d) => 0);
+      this.numberKey.forEach((key) => {
+        const valueList = d3.map(items, (d) => d[key]);
+        for (let i = 1; i < valueList.length - 1; i++) {
+          if (valueList[i] === valueList[i]) {
+            if (valueList[i - 1] !== valueList[i - 1]) {
+              valueList[i - 1] = valueList[i] * 0.98;
+              alphaList[i - 1] = 0;
+              posList[i - 1] = 1;
+            }
+          } else if (valueList[i - 1] === valueList[i - 1]) {
+            valueList[i] = valueList[i - 1] * 1.02;
+            alphaList[i] = 1;
           }
         }
-      }
-    }
-    // 计算排序
-    frameData.forEach((e) => {
-      e.sort((a, b) => {
-        if (a.value == undefined || a.state == "out" || a.state == "null")
-          return 1;
-        if (b.value == undefined || b.state == "out" || b.state == "null")
-          return -1;
-        return this.sort * (b.value - a.value);
+        scales.set(key, d3.scaleLinear(dateList, valueList).clamp(true));
       });
-      e.forEach((d, i) => {
-        if (d.state == "out" || d.state == "null") {
-          d.rank = this.itemCount + 1;
-        } else {
-          d.rank = i;
-        }
-      });
+      scales.set("alpha", d3.scaleLinear(dateList, alphaList).clamp(true));
+      scales.set("pos", d3.scaleLinear(dateList, posList).clamp(true));
+      dataScales.set(id, scales);
     });
+    this.dataScales = dataScales;
+    frameData = d3.range(0, this.totalTrueFrames).map((f) => {
+      let data = [];
+      let ts = this.fiToTs(f);
+      this.dataScales.forEach((v, k) => {
+        let obj = {};
+        obj[this.idField] = k;
+        v.forEach((scale, name) => {
+          if (name == "alpha") {
+            obj[name] = d3.easePolyOut.exponent(20)(scale(ts));
+          } else if (name == "pos") {
+            obj[name] = d3.easePolyIn.exponent(20)(scale(ts));
+          } else {
+            obj[name] = scale(ts);
+          }
+        });
+        if (obj.value === obj.value) {
+          data.push(obj);
+        }
+      });
+      data.max = d3.max(data, (d) => d.value);
+      data.min = d3.min(data, (d) => d.value);
+      data
+        .sort((a, b) => b.value - a.value)
+        .forEach((d, i) => {
+          d["rank"] = i;
+        });
+      return data;
+    });
+
     this.frameData = frameData;
-    this.idSet = idSet;
+    this.idSet = this.dataScales.keys();
   }
 
   setKeyFramesInfo() {
@@ -414,8 +328,12 @@ export class BarChart extends BaseAniChart {
     this.ctx.font = `${this.barHeight}px Sarasa Mono SC`;
 
     this.innerMargin.left += this.labelPandding;
-    let w1 = this.ctx.measureText(this.valueFormat(this.maxData)).width;
-    let w2 = this.ctx.measureText(this.valueFormat(this.minData)).width;
+    let w1 = this.ctx.measureText(
+      this.valueFormat(d3.max(this.data, (d) => d.value))
+    ).width;
+    let w2 = this.ctx.measureText(
+      this.valueFormat(d3.min(this.data, (d) => d.value))
+    ).width;
     this.innerMargin.right += max([w1, w2]);
     this.innerMargin.right += this.labelPandding;
 
@@ -547,6 +465,7 @@ export class BarChart extends BaseAniChart {
           return d.rank;
         }
       });
+
       // 修复突变
       for (let i = 1; i < rankList.length - 1; i++) {
         if (rankList[i - 1] == rankList[i + 1]) rankList[i] = rankList[i - 1];
@@ -614,6 +533,8 @@ export class BarChart extends BaseAniChart {
     let a = easePolyInOut.exponent(10)(idx % 1);
     let mainTicks = this.tickArrays[idx1];
     let secondTicks = this.tickArrays[idx2];
+    this.ctx.save();
+    this.ctx.translate(0, this.outerMargin.top - 10);
     this.ctx.globalAlpha = max(mainTicks) == max(secondTicks) ? 1 : a;
     this.ctx.font = `${this.axisTextSize}px Sarasa Mono SC`;
     this.ctx.fillStyle = "#888";
@@ -621,7 +542,7 @@ export class BarChart extends BaseAniChart {
     this.ctx.lineWidth = 2;
     this.ctx.textAlign = "center";
     secondTicks.forEach((val) => {
-      this.drawTick(xScale, val);
+      // this.drawTick(xScale, val);
       this.ctx.fillText(
         this.tickFormat(val),
         this.innerMargin.left + xScale(val),
@@ -630,7 +551,7 @@ export class BarChart extends BaseAniChart {
     });
     this.ctx.globalAlpha = max(mainTicks) == max(secondTicks) ? 1 : 1 - a;
     mainTicks.forEach((val) => {
-      this.drawTick(xScale, val);
+      // this.drawTick(xScale, val);
       this.ctx.fillText(
         this.tickFormat(val),
         this.innerMargin.left + xScale(val),
@@ -639,6 +560,7 @@ export class BarChart extends BaseAniChart {
     });
     this.ctx.globalAlpha = 1;
     this.ctx.lineWidth = 0;
+    this.ctx.restore();
   }
   drawTick(xScale, val) {
     this.ctx.beginPath();

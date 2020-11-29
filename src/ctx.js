@@ -28,7 +28,7 @@ export default function enhanceCtx(ctx) {
       } catch (error) {
         console.log(error);
       }
-      ctx.stroke();
+      // ctx.stroke();
       ctx.restore();
     }
   };
