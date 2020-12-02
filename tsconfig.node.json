@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+        "outDir": "lib",
+        "declarationDir": "typings",
+        "noImplicitAny": true,
+        "module":"CommonJS",
+        "target":"ESNext",
+        "declarationMap": false,
+        "declaration": true,
+        "inlineSourceMap": true,
+        "typeRoots": [
+            "./typings/**/*",
+            "./node_modules/@types"
+        ],
+        "moduleResolution":"Node",
+        "allowUmdGlobalAccess": true,
+        "esModuleInterop": true,
+        "allowJs": true
+    },
+    "compileOnSave": true,
+    "include": [
+        "./src/**/*", "@types", "typings/**/*"
+    ],
+}

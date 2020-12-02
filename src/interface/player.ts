@@ -9,5 +9,6 @@ export interface Player extends Renderable, Hintable {
   timer: Timer;
   totalFrames: number;
   drawFrame(frame: number): void;
+  drawNextFrame(): void;
   play(): void;
 }

@@ -1,6 +1,7 @@
 import colorThief from "colorthief";
 import ColorThiefUmd from "colorthief/dist/color-thief.umd.js";
 import { extent, group, max, mean, range } from "d3-array";
+import * as d3 from "d3";
 import { csvParse } from "d3-dsv";
 import { easePolyInOut, easePolyOut } from "d3-ease";
 import { csv } from "d3-fetch";
@@ -135,6 +136,7 @@ export class BarChart extends BaseAniChart {
 
   async readCsv(path) {
     if (typeof window == "undefined") {
+      fs = require("fs");
       return csvParse(fs.readFileSync(path).toString());
     } else {
       if ("object" == typeof path) {

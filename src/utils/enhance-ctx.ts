@@ -1,5 +1,4 @@
 import { FontOptions } from "./../options/font-options";
-import * as _ from "lodash";
 
 if (typeof window === "undefined") {
   // tslint:disable-next-line:no-var-requires
@@ -47,6 +46,7 @@ export function enhanceCtx(ctx: any): EnhancedCanvasRenderingContext2D {
       try {
         ctx.drawImage(img, 0, 0, img.width, img.height, x, y, imgW, imgH);
       } catch (error) {
+        // tslint:disable-next-line:no-console
         console.log(error);
       }
       ctx.stroke();

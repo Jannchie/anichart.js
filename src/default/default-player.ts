@@ -22,6 +22,10 @@ export class DefaultPlayer implements Player {
     this.cFrame = frame;
     this.renderer.draw();
   }
+  drawNextFrame() {
+    this.cFrame++;
+    this.renderer.draw();
+  }
   play(): void {
     if (this.timer) {
       this.timer.stop();

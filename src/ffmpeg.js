@@ -8,7 +8,25 @@ const ffmpeg = createFFmpeg({
   log: true,
 });
 
-async function pngToMp4(pngPath, name, fps, thread = 16) {
+export async function addFrameToFFmpeg(
+  ffmpeg,
+  canvas,
+  frame,
+  name = "output",
+  qulity = 1
+) {
+  await ffmpeg.write(
+    `${name}-${frame}.png`,
+    canvas.toDataURL("image/png", qulity)
+  );
+}
+export async function outputMP4(ffmpeg, fps, name = "output") {
+  await ffmpeg.run(`-r ${fps} -threads ${16} -i ${name}-%d.png ${name}.mp4`);
+  let data = await ffmpeg.read(`./${name}.mp4`);
+  this.downloadBlob(new Blob([data.buffer], { type: "video/mp4" }), name);
+}
+
+export async function pngToMp4(pngPath, name, fps, thread = 16) {
   await ffmpeg.load();
   let out = "mp4";
   let nameList = fs.readdirSync(pngPath);

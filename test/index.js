@@ -1,1 +1,1 @@
-let runBartest = require("./test");
+let a = require("./fans.temp");

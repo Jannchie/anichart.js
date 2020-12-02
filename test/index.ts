@@ -1,1 +1,2 @@
-let runBartest = require("./test");
+import barChart from "./fans.temp";
+console.log(barChart);

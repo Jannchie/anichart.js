@@ -44,20 +44,19 @@ export class BarChart extends BaseAniChart {
     drawExt: (ctx: any, data: any, series: any, self: any) => void;
     barHeight: number;
     loadMetaData(path: any): Promise<void>;
-    readCsv(path: any): Promise<import("d3-dsv").DSVRowArray<string>>;
+    readCsv(path: any): Promise<d3.DSVRowArray<string>>;
     loadCsv(path: any): Promise<void>;
-    getCurrentDate: import("d3-scale").ScaleLinear<number, number, never>;
+    getCurrentDate: d3.ScaleLinear<number, number, never>;
     id: string;
     keyFramesCount: number;
-    tsToFi: import("d3-scale").ScaleLinear<number, number, never>;
-    fiToTs: import("d3-scale").ScaleLinear<number, number, never>;
+    tsToFi: d3.ScaleLinear<number, number, never>;
+    fiToTs: d3.ScaleLinear<number, number, never>;
     calculateFrameData(data: any): void;
-    maxValue: any;
-    minValue: any;
-    maxData: any;
-    minData: any;
+    maxValue: number;
+    minValue: number;
+    dataScales: Map<any, any>;
     frameData: any[][];
-    idSet: Set<any>;
+    idSet: IterableIterator<any>;
     setKeyFramesInfo(): void;
     totalTrueFrames: number;
     keyFrames: number[];
@@ -84,3 +83,4 @@ export class BarChart extends BaseAniChart {
 }
 export default BarChart;
 import { BaseAniChart } from "../anichart";
+import * as d3 from "d3";

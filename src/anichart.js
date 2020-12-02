@@ -170,8 +170,8 @@ class BaseAniChart {
     this.ready = true;
     if (typeof window == "undefined") {
       console.log(`Total Frames: ${this.frameData.length}`);
-      this.outputPngs();
-      this.outputMp4();
+      // this.outputPngs();
+      // this.outputMp4();
     }
   }
 
@@ -193,10 +193,44 @@ class BaseAniChart {
       console.log("Do not out pngs in browser!");
       return;
     }
+    function delDir(path) {
+      let files = [];
+      if (fs.existsSync(path)) {
+        files = fs.readdirSync(path);
+        files.forEach((file, index) => {
+          let curPath = path + "/" + file;
+          if (fs.statSync(curPath).isDirectory()) {
+            delDir(curPath); //递归删除文件夹
+          } else {
+            fs.unlinkSync(curPath); //删除文件
+          }
+        });
+        fs.rmdirSync(path);
+      }
+    }
+    function mkdirPath(pathStr) {
+      var projectPath = path.join(process.cwd());
+      var tempDirArray = pathStr.split("\\");
+      for (var i = 0; i < tempDirArray.length; i++) {
+        projectPath = projectPath + "/" + tempDirArray[i];
+        if (fs.existsSync(projectPath)) {
+          var tempstats = fs.statSync(projectPath);
+          if (!tempstats.isDirectory()) {
+            fs.unlinkSync(projectPath);
+            fs.mkdirSync(projectPath);
+          }
+        } else {
+          fs.mkdirSync(projectPath);
+        }
+      }
+    }
+    let fs = require("fs");
+    let path = require("path");
+    global.path = path;
+    delDir(this.imagePath);
+    fs.mkdirSync("./image");
     for (let f in range(this.frameData.length)) {
       this.currentFrame = f;
-      let fs = require("fs");
-      let path = require("path");
       this.outputPng(f, this.outputName, fs, path);
     }
   }
@@ -214,39 +248,6 @@ class BaseAniChart {
       console.log("Cannot output png in browser!");
       this.canvas.toBlob((b) => this.downloadBlob(b, `${name}.png`));
     } else {
-      function delDir(path) {
-        let files = [];
-        if (fs.existsSync(path)) {
-          files = fs.readdirSync(path);
-          files.forEach((file, index) => {
-            let curPath = path + "/" + file;
-            if (fs.statSync(curPath).isDirectory()) {
-              delDir(curPath); //递归删除文件夹
-            } else {
-              fs.unlinkSync(curPath); //删除文件
-            }
-          });
-          fs.rmdirSync(path);
-        }
-      }
-      async function mkdirPath(pathStr) {
-        var projectPath = path.join(process.cwd());
-        var tempDirArray = pathStr.split("\\");
-        for (var i = 0; i < tempDirArray.length; i++) {
-          projectPath = projectPath + "/" + tempDirArray[i];
-          if (fs.existsSync(projectPath)) {
-            var tempstats = fs.statSync(projectPath);
-            if (!tempstats.isDirectory()) {
-              fs.unlinkSync(projectPath);
-              fs.mkdirSync(projectPath);
-            }
-          } else {
-            fs.mkdirSync(projectPath);
-          }
-        }
-      }
-      delDir(this.imagePath);
-      await mkdirPath(this.imagePath);
       this.drawFrame(n);
       this.currentFrame = n;
       // window.a = a;

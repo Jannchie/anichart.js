@@ -242,21 +242,6 @@ export class LineChart extends ChartCompoment {
         y
       );
     });
-    // tick
-    // const ticks = this.scales.x.ticks(5);
-    // this.ctx.textBaseline = "bottom";
-    // this.ctx.fillStyle = "#FFF";
-    // for (const tick of ticks) {
-    //   const x = this.scales.x(tick);
-    //   if (this.days) {
-    //     this.ctx.globalAlpha = this.cAlpha * this.tickAlpha(x);
-    //   }
-    //   this.ctx.fillText(
-    //     d3.timeFormat(this.timeFormat)(new Date(tick)),
-    //     x,
-    //     this.shape.height - this.margin.bottom
-    //   );
-    // }
   }
 
   private findY(area: Path2D) {

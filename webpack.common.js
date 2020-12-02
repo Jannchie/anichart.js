@@ -12,7 +12,6 @@ module.exports = {
   resolve: {
     extensions: [".ts", ".js"],
   },
-  plugins: [new CleanWebpackPlugin()],
   module: {
     rules: [
       // All files with a '.ts' or '.tsx' extension will be handled by 'awesome-typescript-loader'.
@@ -28,8 +27,5 @@ module.exports = {
       },
     ],
   },
-  externals: ["canvas"],
-  node: {
-    fs: "empty",
-  },
+  externals: ["canvas", "fs"],
 };
