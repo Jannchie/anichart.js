@@ -4,7 +4,7 @@ if (typeof window === "undefined") {
 }
 import { createFFmpeg } from "@ffmpeg/ffmpeg";
 
-const ffmpeg = createFFmpeg({
+export const ffmpeg = createFFmpeg({
   log: true,
 });
 
@@ -40,4 +40,3 @@ export async function pngToMp4(pngPath, name, fps, thread = 16) {
   fs.writeFileSync(`${name}.${out}`, data);
   process.exit(0);
 }
-export { ffmpeg, pngToMp4 };
