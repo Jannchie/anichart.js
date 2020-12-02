@@ -1,12 +1,12 @@
 import * as d3 from "d3";
 import { DSVRowArray } from "d3";
 import { scaleLinear } from "d3-scale";
-import { Axis } from "../components/axis";
-import { ChartCompoment } from "../components/chart-compoment";
+import { Axis } from "../components/Axis";
+import { ChartComponent } from "../components/ChartComponent";
 import { LineChartOptions } from "../options/line-chart-options";
 import { DefaultFontOptions } from "./../options/font-options";
 
-export class LineChart extends ChartCompoment {
+export class LineChart extends ChartComponent {
   shape: { width: number; height: number };
   scales: {
     x: d3.ScaleLinear<number, number, never>;

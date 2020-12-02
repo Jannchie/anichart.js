@@ -1,17 +1,12 @@
 import * as d3 from "d3";
-import * as _ from "lodash";
-import { Scene } from ".";
-import { DefaultPlayer } from "../default/default-player";
-import { DefaultRenderer } from "../default/defaut-renderer";
-import { SceneOptions } from "../options/scene-options";
-import { BaseScene } from "./base-scene";
-import { DefaultHinter } from "../default/default-hinter";
-
+import * as _ from "lodash-es";
+import { Scene } from "./Scene";
+import { SceneOptions } from "../options/SceneOptions";
+import { BaseScene } from "./BaseScene";
 export class Series extends BaseScene {
   private scenes: Scene[] = [];
   constructor(options: SceneOptions = {}) {
-    super();
-    this.init(options);
+    super(options);
     this.update();
   }
 
@@ -20,13 +15,6 @@ export class Series extends BaseScene {
     this.scenes.forEach((s) => {
       s.setCanvas(selector);
     });
-  }
-
-  private init(options: SceneOptions) {
-    this.hinter = new DefaultHinter();
-    this.renderer = new DefaultRenderer(this.hinter);
-    this.player = new DefaultPlayer(this.renderer, this.hinter);
-    _.merge(this, options);
   }
 
   play() {
@@ -42,12 +30,16 @@ export class Series extends BaseScene {
   }
 
   addScene(s: Scene) {
+    s.hinter = this.hinter;
     this.scenes.push(s);
   }
 
   update() {
     if (this.scenes)
       this.scenes.forEach((s) => {
+        s.player.fps = this.player.fps;
+        s.renderer.canvas = this.renderer.canvas;
+        s.renderer.ctx = this.renderer.ctx;
         s.renderer.shape = this.renderer.shape;
         s.update();
       });

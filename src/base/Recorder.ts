@@ -13,6 +13,7 @@ export class Recorder implements RecorderInterface {
     this.ffmpeg = ffmpeg;
   }
   addFrame(frame: number): void {
+    this.player.drawFrame(frame);
     addFrameToFFmpeg(ffmpeg, this.player.renderer.canvas);
   }
   addCurrentFrame(): void {

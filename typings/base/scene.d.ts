@@ -1,8 +1,7 @@
 import { Component } from "../components";
-import { SceneOptions } from "../options/scene-options";
-import { BaseScene } from "./base-scene";
+import { BaseScene } from "./BaseScene";
 export declare class Scene extends BaseScene {
-    constructor(options?: SceneOptions);
-    private init;
+    init(): void;
     addComponent(c: Component): void;
+    play(): void;
 }

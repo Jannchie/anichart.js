@@ -1,2 +1,2 @@
-import barChart from "./fans.temp";
+import barChart from "./test";
 console.log(barChart);

@@ -1,3 +1,3 @@
-export * from "./scene";
-export * from "./series";
-
+export * from "./Scene";
+export * from "./recorder";
+export * from "./Series";

@@ -256,7 +256,7 @@ export class BarChart extends BaseAniChart {
     const dataScales = new Map();
     group.forEach((items, id) => {
       const scales = new Map();
-      const dateList = d3.map(items, (d) => d["date"]);
+      const dateList = d3.map(items, (d) => d.date);
       const alphaList = d3.map(items, (d) => 1);
       const posList = d3.map(items, (d) => 0);
       this.numberKey.forEach((key) => {
@@ -304,7 +304,7 @@ export class BarChart extends BaseAniChart {
       data
         .sort((a, b) => b.value - a.value)
         .forEach((d, i) => {
-          d["rank"] = i;
+          d.rank = i;
         });
       return data;
     });

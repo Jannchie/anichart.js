@@ -1,14 +1,17 @@
 import * as d3 from "d3";
+import { BaseScene } from "../base/BaseScene";
 import { ImageLoader } from "../image-loader";
-import { Hinter } from "../interface/hinter";
+import { Hinter } from "../interface/Hinter";
 import { EnhancedCanvasRenderingContext2D } from "../utils/enhance-ctx";
 
 export type DrawHint = (msg: string) => void;
 export class DefaultHinter implements Hinter {
   canvas: HTMLCanvasElement;
   imageLoader: ImageLoader;
-  constructor(ctx?: EnhancedCanvasRenderingContext2D) {
-    this.ctx = ctx;
+  constructor(scene?: BaseScene) {
+    if (scene && scene.renderer) {
+      this.ctx = scene.renderer.ctx;
+    }
     this.imageLoader = new ImageLoader();
   }
   hint: string;

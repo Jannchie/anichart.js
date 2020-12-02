@@ -1,5 +1,5 @@
 import { EnhancedCanvasRenderingContext2D } from "../utils/enhance-ctx";
-import { DrawHint } from "../default/default-hinter";
+import { DrawHint } from "../default/DefaultHinter";
 
 export interface Hinter {
   hint: string;

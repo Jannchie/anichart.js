@@ -1,22 +1,47 @@
 import { select } from "d3";
-import { ComponentManager, Hinter, Renderer } from "../interface";
+import { BaseScene } from "../base/BaseScene";
+import { Scene } from "../base/Scene";
+import { Hinter, Renderer } from "../interface";
 import { ColorPicker } from "../interface/color-picker";
+import { Shape } from "../types/shape";
 import {
   enhanceCtx,
   EnhancedCanvasRenderingContext2D,
 } from "../utils/enhance-ctx";
-import { DefaultColorPicker } from "./default-color-picker";
+import { DefaultColorPicker } from "./DefaultColorPicker";
 
 export class DefaultRenderer implements Renderer {
-  hinter: Hinter;
-  componentManager: ComponentManager;
-  shape = { width: 1366, height: 768 };
+  public get hinter(): Hinter {
+    return this.scene.hinter;
+  }
+  public set hinter(value: Hinter) {
+    this.hinter = value;
+  }
+  scene: BaseScene;
+  get componentManager() {
+    return this.scene.componentManager;
+  }
+  set componentManager(val) {
+    this.scene.componentManager = val;
+  }
+  shape = {} as Shape;
+  get width() {
+    return this.shape.width;
+  }
+  set width(value) {
+    this.shape.width = value;
+  }
+  get height() {
+    return this.shape.height;
+  }
+  set height(value) {
+    this.shape.height = value;
+  }
   canvas: HTMLCanvasElement;
   ctx: EnhancedCanvasRenderingContext2D;
   colorPicker: ColorPicker = new DefaultColorPicker();
-  constructor(hinter: Hinter, componentManager?: ComponentManager) {
-    this.hinter = hinter;
-    if (componentManager) this.componentManager = componentManager;
+  constructor(scene: BaseScene) {
+    this.scene = scene;
   }
   draw(): void {
     if (this.componentManager) {

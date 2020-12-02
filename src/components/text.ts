@@ -1,8 +1,8 @@
-import { FontOptions, DefaultFontOptions } from "./../options/font-options";
-import { BaseComponent } from "./base-component";
+import { FontOptions, DefaultFontOptions } from "../options/font-options";
+import { BaseComponent } from "./BaseComponent";
 import { TextOptions } from "../options/text-options";
 import { Pos } from "../types/position";
-import * as _ from "lodash";
+import * as _ from "lodash-es";
 class Text extends BaseComponent {
   text: string | ((n: number) => string);
   fillStyle: string | CanvasGradient | CanvasPattern;
