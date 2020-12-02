@@ -12,7 +12,7 @@ export declare class DefaultPlayer implements Player {
     constructor(scene: BaseScene);
     cFrame: number;
     get totalFrames(): number;
-    timer: d3.Timer;
+    interval: d3.Timer;
     output: boolean;
     drawFrame(frame: number): void;
     drawNextFrame(): void;

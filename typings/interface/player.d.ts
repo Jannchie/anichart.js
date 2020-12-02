@@ -5,7 +5,7 @@ export interface Player extends Renderable, Hintable {
     fps: number;
     sec: number;
     cFrame: number;
-    timer: Timer;
+    interval: Timer;
     totalFrames: number;
     drawFrame(frame: number): void;
     drawNextFrame(): void;

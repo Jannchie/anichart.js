@@ -19,7 +19,7 @@ export class DefaultPlayer implements Player {
   get totalFrames(): number {
     return this.fps * this.sec;
   }
-  timer: d3.Timer = null;
+  interval: d3.Timer = null;
   output: boolean = false;
   drawFrame(frame: number) {
     this.cFrame = frame;
@@ -30,9 +30,9 @@ export class DefaultPlayer implements Player {
     this.renderer.draw();
   }
   play(): void {
-    if (this.timer) {
-      this.timer.stop();
-      this.timer = null;
+    if (this.interval) {
+      this.interval.stop();
+      this.interval = null;
       return;
     }
     if (this.output) {
@@ -42,15 +42,20 @@ export class DefaultPlayer implements Player {
       }
     } else {
       const start = new Date().getTime();
-      this.timer = d3.interval(async () => {
-        this.cFrame++;
+      let count = 0;
+      this.interval = d3.interval((elapsed) => {
+        if (this.output) {
+          this.cFrame++;
+        } else {
+          this.cFrame = Math.floor((elapsed / 1000) * this.fps);
+        }
         this.renderer.draw();
-
+        count++;
         if (this.cFrame >= this.totalFrames) {
-          this.timer.stop();
+          this.interval.stop();
           this.hinter.drawHint(
             `Finished! FPS: ${(
-              (this.sec * this.fps) /
+              count /
               ((new Date().getTime() - start) / 1000)
             ).toFixed(2)}`
           );
