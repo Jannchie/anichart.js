@@ -1,4 +1,4 @@
-import { BaseComponent } from "./base-component";
+import { BaseComponent } from "./BaseComponent";
 export declare class Background extends BaseComponent {
     backgroundColor: string;
     update(): void;

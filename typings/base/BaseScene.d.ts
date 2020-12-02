@@ -1,9 +1,10 @@
-import { DefaultComponentManager } from "../default/default-component-manager";
+import { SceneOptions } from "../options/SceneOptions";
+import { DefaultComponentManager } from "../default/DefaultComponentManager";
 import { Hintable } from "../interface/hintable";
-import { Hinter } from "../interface/hinter";
+import { Hinter } from "../interface/Hinter";
 import { Playable } from "../interface/playable";
 import { Player } from "../interface/player";
-import { Renderer } from "../interface/renderer";
+import { Renderer } from "../interface/Renderer";
 export declare abstract class BaseScene implements Playable, Hintable {
     renderer: Renderer;
     componentManager: DefaultComponentManager;
@@ -11,5 +12,8 @@ export declare abstract class BaseScene implements Playable, Hintable {
     player: Player;
     output: boolean;
     setCanvas(selector?: string): void;
+    constructor(o: SceneOptions);
+    init(): void;
+    setOptions(o: SceneOptions): void;
     update(): void;
 }

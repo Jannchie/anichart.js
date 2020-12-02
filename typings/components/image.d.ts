@@ -1,4 +1,4 @@
-import { BaseComponent } from "./base-component";
+import { BaseComponent } from "./BaseComponent";
 import { ImageComponentOptions } from "../options/image-component-options";
 export declare class ImageComponent extends BaseComponent {
     image: CanvasImageSource;

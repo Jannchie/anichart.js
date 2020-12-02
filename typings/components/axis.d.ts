@@ -1,6 +1,6 @@
 import * as d3 from "d3";
 import { DefaultFontOptions } from "../options/font-options";
-import { GroupComponent } from "./group";
+import { GroupComponent } from "./Group";
 export declare class Axis extends GroupComponent {
     scales: {
         x: d3.ScaleLinear<number, number, never>;

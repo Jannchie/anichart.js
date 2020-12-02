@@ -1,5 +1,5 @@
 import { FadeTextOptions } from "../options/fade-text-options";
-import { Text } from "./text";
+import { Text } from "./Text";
 declare class FadeText extends Text {
     time: number;
     fade: number;

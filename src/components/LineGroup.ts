@@ -1,3 +1,3 @@
-import { GroupComponent } from "./group";
+import { GroupComponent } from "./Group";
 
 export class LineGroup extends GroupComponent {}

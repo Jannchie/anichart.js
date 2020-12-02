@@ -1,5 +1,5 @@
-import { FontOptions } from "./../options/font-options";
-import { BaseComponent } from "./base-component";
+import { FontOptions } from "../options/font-options";
+import { BaseComponent } from "./BaseComponent";
 import { TextOptions } from "../options/text-options";
 import { Pos } from "../types/position";
 declare class Text extends BaseComponent {

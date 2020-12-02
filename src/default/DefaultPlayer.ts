@@ -1,22 +1,25 @@
 import * as d3 from "d3";
-import { Hinter } from "../interface/hinter";
+import { BaseScene } from "../base/BaseScene";
+import { Hinter } from "../interface/Hinter";
 import { Player } from "../interface/player";
-import { Renderer } from "../interface/renderer";
+import { Renderer } from "../interface/Renderer";
 
 export class DefaultPlayer implements Player {
   fps: number = 30;
   sec: number = 5;
-  constructor(renderer: Renderer, hinter: Hinter) {
-    this.renderer = renderer;
-    this.hinter = hinter;
-  }
+  scene: BaseScene;
   renderer: Renderer;
   hinter: Hinter;
+  constructor(scene: BaseScene) {
+    this.scene = scene;
+    this.renderer = scene.renderer;
+    this.hinter = scene.hinter;
+  }
   cFrame: number = 0;
   get totalFrames(): number {
     return this.fps * this.sec;
   }
-  timer: d3.Timer;
+  timer: d3.Timer = null;
   output: boolean = false;
   drawFrame(frame: number) {
     this.cFrame = frame;

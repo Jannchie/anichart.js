@@ -1,8 +1,8 @@
-import { DefaultFontOptions, Fontable } from "./../options/font-options";
-import { TextLinesOptions } from "../options/text-lines-options";
-import { GroupComponent } from "./group";
+import { DefaultFontOptions, Fontable } from "../options/font-options";
+import { TextLinesOptions } from "../options/TextLinesOptions";
+import { GroupComponent } from "./Group";
 import { Text } from "./Text";
-import * as _ from "lodash";
+import * as _ from "lodash-es";
 export class TextLines extends GroupComponent implements Fontable {
   components: Text[] = [];
   lineSpacing: number = 4;

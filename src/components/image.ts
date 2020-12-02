@@ -1,5 +1,5 @@
 import { ImageLoader } from "../image-loader";
-import { BaseComponent } from "./base-component";
+import { BaseComponent } from "./BaseComponent";
 import { ImageComponentOptions } from "../options/image-component-options";
 export class ImageComponent extends BaseComponent {
   image: CanvasImageSource;

@@ -4,21 +4,17 @@ import * as d3 from "d3";
 import Pos from "../src/types/position";
 const d = path.join(__dirname, "./data/test.csv");
 const seriesOptions = {
-  player: {
-    fps: 144,
-  },
+  fps: 144,
 };
-const s = new ani.Series(seriesOptions);
+const series = new ani.Series(seriesOptions);
 const sceneOptions = {
-  player: {
-    sec: 10,
-    fps: 144,
-  },
+  sec: 10,
+  fps: 144,
 };
 
 const a = new ani.Scene(sceneOptions);
-sceneOptions.player.fps = 30;
-sceneOptions.player.sec = 5;
+sceneOptions.fps = 30;
+sceneOptions.sec = 5;
 const lines = new ani.TextLines({
   fillStyle: "#FFF",
   font: { fontSize: 18, font: "Sarasa Mono SC" },
@@ -163,13 +159,13 @@ logoScene.addComponent(
     },
   })
 );
-s.addScene(logoScene);
-s.addScene(a);
-s.setCanvas();
-s.renderer.shape = shape;
+series.addScene(logoScene);
+series.addScene(a);
+series.setCanvas();
+series.renderer.shape = shape;
 (async () => {
   await lineChart.loadData(d);
-  s.play();
+  series.play();
 })();
 
 export default a;

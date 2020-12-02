@@ -1,6 +1,6 @@
 import { scaleLinear } from "d3-scale";
 import { FadeTextOptions } from "../options/fade-text-options";
-import { Text } from "./text";
+import { Text } from "./Text";
 class FadeText extends Text {
   time: number;
   fade: number;

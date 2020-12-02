@@ -1,5 +1,5 @@
-import { BaseOptions } from "./../options/base-options";
-import { BaseComponent } from "./base-component";
+import { BaseOptions } from "../options/base-options";
+import { BaseComponent } from "./BaseComponent";
 import { Component } from "./component";
 export interface Groupable {
   addComponent(c: Component): void;
@@ -18,7 +18,6 @@ export class GroupComponent extends BaseComponent implements Groupable {
   }
   addComponent(c: BaseComponent) {
     this.components.push(c);
-    c.hinter = this.hinter;
     this.hinter.drawHint(`Component Added: ${c.constructor.name}`);
   }
   update() {
@@ -29,9 +28,7 @@ export class GroupComponent extends BaseComponent implements Groupable {
   updateChild() {
     if (this.components) {
       this.components.forEach((c) => {
-        c.player = this.player;
-        c.ctx = this.ctx;
-        c.renderer = this.renderer;
+        c.scene = this.scene;
         this.hinter.drawHint(`Update Component: ${c.constructor.name}`);
         c.update();
       });

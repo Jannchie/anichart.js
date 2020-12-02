@@ -1,9 +1,9 @@
 import { csv } from "d3";
 import { csvParse, DSVRowArray } from "d3-dsv";
 import { Chart } from "./chart-interface";
-import { GroupComponent as Group } from "./group";
+import { GroupComponent as Group } from "./Group";
 
-export abstract class ChartCompoment extends Group implements Chart {
+export abstract class ChartComponent extends Group implements Chart {
   dateKey = "date";
   valueKey = "value";
   idKey = "id";

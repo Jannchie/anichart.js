@@ -1,6 +1,6 @@
+import { DefaultHinter } from "./../default/DefaultHinter";
 import { merge } from "lodash-es";
 import { Scene } from "../base";
-import { DefaultHinter } from "../default/default-hinter";
 import { Hintable, Hinter, Player, Renderer } from "../interface";
 import { FontOptions } from "../options/font-options";
 import { DefaultShadowOptions, ShadowOptions } from "../options/shadow-options";
@@ -13,9 +13,31 @@ export abstract class BaseComponent implements Component, Hintable {
   pos: Pos | ((n: number) => Pos) = { x: 0, y: 0 };
   protected cAlpha: number;
   protected cPos: Pos;
-  hinter: Hinter = new DefaultHinter();
-  renderer: Renderer;
-  player: Player;
+
+  get renderer() {
+    return this.scene ? this.scene.renderer : null;
+  }
+  set renderer(val) {
+    this.scene.renderer = val;
+  }
+
+  get player() {
+    return this.scene ? this.scene.player : null;
+  }
+  set player(val) {
+    this.scene.player = val;
+  }
+
+  get hinter() {
+    if (this.scene) {
+      return this.scene.hinter;
+    } else {
+      return new DefaultHinter();
+    }
+  }
+  set hinter(val) {
+    this.scene.hinter = val;
+  }
 
   constructor(init?: Partial<BaseComponent>) {
     Object.assign(this, init);
@@ -28,7 +50,12 @@ export abstract class BaseComponent implements Component, Hintable {
 
   shadow: ShadowOptions;
   font: FontOptions;
-  ctx: EnhancedCanvasRenderingContext2D;
+  public get ctx(): EnhancedCanvasRenderingContext2D {
+    return this.scene.renderer.ctx;
+  }
+  public set ctx(value: EnhancedCanvasRenderingContext2D) {
+    this.ctx = value;
+  }
 
   update(): void {
     this.shadow = merge(new DefaultShadowOptions(), this.shadow);

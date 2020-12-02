@@ -1,5 +1,5 @@
-import { BaseOptions } from "./../options/base-options";
-import { BaseComponent } from "./base-component";
+import { BaseOptions } from "../options/base-options";
+import { BaseComponent } from "./BaseComponent";
 import { Component } from "./component";
 export interface Groupable {
     addComponent(c: Component): void;

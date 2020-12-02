@@ -1,11 +1,10 @@
-import { Scene } from ".";
-import { SceneOptions } from "../options/scene-options";
-import { BaseScene } from "./base-scene";
+import { Scene } from "./Scene";
+import { SceneOptions } from "../options/SceneOptions";
+import { BaseScene } from "./BaseScene";
 export declare class Series extends BaseScene {
     private scenes;
     constructor(options?: SceneOptions);
     setCanvas(selector?: string): void;
-    private init;
     play(): void;
     addScene(s: Scene): void;
     update(): void;
