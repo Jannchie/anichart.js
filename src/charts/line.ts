@@ -252,6 +252,9 @@ export class LineChart extends ChartComponent {
       .force("collide", d3.forceCollide(height).strength(0.4));
     sim.tick();
     this.lines.forEach((line) => {
+      if (line.y === 0) {
+        return;
+      }
       // 绘制Label
       this.ctx.setFontOptions(this.labelFont);
       this.ctx.fillStyle = line.color;
