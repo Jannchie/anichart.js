@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import { DefaultFontOptions } from "../options/font-options";
+import { DefaultFontOptions } from "../options/FontOptions";
 import { GroupComponent } from "./Group";
 export declare class Axis extends GroupComponent {
     scales: {

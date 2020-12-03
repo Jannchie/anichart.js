@@ -1,4 +1,4 @@
-import { FontOptions } from "./../options/font-options";
+import { FontOptions } from "../options/FontOptions";
 interface EnhancedCanvasRenderingContext2D extends CanvasRenderingContext2D {
     drawClipedImg(img: CanvasImageSource, x: number, y: number, imgH: number, imgW: number, r: number): void;
     radiusArea(l: number, t: number, w: number, h: number, r: number): void;

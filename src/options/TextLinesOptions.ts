@@ -1,5 +1,5 @@
-import { BaseOptions } from "./base-options";
-import { FontOptions } from "./font-options";
+import { BaseOptions } from "./BaseOptions";
+import { FontOptions } from "./FontOptions";
 
 export interface TextLinesOptions extends BaseOptions {
   // 颜色

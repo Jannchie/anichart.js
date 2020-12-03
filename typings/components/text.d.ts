@@ -1,4 +1,4 @@
-import { FontOptions } from "../options/font-options";
+import { FontOptions } from "../options/FontOptions";
 import { BaseComponent } from "./BaseComponent";
 import { TextOptions } from "../options/text-options";
 import { Pos } from "../types/position";

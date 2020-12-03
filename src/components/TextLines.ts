@@ -1,4 +1,4 @@
-import { DefaultFontOptions, Fontable } from "../options/font-options";
+import { DefaultFontOptions, Fontable } from "../options/FontOptions";
 import { TextLinesOptions } from "../options/TextLinesOptions";
 import { GroupComponent } from "./Group";
 import { Text } from "./Text";

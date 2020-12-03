@@ -1,4 +1,4 @@
-import { FontOptions } from "./font-options";
+import { FontOptions } from "./FontOptions";
 import { ShadowOptions } from "./shadow-options";
 import Pos from "../types/position";
 export interface BaseOptions {

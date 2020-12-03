@@ -9,6 +9,7 @@ export declare class DefaultPlayer implements Player {
     scene: BaseScene;
     renderer: Renderer;
     hinter: Hinter;
+    mode: string;
     constructor(scene: BaseScene);
     cFrame: number;
     get totalFrames(): number;

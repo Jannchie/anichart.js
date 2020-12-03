@@ -1,4 +1,4 @@
-import { BaseOptions } from "../options/base-options";
+import { BaseOptions } from "../options/BaseOptions";
 import { BaseComponent } from "./BaseComponent";
 import { Component } from "./component";
 export interface Groupable {

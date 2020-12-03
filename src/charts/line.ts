@@ -1,11 +1,10 @@
 import * as d3 from "d3";
 import { DSVRowArray } from "d3";
 import { scaleLinear } from "d3-scale";
-import * as _ from "lodash-es";
 import { Axis } from "../components/Axis";
 import { ChartComponent } from "../components/ChartComponent";
-import { LineChartOptions } from "../options/line-chart-options";
-import { DefaultFontOptions } from "./../options/font-options";
+import { LineChartOptions } from "../options/LineChartOptions";
+import { DefaultFontOptions } from "../options/FontOptions";
 
 export class LineChart extends ChartComponent {
   shape: { width: number; height: number };
@@ -31,6 +30,7 @@ export class LineChart extends ChartComponent {
   tickFadeThreshold = 100;
   private xMax: number;
   strict = false;
+  collide = true;
   axis: Axis;
   lines: any[];
   getLabel(k: string, y: number): string {
@@ -44,7 +44,17 @@ export class LineChart extends ChartComponent {
     this.axis = new Axis();
     this.addComponent(this.axis);
     this.update();
+    this.setOptions(options);
   }
+  setOptions(o?: LineChartOptions) {
+    if (o.strict !== undefined) {
+      this.strict = o.strict;
+    }
+    if (o.collide !== undefined) {
+      this.collide = o.collide;
+    }
+  }
+
   update() {
     super.update();
     if (this.renderer) {
@@ -179,14 +189,6 @@ export class LineChart extends ChartComponent {
     return this.padding.left + this.margin.left;
   }
 
-  private setRange(n: number = 0) {
-    // const delta = this.scales.x.domain();
-    // const frames = this.player.fps * this.player.sec - 1;
-    // this.tsRange[1] = this.tsRange[0] + delta * (this.player.cFrame / frames);
-    // if (this.days) {
-    //   this.tsRange[0] = this.tsRange[1] - this.days * 86400 * 1000;
-    // }
-  }
   preRender(): void {
     super.preRender();
 
@@ -244,26 +246,30 @@ export class LineChart extends ChartComponent {
       // 绘制圆点
       this.ctx.fillCircle(this.xMax, line.y, this.pointR);
     });
-    // Use mechanical layout to solve label overlap problem
-    // 使用力学布局，解决标签重叠问题
-    const height = this.labelFont.fontSize;
-    const sim = d3
-      .forceSimulation(this.lines)
-      .force("collide", d3.forceCollide(height).strength(0.4));
-    sim.tick();
-    this.lines.forEach((line) => {
-      if (line.y === 0) {
-        return;
-      }
-      // 绘制Label
-      this.ctx.setFontOptions(this.labelFont);
-      this.ctx.fillStyle = line.color;
-      this.ctx.fillText(
-        this.getLabel(line.key, line.val),
-        this.xMax + 15,
-        line.y
-      );
-    });
+
+    // 碰撞检测标签位置
+    if (this.collide) {
+      // Use mechanical layout to solve label overlap problem
+      // 使用力学布局，解决标签重叠问题
+      const height = this.labelFont.fontSize;
+      const sim = d3
+        .forceSimulation(this.lines)
+        .force("collide", d3.forceCollide(height).strength(0.4));
+      sim.tick();
+    }
+
+    this.lines
+      .filter((l) => l.val === l.val)
+      .forEach((line) => {
+        // 绘制Label
+        this.ctx.setFontOptions(this.labelFont);
+        this.ctx.fillStyle = line.color;
+        this.ctx.fillText(
+          this.getLabel(line.key, line.val),
+          this.xMax + 15,
+          line.y
+        );
+      });
   }
 
   private findY(area: Path2D) {

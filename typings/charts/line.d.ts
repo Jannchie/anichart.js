@@ -2,8 +2,8 @@ import * as d3 from "d3";
 import { DSVRowArray } from "d3";
 import { Axis } from "../components/Axis";
 import { ChartComponent } from "../components/ChartComponent";
-import { LineChartOptions } from "../options/line-chart-options";
-import { DefaultFontOptions } from "./../options/font-options";
+import { LineChartOptions } from "../options/LineChartOptions";
+import { DefaultFontOptions } from "../options/FontOptions";
 export declare class LineChart extends ChartComponent {
     shape: {
         width: number;
@@ -41,9 +41,12 @@ export declare class LineChart extends ChartComponent {
     tickFadeThreshold: number;
     private xMax;
     strict: boolean;
+    collide: boolean;
     axis: Axis;
+    lines: any[];
     getLabel(k: string, y: number): string;
     constructor(options?: LineChartOptions);
+    setOptions(o?: LineChartOptions): void;
     update(): void;
     private calLabelMaxLength;
     private calData;
@@ -55,7 +58,6 @@ export declare class LineChart extends ChartComponent {
     private get yTop();
     private get xRight();
     private get xLeft();
-    private setRange;
     preRender(): void;
     render(): void;
     private findY;
