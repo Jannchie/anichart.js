@@ -16,7 +16,6 @@ const a = new window.anichart.Bar({
   await a.loadCsv(d);
   await a.readyToDraw();
 })();
-
 if (typeof window != "undefined") {
   window.a = a;
 }

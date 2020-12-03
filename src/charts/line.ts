@@ -1,6 +1,7 @@
 import * as d3 from "d3";
 import { DSVRowArray } from "d3";
 import { scaleLinear } from "d3-scale";
+import * as _ from "lodash-es";
 import { Axis } from "../components/Axis";
 import { ChartComponent } from "../components/ChartComponent";
 import { LineChartOptions } from "../options/line-chart-options";
@@ -31,6 +32,7 @@ export class LineChart extends ChartComponent {
   private xMax: number;
   strict = false;
   axis: Axis;
+  lines: any[];
   getLabel(k: string, y: number): string {
     return `${k}: ${d3.format(this.valueFormat)(y)}`;
   }
@@ -193,10 +195,23 @@ export class LineChart extends ChartComponent {
     this.xMax =
       this.cPos.x + this.shape.width - this.padding.right - this.margin.right;
     this.setScale();
-    // this.setRange();
+    this.lines = [];
+    this.dataGroup.forEach((v, k) => {
+      const line = {} as any;
+      // 绘制曲线
+      line.path = new Path2D(this.lineGen.curve(d3.curveMonotoneX)(v));
+      line.area = new Path2D(this.areaGen.curve(d3.curveMonotoneX)(v));
+      line.fx = 0;
+      line.y = this.findY(line.area);
+      line.val = this.scales.y.invert(line.y);
+      line.key = k;
+      line.color = this.renderer.colorPicker.getColor(k);
+      this.lines.push(line);
+    });
   }
   render(): void {
-    this.dataGroup.forEach((v, k: string) => {
+    const nodes: any[] = [];
+    this.lines.forEach((line) => {
       // ------------------------------------------------------------
       // 裁剪曲线绘图区域
       this.ctx.save();
@@ -218,28 +233,32 @@ export class LineChart extends ChartComponent {
       );
       this.ctx.closePath();
       this.ctx.clip();
-      const color = this.renderer.colorPicker.getColor(k);
-      this.ctx.strokeStyle = color;
+      this.ctx.strokeStyle = line.color;
       this.ctx.lineWidth = this.lineWidth;
-      // 绘制曲线
-      const path = new Path2D(this.lineGen.curve(d3.curveMonotoneX)(v));
-      const area = new Path2D(this.areaGen.curve(d3.curveMonotoneX)(v));
-      this.ctx.stroke(path);
-      // this.ctx.stroke(area);
+
+      this.ctx.stroke(line.path);
       // 取消裁剪
       this.ctx.restore();
       // ------------------------------------------------------------
-      // 寻找小圆点的Y轴坐标
-      const y = this.findY(area);
+      this.ctx.fillStyle = line.color;
       // 绘制圆点
-      this.ctx.fillStyle = color;
-      this.ctx.fillCircle(this.xMax, y, this.pointR);
-      this.ctx.setFontOptions(this.labelFont);
+      this.ctx.fillCircle(this.xMax, line.y, this.pointR);
+    });
+    // Use mechanical layout to solve label overlap problem
+    // 使用力学布局，解决标签重叠问题
+    const height = this.labelFont.fontSize;
+    const sim = d3
+      .forceSimulation(this.lines)
+      .force("collide", d3.forceCollide(height).strength(0.4));
+    sim.tick();
+    this.lines.forEach((line) => {
       // 绘制Label
+      this.ctx.setFontOptions(this.labelFont);
+      this.ctx.fillStyle = line.color;
       this.ctx.fillText(
-        this.getLabel(k, this.scales.y.invert(y)),
+        this.getLabel(line.key, line.val),
         this.xMax + 15,
-        y
+        line.y
       );
     });
   }
