@@ -1,4 +1,4 @@
-import { FontOptions } from "./../options/font-options";
+import { FontOptions } from "../options/FontOptions";
 
 if (typeof window === "undefined") {
   // tslint:disable-next-line:no-var-requires

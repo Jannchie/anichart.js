@@ -1,6 +1,6 @@
 import * as d3 from "d3";
 import { ScaleLinear, ScaleLogarithmic } from "d3";
-import { DefaultFontOptions } from "../options/font-options";
+import { DefaultFontOptions } from "../options/FontOptions";
 import { GroupComponent } from "./Group";
 export class Axis extends GroupComponent {
   scales: {

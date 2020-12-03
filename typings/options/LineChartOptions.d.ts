@@ -1,5 +1,5 @@
-import { BaseOptions } from "./base-options";
-import { FontOptions } from "./font-options";
+import { BaseOptions } from "./BaseOptions";
+import { FontOptions } from "./FontOptions";
 export interface LineChartOptions extends BaseOptions {
     padding?: {
         left: number;
@@ -20,6 +20,7 @@ export interface LineChartOptions extends BaseOptions {
     pointR?: number;
     strict?: boolean;
     getLabel?: (id: string, value: number) => string;
+    collide?: boolean;
     dateKey?: string;
     valueKey?: string;
     idKey?: string;

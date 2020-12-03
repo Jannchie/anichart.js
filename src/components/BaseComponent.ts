@@ -2,7 +2,7 @@ import { DefaultHinter } from "./../default/DefaultHinter";
 import { merge } from "lodash-es";
 import { Scene } from "../base";
 import { Hintable, Hinter, Player, Renderer } from "../interface";
-import { FontOptions } from "../options/font-options";
+import { FontOptions } from "../options/FontOptions";
 import { DefaultShadowOptions, ShadowOptions } from "../options/shadow-options";
 import Pos from "../types/position";
 import { EnhancedCanvasRenderingContext2D } from "../utils/enhance-ctx";

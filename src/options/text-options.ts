@@ -1,5 +1,5 @@
-import { FontOptions } from "./font-options";
-import { BaseOptions } from "./base-options";
+import { FontOptions } from "./FontOptions";
+import { BaseOptions } from "./BaseOptions";
 
 export interface TextOptions extends BaseOptions {
   // 文字内容

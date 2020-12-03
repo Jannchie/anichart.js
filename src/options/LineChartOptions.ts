@@ -1,5 +1,5 @@
-import { BaseOptions } from "./base-options";
-import { FontOptions } from "./font-options";
+import { BaseOptions } from "./BaseOptions";
+import { FontOptions } from "./FontOptions";
 
 export interface LineChartOptions extends BaseOptions {
   padding?: { left: number; right?: number; bottom?: number; top?: number };
@@ -10,8 +10,12 @@ export interface LineChartOptions extends BaseOptions {
   lineWidth?: number;
   pointR?: number;
   strict?: boolean;
+
   // 标签定义
   getLabel?: (id: string, value: number) => string;
+  // 标签碰撞检测
+  collide?: boolean;
+
   dateKey?: string;
   valueKey?: string;
   idKey?: string;
