@@ -10,6 +10,7 @@ export class DefaultPlayer implements Player {
   scene: BaseScene;
   renderer: Renderer;
   hinter: Hinter;
+  mode: string;
   constructor(scene: BaseScene) {
     this.scene = scene;
     this.renderer = scene.renderer;
@@ -44,7 +45,7 @@ export class DefaultPlayer implements Player {
       const start = new Date().getTime();
       let count = 0;
       this.interval = d3.interval((elapsed) => {
-        if (this.output) {
+        if (this.output || this.mode === "output") {
           this.cFrame++;
         } else {
           this.cFrame = Math.floor((elapsed / 1000) * this.fps);

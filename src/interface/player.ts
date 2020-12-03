@@ -8,6 +8,7 @@ export interface Player extends Renderable, Hintable {
   cFrame: number;
   interval: Timer;
   totalFrames: number;
+  mode: string;
   drawFrame(frame: number): void;
   drawNextFrame(): void;
   play(): void;

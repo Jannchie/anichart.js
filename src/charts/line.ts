@@ -44,6 +44,12 @@ export class LineChart extends ChartComponent {
     this.axis = new Axis();
     this.addComponent(this.axis);
     this.update();
+    this.setOptions(options);
+  }
+  setOptions(o?: LineChartOptions) {
+    if (o.strict !== undefined) {
+      this.strict = o.strict;
+    }
   }
   update() {
     super.update();
@@ -96,6 +102,8 @@ export class LineChart extends ChartComponent {
 
   private calData() {
     if (this.strict === true) {
+      console.log("this.Strictmode");
+
       const dts = Array.from(
         d3.group(this.data, (d) => d[this.dateKey]).keys()
       ).sort((a, b) => Number(a) - Number(b));
@@ -251,19 +259,18 @@ export class LineChart extends ChartComponent {
       .forceSimulation(this.lines)
       .force("collide", d3.forceCollide(height).strength(0.4));
     sim.tick();
-    this.lines.forEach((line) => {
-      if (line.y === 0) {
-        return;
-      }
-      // 绘制Label
-      this.ctx.setFontOptions(this.labelFont);
-      this.ctx.fillStyle = line.color;
-      this.ctx.fillText(
-        this.getLabel(line.key, line.val),
-        this.xMax + 15,
-        line.y
-      );
-    });
+    this.lines
+      .filter((l) => l.val === l.val)
+      .forEach((line) => {
+        // 绘制Label
+        this.ctx.setFontOptions(this.labelFont);
+        this.ctx.fillStyle = line.color;
+        this.ctx.fillText(
+          this.getLabel(line.key, line.val),
+          this.xMax + 15,
+          line.y
+        );
+      });
   }
 
   private findY(area: Path2D) {
