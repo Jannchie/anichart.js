@@ -16,7 +16,7 @@ export class BaseAniChart {
     label(data: any): any;
     colorKey(data: any): any;
     selectCanvas(selector?: string): Promise<void>;
-    canvas: Element | Window | Document | import("canvas").Canvas | import("d3-selection").EnterElement;
+    canvas: import("canvas").Canvas | Element | import("d3-selection").EnterElement | Document | Window;
     ctx: any;
     initCanvas(parent?: string): Promise<void>;
     hintText(txt: any, self?: BaseAniChart): Promise<void>;

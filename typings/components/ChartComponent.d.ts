@@ -7,7 +7,7 @@ export declare abstract class ChartComponent extends Group implements Chart {
     valueKey: string;
     idKey: string;
     colorKey: string;
-    constructor(options: ChartOptions);
+    colorMap: Map<string, string>;
     setOptions(options: ChartOptions): void;
     loadData(path: string | any): Promise<void>;
     update(): void;

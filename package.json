@@ -21,7 +21,7 @@
     "src/**/*"
   ],
   "scripts": {
-    "build": "tsc & webpack --config webpack.prod.js",
+    "build": "tsc --build tsconfig.prod.json & webpack --config webpack.prod.js",
     "deploy": "npm version prerelease",
     "serve": "webpack-dev-server --open  --config webpack.dev.js",
     "dev": "webpack  --config webpack.dev.js",
