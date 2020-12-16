@@ -1,5 +1,6 @@
 import { csv } from "d3";
 import { csvParse, DSVRowArray } from "d3-dsv";
+import { ChartOptions } from "../options/ChartOptions";
 import { Chart } from "./chart-interface";
 import { GroupComponent as Group } from "./Group";
 
@@ -8,6 +9,15 @@ export abstract class ChartComponent extends Group implements Chart {
   valueKey = "value";
   idKey = "id";
   colorKey = "id";
+  colorMap = new Map<string, string>();
+  setOptions(options: ChartOptions) {
+    if (options.color) {
+      for (const key of Object.keys(options.color)) {
+        this.colorMap.set(key, options.color[key]);
+      }
+    }
+  }
+
   async loadData(path: string | any): Promise<void> {
     this.hinter.drawHint("Loading Data...");
     this.data = await this.readCsv(path);
@@ -22,6 +32,9 @@ export abstract class ChartComponent extends Group implements Chart {
     }
   }
   update() {
+    if (this.colorPicker) {
+      this.colorPicker.colorMap = this.colorMap;
+    }
     super.update();
     if (this.components) {
       this.components.forEach((c) => {

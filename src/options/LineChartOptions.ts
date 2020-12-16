@@ -1,7 +1,7 @@
-import { BaseOptions } from "./BaseOptions";
+import { ChartOptions } from "./ChartOptions";
 import { FontOptions } from "./FontOptions";
 
-export interface LineChartOptions extends BaseOptions {
+export interface LineChartOptions extends ChartOptions {
   padding?: { left: number; right?: number; bottom?: number; top?: number };
   margin?: { left: number; right?: number; bottom?: number; top?: number };
   labelFont?: FontOptions;

@@ -14,6 +14,15 @@ export abstract class BaseComponent implements Component, Hintable {
   protected cAlpha: number;
   protected cPos: Pos;
 
+  get colorPicker() {
+    return this.scene && this.scene.renderer
+      ? this.scene.renderer.colorPicker
+      : null;
+  }
+  set colorPicker(val) {
+    this.scene.renderer.colorPicker = val;
+  }
+
   get renderer() {
     return this.scene ? this.scene.renderer : null;
   }

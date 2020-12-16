@@ -47,6 +47,7 @@ export class LineChart extends ChartComponent {
     this.setOptions(options);
   }
   setOptions(o?: LineChartOptions) {
+    super.setOptions(o);
     if (o.strict !== undefined) {
       this.strict = o.strict;
     }
@@ -207,7 +208,7 @@ export class LineChart extends ChartComponent {
       line.y = this.findY(line.area);
       line.val = this.scales.y.invert(line.y);
       line.key = k;
-      line.color = this.renderer.colorPicker.getColor(k);
+      line.color = this.colorPicker.getColor(k);
       this.lines.push(line);
     });
   }

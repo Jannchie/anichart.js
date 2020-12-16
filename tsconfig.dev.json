@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+        "outDir": "lib",
+        "noImplicitAny": true,
+        "module": "es6",
+        "target": "es5",
+        "declarationMap": false,
+        "declaration": false,
+        "inlineSourceMap": true,
+        "typeRoots": [
+            "./src/**/*",
+            "./node_modules/@types"
+        ],
+        "moduleResolution": "Node",
+        "allowUmdGlobalAccess": true,
+        "esModuleInterop": true,
+        "allowJs": true
+    },
+    "compileOnSave": true,
+    "include": [
+        "./src/**/*",
+        "@types",
+    ],
+}

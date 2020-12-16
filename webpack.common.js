@@ -14,7 +14,11 @@ module.exports = {
   module: {
     rules: [
       // All files with a '.ts' or '.tsx' extension will be handled by 'awesome-typescript-loader'.
-      { test: /\.ts?$/, loader: "ts-loader" },
+      {
+        test: /\.ts?$/,
+        loader: "ts-loader",
+        options: { configFile: "tsconfig.dev.json" },
+      },
       // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
       { enforce: "pre", test: /\.js|.ts$/, loader: "source-map-loader" },
       {

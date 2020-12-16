@@ -10,6 +10,8 @@ export declare abstract class BaseComponent implements Component, Hintable {
     pos: Pos | ((n: number) => Pos);
     protected cAlpha: number;
     protected cPos: Pos;
+    get colorPicker(): import("../interface").ColorPicker;
+    set colorPicker(val: import("../interface").ColorPicker);
     get renderer(): Renderer;
     set renderer(val: Renderer);
     get player(): Player;

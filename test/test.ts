@@ -76,7 +76,10 @@ lines.addComponent(
     blur: 4,
   })
 );
-const lineChart = new ani.LineChart({ days: 2 });
+const lineChart = new ani.LineChart({
+  days: 2,
+  color: { "1850091": "#FF1" },
+});
 a.addComponent(lineChart);
 const logoScene = new ani.Scene(sceneOptions);
 logoScene.update();
