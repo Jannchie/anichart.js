@@ -3,6 +3,7 @@
 </p>
 
 <p align="center">
+    <img alt="Code Time" src="https://img.shields.io/endpoint?style=flat-square&url=https://codetime-api.datreks.com/badge/2?logoColor=white%26project=anichart%26recentMS=0%26showProject=false" />
     <img src="https://data.jsdelivr.com/v1/package/npm/anichart/badge">
     <img alt="NPM" src="https://img.shields.io/npm/l/anichart?style=flat-square">
     <img alt="npm" src="https://img.shields.io/npm/v/anichart?style=flat-square">
