@@ -170,7 +170,7 @@ class BaseAniChart {
     this.ready = true;
     if (typeof window == "undefined") {
       console.log(`Total Frames: ${this.frameData.length}`);
-      // this.outputPngs();
+      this.outputPngs();
       // this.outputMp4();
     }
   }
@@ -229,7 +229,7 @@ class BaseAniChart {
     global.path = path;
     delDir(this.imagePath);
     fs.mkdirSync("./image");
-    for (let f in range(this.frameData.length)) {
+    for (let f of range(this.frameData.length)) {
       this.currentFrame = f;
       this.outputPng(f, this.outputName, fs, path);
     }

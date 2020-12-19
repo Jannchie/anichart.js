@@ -122,7 +122,6 @@ export class BarChart extends BaseAniChart {
         0.8
     );
   }
-
   async loadMetaData(path) {
     let metaData = await this.readCsv(path);
     metaData = metaData.reduce((pv, cv) => {
@@ -170,7 +169,9 @@ export class BarChart extends BaseAniChart {
     let firstTs = tsList[0];
     let lastTs = tsList[tsList.length - 1];
     tsList = range(firstTs, lastTs + 1, delta);
-    let frameCount = this.frameRate * this.interval * (tsList.length - 1);
+    let frameCount = Math.floor(
+      this.frameRate * this.interval * (tsList.length - 1)
+    );
 
     this.getCurrentDate = scaleLinear()
       .domain([0, frameCount - 1])
@@ -210,7 +211,8 @@ export class BarChart extends BaseAniChart {
       this.numberKey.forEach((key) => {
         scales[key] = scaleLinear()
           .domain(dtList)
-          .range(valList.map((d) => d[key]));
+          .range(valList.map((d) => Number(d[key])))
+          .clamp(true);
       });
       const startDt = dtList[0];
       let obj = valList[0];
@@ -260,19 +262,19 @@ export class BarChart extends BaseAniChart {
       const alphaList = d3.map(items, (d) => 1);
       const posList = d3.map(items, (d) => 0);
       this.numberKey.forEach((key) => {
-        const valueList = d3.map(items, (d) => d[key]);
-        for (let i = 1; i < valueList.length - 1; i++) {
-          if (valueList[i] === valueList[i]) {
-            if (valueList[i - 1] !== valueList[i - 1]) {
-              valueList[i - 1] = valueList[i] * 0.98;
-              alphaList[i - 1] = 0;
-              posList[i - 1] = 1;
-            }
-          } else if (valueList[i - 1] === valueList[i - 1]) {
-            valueList[i] = valueList[i - 1] * 1.02;
-            alphaList[i] = 1;
-          }
-        }
+        const valueList = d3.map(items, (d) => Number(d[key]));
+        // for (let i = 1; i < valueList.length - 1; i++) {
+        //   if (valueList[i] === valueList[i]) {
+        //     if (valueList[i - 1] !== valueList[i - 1]) {
+        //       valueList[i - 1] = valueList[i] * 0.98;
+        //       alphaList[i - 1] = 0;
+        //       posList[i - 1] = 1;
+        //     }
+        //   } else if (valueList[i - 1] === valueList[i - 1]) {
+        //     valueList[i] = valueList[i - 1] * 1.02;
+        //     alphaList[i] = 1;
+        //   }
+        // }
         scales.set(key, d3.scaleLinear(dateList, valueList).clamp(true));
       });
       scales.set("alpha", d3.scaleLinear(dateList, alphaList).clamp(true));
@@ -350,7 +352,7 @@ export class BarChart extends BaseAniChart {
 
     this.ctx.drawBar = (data, series) => {
       this.ctx.fillStyle = "#999";
-      let fillColor = this.getColor(data);
+      let fillColor = this.getColor(data, this.metaData);
       let barWidth = series.xScale(data.value);
       let r = this.barRedius > barWidth / 2 ? barWidth / 2 : this.barRedius;
       let imgPandding =
@@ -451,7 +453,9 @@ export class BarChart extends BaseAniChart {
    * @param {List} frameData
    */
   calPosition(idSet, frameData) {
-    for (let __ of range(this.freeze + this.frameRate * this.interval)) {
+    for (let __ of range(
+      Math.floor(this.freeze + this.frameRate * this.interval)
+    )) {
       frameData.push(_.cloneDeep(frameData[this.totalTrueFrames - 1]));
       frameData[frameData.length - 1].max =
         frameData[this.totalTrueFrames - 1].max;
@@ -477,7 +481,7 @@ export class BarChart extends BaseAniChart {
 
       let tmpList = [];
       for (let i = 0; i < rankList.length; i++) {
-        let frames = (this.frameRate * this.interval) / 7;
+        let frames = Math.floor(this.frameRate * this.interval) / 7;
         let tmpArray = rankList.slice(
           i - frames > 0 ? i - frames : 0,
           i + frames
