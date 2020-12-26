@@ -16,7 +16,9 @@ export class Stage {
   get totalFrames() {
     return this.options.sec * this.options.fps;
   }
-
+  get canvas() {
+    return this.renderer.canvas;
+  }
   constructor(canvas?: HTMLCanvasElement) {
     if (!canvas) {
       canvas = document.createElement("canvas");

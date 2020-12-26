@@ -23,7 +23,7 @@ export class TextAni extends Ani {
     this.last = options.last ? options.last : 2;
     this.time = options.time ? options.time : 0;
     this.type = options.type ? options.type : "fade";
-    this.blur = options.blur ? options.blur : 20;
+    this.blur = options.blur ? options.blur : 10;
     this.rise = options.rise ? options.rise : 10;
   }
   getComponent(sec: number) {
@@ -38,10 +38,8 @@ export class TextAni extends Ani {
         [0, 1, 1, 0]
       )
       .clamp(true);
+    this.component.alpha = scale(sec);
     switch (this.type) {
-      case "fade":
-        this.component.alpha = scale(sec);
-        break;
       case "blur":
         this.component.filter = `blur(${(1 - scale(sec)) * this.blur}px)`;
         break;

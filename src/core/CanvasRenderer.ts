@@ -1,4 +1,5 @@
 import { Component } from "./component/Component";
+import { Rect } from "./component/Rect";
 import { Text } from "./component/Text";
 export class CanvasRenderer {
   canvas: HTMLCanvasElement;
@@ -14,35 +15,56 @@ export class CanvasRenderer {
     this.ctx.save();
 
     // render itself
-    this.ctx.translate(component.position.x, component.position.y);
-    this.ctx.translate(component.offset.x, component.offset.y);
+    // render base component props
+    this.renderBase(component);
+    // render special component props
     if (component instanceof Text) {
       this.renderText(component);
+    } else if (component instanceof Rect) {
+      this.renderRect(component);
     }
-
     this.ctx.restore();
     // render children components
     component.children.forEach((child) => {
       this.render(child);
     });
   }
+  private renderRect(component: Rect) {
+    this.ctx.fillRect(
+      component.position.x,
+      component.position.y,
+      component.shape.width,
+      component.shape.height
+    );
+  }
 
+  private renderBase(component: Component) {
+    this.ctx.translate(component.position.x, component.position.y);
+    this.ctx.translate(component.offset.x, component.offset.y);
+    if (component.filter) {
+      this.ctx.filter = component.filter;
+    }
+    if (component.strokeStyle) {
+      this.ctx.strokeStyle = component.strokeStyle;
+    }
+    if (component.fillStyle) {
+      this.ctx.fillStyle = component.fillStyle;
+    }
+    if (component.alpha !== null) {
+      this.ctx.globalAlpha = component.alpha;
+    }
+  }
   private renderText(component: Text) {
-    this.ctx.fillStyle = component.fillStyle;
-    this.ctx.textAlign = component.textAlign;
-    this.ctx.textBaseline = component.textBaseline;
-    this.ctx.strokeStyle = component.strokeStyle;
-    this.ctx.globalAlpha = component.alpha;
-    this.ctx.font = component.fontStr;
-    this.ctx.fillText(
-      component.text,
-      component.position.x,
-      component.position.y
-    );
-    this.ctx.strokeText(
-      component.text,
-      component.position.x,
-      component.position.y
-    );
+    if (component.textAlign) {
+      this.ctx.textAlign = component.textAlign;
+    }
+    if (component.textBaseline) {
+      this.ctx.textBaseline = component.textBaseline;
+    }
+    if (component.fontStr) {
+      this.ctx.font = component.fontStr;
+    }
+    this.ctx.fillText(component.text, 0, 0);
+    this.ctx.strokeText(component.text, 0, 0);
   }
 }
