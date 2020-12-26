@@ -15,5 +15,5 @@ export class Component {
   alpha: number = 1;
   filter: string;
   fillStyle?: string | CanvasGradient | CanvasPattern;
-  strokeStyle?: string | CanvasGradient | CanvasPattern;
+  strokeStyle?: string | CanvasGradient | CanvasPattern = "#0000";
 }

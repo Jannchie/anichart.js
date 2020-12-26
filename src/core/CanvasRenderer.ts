@@ -23,11 +23,11 @@ export class CanvasRenderer {
     } else if (component instanceof Rect) {
       this.renderRect(component);
     }
-    this.ctx.restore();
     // render children components
     component.children.forEach((child) => {
       this.render(child);
     });
+    this.ctx.restore();
   }
   private renderRect(component: Rect) {
     this.ctx.fillRect(

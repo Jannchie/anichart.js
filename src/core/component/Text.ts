@@ -16,15 +16,23 @@ export type FontWeight =
 export type FontVariant = "normal" | "small-caps";
 export type FontStyle = "normal" | "italic" | "oblique";
 export class Text extends Component {
+  constructor(text?: string) {
+    super();
+    this.text = text;
+  }
   text?: string = "";
-  textAlign?: CanvasTextAlign = "left";
-  textBaseline?: CanvasTextBaseline = "top";
-  fontVariant?: FontVariant = "normal";
-  fontWeight?: FontWeight = "normal";
-  fontStyle?: FontStyle = "normal";
-  fontSize?: number = 16;
-  font?: string = "";
+  textAlign?: CanvasTextAlign;
+  textBaseline?: CanvasTextBaseline;
+  fontVariant?: FontVariant;
+  fontWeight?: FontWeight;
+  fontStyle?: FontStyle;
+  fontSize?: number;
+  font?: string;
   get fontStr() {
-    return `${this.fontStyle} ${this.fontVariant} ${this.fontWeight} ${this.fontSize}px ${this.font}`;
+    return `${this.fontStyle ? this.fontStyle : ""} ${
+      this.fontVariant ? this.fontVariant : ""
+    } ${this.fontWeight ? this.fontWeight : ""} ${
+      this.fontSize ? this.fontSize : 16
+    }px ${this.font ? this.font : ""}`;
   }
 }
