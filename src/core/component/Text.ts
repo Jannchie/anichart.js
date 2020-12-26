@@ -17,8 +17,6 @@ export type FontVariant = "normal" | "small-caps";
 export type FontStyle = "normal" | "italic" | "oblique";
 export class Text extends Component {
   text?: string = "";
-  strokeStyle?: string | CanvasGradient | CanvasPattern;
-  fillStyle?: string | CanvasGradient | CanvasPattern = "#444";
   textAlign?: CanvasTextAlign = "left";
   textBaseline?: CanvasTextBaseline = "top";
   fontVariant?: FontVariant = "normal";

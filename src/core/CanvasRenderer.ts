@@ -8,31 +8,38 @@ export class CanvasRenderer {
     this.ctx = this.canvas.getContext("2d");
   }
   render(component: Component) {
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    this.ctx.fillStyle = "#FFF";
-    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-    // render children components
-    component.children.forEach((child) => this.render(child));
+    this.ctx.save();
+
     // render itself
+    this.ctx.translate(component.position.x, component.position.y);
+    this.ctx.translate(component.offset.x, component.offset.y);
     if (component instanceof Text) {
-      this.ctx.save();
-      this.ctx.fillStyle = component.fillStyle;
-      this.ctx.textAlign = component.textAlign;
-      this.ctx.textBaseline = component.textBaseline;
-      this.ctx.strokeStyle = component.strokeStyle;
-      this.ctx.globalAlpha = component.alpha;
-      this.ctx.font = component.fontStr;
-      this.ctx.fillText(
-        component.text,
-        component.position.x,
-        component.position.y
-      );
-      this.ctx.strokeText(
-        component.text,
-        component.position.x,
-        component.position.y
-      );
-      this.ctx.restore();
+      this.renderText(component);
     }
+
+    this.ctx.restore();
+    // render children components
+    component.children.forEach((child) => {
+      this.render(child);
+    });
+  }
+
+  private renderText(component: Text) {
+    this.ctx.fillStyle = component.fillStyle;
+    this.ctx.textAlign = component.textAlign;
+    this.ctx.textBaseline = component.textBaseline;
+    this.ctx.strokeStyle = component.strokeStyle;
+    this.ctx.globalAlpha = component.alpha;
+    this.ctx.font = component.fontStr;
+    this.ctx.fillText(
+      component.text,
+      component.position.x,
+      component.position.y
+    );
+    this.ctx.strokeText(
+      component.text,
+      component.position.x,
+      component.position.y
+    );
   }
 }
