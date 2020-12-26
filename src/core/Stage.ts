@@ -36,6 +36,7 @@ export class Stage {
     this.aniRoot.children.forEach((child) => {
       this.compRoot.children.push(child.getComponent(sec));
     });
+    this.renderer.clean();
   }
 
   render(sec: number) {

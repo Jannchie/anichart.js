@@ -7,6 +7,9 @@ export class CanvasRenderer {
     this.canvas = canvas;
     this.ctx = this.canvas.getContext("2d");
   }
+  clean() {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  }
   render(component: Component) {
     this.ctx.save();
 
