@@ -1,7 +1,9 @@
-import { text } from "d3";
+import { createAni } from "../src/core/ani/AniCreator";
+import { ease } from "../src/core/ani/Ease";
 import { RectAni } from "../src/core/ani/RectAni";
 import { TextAni } from "../src/core/ani/TextAni";
 import { TextLinesAni } from "../src/core/ani/TextLinesAni";
+import { Rect } from "../src/core/component/Rect";
 import { Stage } from "../src/core/Stage";
 
 const stage = new Stage();
@@ -40,8 +42,21 @@ textJannchieStudio.type = "blur";
 textLinesAni.children.push(textAnichart);
 textLinesAni.children.push(textJannchieStudio);
 
+const rectAni = createAni(
+  new Rect({
+    shape: { width: 100, height: 100 },
+    fillStyle: "#451",
+  }),
+  new Rect({
+    shape: { width: 100, height: 200 },
+    fillStyle: "#742",
+  }),
+  ease.easeBounce
+);
+
 stage.addChild(bgAni);
 stage.addChild(textLinesAni);
+stage.addChild(rectAni);
 
 stage.options.sec = 3;
 stage.play();

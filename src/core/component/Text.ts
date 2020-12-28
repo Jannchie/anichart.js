@@ -16,6 +16,7 @@ export type FontWeight =
 export type FontVariant = "normal" | "small-caps";
 export type FontStyle = "normal" | "italic" | "oblique";
 export class Text extends Component {
+  readonly type? = "Text";
   constructor(text?: string) {
     super();
     this.text = text;

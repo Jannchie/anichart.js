@@ -13,15 +13,14 @@ export class CanvasRenderer {
   }
   render(component: Component) {
     this.ctx.save();
-
     // render itself
     // render base component props
     this.renderBase(component);
     // render special component props
-    if (component instanceof Text) {
-      this.renderText(component);
-    } else if (component instanceof Rect) {
-      this.renderRect(component);
+    if (component.type === "Text") {
+      this.renderText(component as Text);
+    } else if (component.type === "Rect") {
+      this.renderRect(component as Rect);
     }
     // render children components
     component.children.forEach((child) => {

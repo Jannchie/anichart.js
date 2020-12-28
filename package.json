@@ -23,7 +23,7 @@
   "scripts": {
     "build": "tsc --build tsconfig.prod.json & webpack --config webpack.prod.js",
     "deploy": "npm version prerelease",
-    "serve": "webpack-dev-server --open  --config webpack.dev.js",
+    "serve": "webpack-dev-server --open  --config webpack.dev.js --port 12341",
     "dev": "webpack  --config webpack.dev.js",
     "watch": "webpack --watch  --config webpack.dev.js"
   },
