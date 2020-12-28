@@ -43,14 +43,16 @@ textLinesAni.children.push(textAnichart);
 textLinesAni.children.push(textJannchieStudio);
 
 const rectAni = createAni(
-  new Rect({
-    shape: { width: 100, height: 100 },
-    fillStyle: "#451",
-  }),
-  new Rect({
-    shape: { width: 100, height: 200 },
-    fillStyle: "#742",
-  }),
+  [
+    new Rect({
+      shape: { width: 100, height: 0 },
+      fillStyle: "#451",
+    }),
+    new Rect({
+      shape: { width: 100, height: 200 },
+      fillStyle: "#742",
+    }),
+  ],
   ease.easeBounce
 );
 

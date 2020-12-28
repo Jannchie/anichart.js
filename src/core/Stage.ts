@@ -8,7 +8,7 @@ export class Stage {
   compRoot: Component = new Component();
   renderer: CanvasRenderer;
 
-  options = { sec: 5, fps: 30 };
+  options = { sec: 5, fps: 144 };
   interval: d3.Timer;
   output: boolean;
   mode = "output";
