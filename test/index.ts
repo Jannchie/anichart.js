@@ -45,15 +45,21 @@ textLinesAni.children.push(textJannchieStudio);
 const rectAni = createAni(
   [
     new Rect({
+      position: { x: 100, y: 0 },
       shape: { width: 100, height: 0 },
-      fillStyle: "#451",
+      fillStyle: "#d23",
     }),
     new Rect({
       shape: { width: 100, height: 200 },
-      fillStyle: "#742",
+      fillStyle: "#2a3",
+    }),
+    new Rect({
+      shape: { width: 100, height: 0 },
+      fillStyle: "#569",
     }),
   ],
-  ease.easeBounce
+  [0, 1, 2],
+  ease.easeElastic
 );
 
 stage.addChild(bgAni);

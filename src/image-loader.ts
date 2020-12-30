@@ -20,3 +20,5 @@ export class ImageLoader {
     }
   }
 }
+
+export const imageLoader = new ImageLoader();

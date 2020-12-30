@@ -1,6 +1,7 @@
 import { Component } from "./component/Component";
 import { Rect } from "./component/Rect";
 import { Text } from "./component/Text";
+import { Image } from "./component/Image";
 export class CanvasRenderer {
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
@@ -21,12 +22,39 @@ export class CanvasRenderer {
       this.renderText(component as Text);
     } else if (component.type === "Rect") {
       this.renderRect(component as Rect);
+    } else if (component.type === "Image") {
+      this.renderImage(component as Image);
     }
     // render children components
     component.children.forEach((child) => {
       this.render(child);
     });
     this.ctx.restore();
+  }
+  renderImage(image: Image) {
+    if (image.sliceShape) {
+      this.ctx.drawImage(
+        image.src,
+        image.slicePosition.x,
+        image.slicePosition.y,
+        image.sliceShape.width,
+        image.sliceShape.height,
+        image.position.x,
+        image.position.y,
+        image.shape.width,
+        image.shape.height
+      );
+    } else if (image.shape) {
+      this.ctx.drawImage(
+        image.src,
+        image.position.x,
+        image.position.y,
+        image.shape.width,
+        image.shape.height
+      );
+    } else {
+      this.ctx.drawImage(image.src, image.position.x, image.position.y);
+    }
   }
   private renderRect(component: Rect) {
     this.ctx.fillRect(
