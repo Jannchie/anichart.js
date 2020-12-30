@@ -2,6 +2,7 @@ import { Component } from "./component/Component";
 import { Rect } from "./component/Rect";
 import { Text } from "./component/Text";
 import { Image } from "./component/Image";
+import { recourse } from "./Recourse";
 export class CanvasRenderer {
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
@@ -32,28 +33,36 @@ export class CanvasRenderer {
     this.ctx.restore();
   }
   renderImage(image: Image) {
-    if (image.sliceShape) {
-      this.ctx.drawImage(
-        image.src,
-        image.slicePosition.x,
-        image.slicePosition.y,
-        image.sliceShape.width,
-        image.sliceShape.height,
-        image.position.x,
-        image.position.y,
-        image.shape.width,
-        image.shape.height
-      );
-    } else if (image.shape) {
-      this.ctx.drawImage(
-        image.src,
-        image.position.x,
-        image.position.y,
-        image.shape.width,
-        image.shape.height
-      );
-    } else {
-      this.ctx.drawImage(image.src, image.position.x, image.position.y);
+    const srcPromise = recourse.images.get(image.path);
+    if (srcPromise instanceof Promise) {
+      srcPromise.then((src) => {
+        if (!src) {
+          return;
+        }
+        if (image.sliceShape) {
+          this.ctx.drawImage(
+            src,
+            image.slicePosition.x,
+            image.slicePosition.y,
+            image.sliceShape.width,
+            image.sliceShape.height,
+            image.position.x,
+            image.position.y,
+            image.shape.width,
+            image.shape.height
+          );
+        } else if (image.shape) {
+          this.ctx.drawImage(
+            src,
+            image.position.x,
+            image.position.y,
+            image.shape.width,
+            image.shape.height
+          );
+        } else {
+          this.ctx.drawImage(src, image.position.x, image.position.y);
+        }
+      });
     }
   }
   private renderRect(component: Rect) {

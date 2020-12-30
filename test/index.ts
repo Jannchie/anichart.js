@@ -5,7 +5,8 @@ import { TextAni } from "../src/core/ani/TextAni";
 import { TextLinesAni } from "../src/core/ani/TextLinesAni";
 import { Rect } from "../src/core/component/Rect";
 import { Stage } from "../src/core/Stage";
-
+import { Image } from "../src/core/component/Image";
+import { recourse } from "../src/core/Recourse";
 const stage = new Stage();
 
 const bgAni = new RectAni();
@@ -62,9 +63,21 @@ const rectAni = createAni(
   ease.easeElastic
 );
 
+recourse.load("./data/ANI.png");
+const logo = new Image({
+  path: "./data/ANI.png",
+  position: {
+    x: stage.canvas.width - 128,
+    y: stage.canvas.height - 108,
+  },
+  shape: { width: 128, height: 128 },
+});
+const logoAni = createAni([logo, logo]);
+
 stage.addChild(bgAni);
 stage.addChild(textLinesAni);
 stage.addChild(rectAni);
+stage.addChild(logoAni);
 
 stage.options.sec = 3;
 stage.play();
