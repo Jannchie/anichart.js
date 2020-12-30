@@ -72,7 +72,15 @@ const logo = new Image({
   },
   shape: { width: 128, height: 128 },
 });
-const logoAni = createAni([logo, logo]);
+const logo0 = new Image({
+  path: "./data/ANI.png",
+  position: {
+    x: 0,
+    y: stage.canvas.height - 108,
+  },
+  shape: { width: 128, height: 128 },
+});
+const logoAni = createAni([logo0, logo], [0, 1], ease.easeElastic);
 
 stage.addChild(bgAni);
 stage.addChild(textLinesAni);
