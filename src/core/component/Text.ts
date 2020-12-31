@@ -38,11 +38,4 @@ export class Text extends Component {
   fontStyle?: FontStyle;
   fontSize?: number;
   font?: string;
-  get fontStr() {
-    return `${this.fontStyle ? this.fontStyle : ""} ${
-      this.fontVariant ? this.fontVariant : ""
-    } ${this.fontWeight ? this.fontWeight : ""} ${
-      this.fontSize ? this.fontSize : 16
-    }px ${this.font ? this.font : ""}`;
-  }
 }

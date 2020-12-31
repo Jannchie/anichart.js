@@ -95,10 +95,25 @@ export class CanvasRenderer {
     if (component.textBaseline) {
       this.ctx.textBaseline = component.textBaseline;
     }
-    if (component.fontStr) {
-      this.ctx.font = component.fontStr;
+    const fontStr = `${component.fontStyle ? component.fontStyle : ""} ${
+      component.fontVariant ? component.fontVariant : ""
+    } ${component.fontWeight ? component.fontWeight : ""} ${
+      component.fontSize ? component.fontSize : 16
+    }px ${component.font ? component.font : ""}`;
+    if (
+      component.font ||
+      component.fontSize ||
+      component.fontWeight ||
+      component.fontStyle ||
+      component.fontVariant
+    ) {
+      this.ctx.font = fontStr;
     }
-    this.ctx.fillText(component.text, 0, 0);
-    this.ctx.strokeText(component.text, 0, 0);
+    this.ctx.fillText(component.text, -component.center.x, -component.center.y);
+    this.ctx.strokeText(
+      component.text,
+      -component.center.x,
+      -component.center.y
+    );
   }
 }
