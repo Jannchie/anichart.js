@@ -47,15 +47,21 @@ export class CanvasRenderer {
         image.slicePosition.y,
         image.sliceShape.width,
         image.sliceShape.height,
-        0,
-        0,
+        -image.center.x,
+        -image.center.y,
         image.shape.width,
         image.shape.height
       );
     } else if (image.shape) {
-      this.ctx.drawImage(src, 0, 0, image.shape.width, image.shape.height);
+      this.ctx.drawImage(
+        src,
+        -image.center.x,
+        -image.center.y,
+        image.shape.width,
+        image.shape.height
+      );
     } else {
-      this.ctx.drawImage(src, 0, 0);
+      this.ctx.drawImage(src, -image.center.x, -image.center.y);
     }
   }
   private renderRect(component: Rect) {

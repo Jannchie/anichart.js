@@ -70,7 +70,9 @@ const logoCenter = new Image({
     x: stage.canvas.width / 2,
     y: stage.canvas.height / 2,
   },
-  shape: { width: 128, height: 128 },
+  alpha: 0.25,
+  center: { x: 128, y: 128 },
+  shape: { width: 256, height: 256 },
 });
 
 const logo = new Image({
