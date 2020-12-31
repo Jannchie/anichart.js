@@ -5,5 +5,5 @@ export class Ani {
   getComponent(sec: number) {
     return this.component;
   }
-  children?: Ani[] = [];
+  children?: (Ani | Component)[] = [];
 }

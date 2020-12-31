@@ -17,9 +17,18 @@ export type FontVariant = "normal" | "small-caps";
 export type FontStyle = "normal" | "italic" | "oblique";
 export class Text extends Component {
   readonly type? = "Text";
-  constructor(text?: string) {
-    super();
-    this.text = text;
+  constructor(text?: Text) {
+    super(text);
+    if (text) {
+      if (text.text) this.text = text.text;
+      if (text.textAlign) this.textAlign = text.textAlign;
+      if (text.textBaseline) this.textBaseline = text.textBaseline;
+      if (text.fontVariant) this.fontVariant = text.fontVariant;
+      if (text.fontWeight) this.fontWeight = text.fontWeight;
+      if (text.font) this.font = text.font;
+      if (text.fontStyle) this.fontStyle = text.fontStyle;
+      if (text.fontSize) this.fontSize = text.fontSize;
+    }
   }
   text?: string = "";
   textAlign?: CanvasTextAlign;

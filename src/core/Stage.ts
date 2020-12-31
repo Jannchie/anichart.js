@@ -2,6 +2,7 @@ import * as d3 from "d3";
 import { Ani } from "./ani/Ani";
 import { CanvasRenderer } from "./CanvasRenderer";
 import { Component } from "./component/Component";
+import { recourse } from "./Recourse";
 
 export class Stage {
   aniRoot: Ani = new Ani();
@@ -29,14 +30,18 @@ export class Stage {
     this.renderer = new CanvasRenderer(canvas);
   }
 
-  addChild(child: Ani) {
+  addChild(child: Ani | Component) {
     this.aniRoot.children.push(child);
   }
 
   private preRender(sec: number) {
     this.compRoot = new Component();
     this.aniRoot.children.forEach((child) => {
-      this.compRoot.children.push(child.getComponent(sec));
+      if (child instanceof Component) {
+        this.compRoot.children.push(child);
+      } else {
+        this.compRoot.children.push(child.getComponent(sec));
+      }
     });
     this.renderer.clean();
   }
@@ -46,29 +51,35 @@ export class Stage {
     this.renderer.render(this.compRoot);
   }
 
+  loadRecourse() {
+    return recourse.setup();
+  }
+
   play(): void {
-    if (this.interval) {
-      this.interval.stop();
-      this.interval = null;
-      return;
-    }
-    if (this.output) {
-      while (this.cFrame < this.totalFrames) {
-        this.cFrame++;
-        this.render(Math.floor(this.cFrame / this.options.fps));
+    this.loadRecourse().then(() => {
+      if (this.interval) {
+        this.interval.stop();
+        this.interval = null;
+        return;
       }
-    } else {
-      this.interval = d3.interval((elapsed) => {
-        if (this.output || this.mode === "output") {
+      if (this.output) {
+        while (this.cFrame < this.totalFrames) {
           this.cFrame++;
-        } else {
-          this.cFrame = Math.floor((elapsed / 1000) * this.options.fps);
+          this.render(Math.floor(this.cFrame / this.options.fps));
         }
-        this.render(this.cFrame / this.options.fps);
-        if (this.cFrame >= this.totalFrames) {
-          this.interval.stop();
-        }
-      }, (1 / this.options.fps) * 1000);
-    }
+      } else {
+        this.interval = d3.interval((elapsed) => {
+          if (this.output || this.mode === "output") {
+            this.cFrame++;
+          } else {
+            this.cFrame = Math.floor((elapsed / 1000) * this.options.fps);
+          }
+          this.render(this.cFrame / this.options.fps);
+          if (this.cFrame >= this.totalFrames) {
+            this.interval.stop();
+          }
+        }, (1 / this.options.fps) * 1000);
+      }
+    });
   }
 }
