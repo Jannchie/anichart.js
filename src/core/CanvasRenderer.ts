@@ -1,8 +1,6 @@
 import { Component } from "./component/Component";
 import { Rect } from "./component/Rect";
 import { Text } from "./component/Text";
-import { Image } from "./component/Image";
-import { recourse } from "./Recourse";
 export class CanvasRenderer {
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
@@ -16,53 +14,19 @@ export class CanvasRenderer {
   render(component: Component) {
     this.ctx.save();
     // render itself
-
     // render base component props
     this.renderBase(component);
-
     // render special component props
     if (component.type === "Text") {
       this.renderText(component as Text);
     } else if (component.type === "Rect") {
       this.renderRect(component as Rect);
-    } else if (component.type === "Image") {
-      this.renderImage(component as Image);
     }
-
     // render children components
     component.children.forEach((child) => {
       this.render(child);
     });
     this.ctx.restore();
-  }
-  renderImage(image: Image) {
-    const src = recourse.images.get(image.path);
-    if (!src) {
-      return;
-    }
-    if (image.sliceShape) {
-      this.ctx.drawImage(
-        src,
-        image.slicePosition.x,
-        image.slicePosition.y,
-        image.sliceShape.width,
-        image.sliceShape.height,
-        -image.center.x,
-        -image.center.y,
-        image.shape.width,
-        image.shape.height
-      );
-    } else if (image.shape) {
-      this.ctx.drawImage(
-        src,
-        -image.center.x,
-        -image.center.y,
-        image.shape.width,
-        image.shape.height
-      );
-    } else {
-      this.ctx.drawImage(src, -image.center.x, -image.center.y);
-    }
   }
   private renderRect(component: Rect) {
     this.ctx.fillRect(
@@ -75,6 +39,7 @@ export class CanvasRenderer {
 
   private renderBase(component: Component) {
     this.ctx.translate(component.position.x, component.position.y);
+    this.ctx.translate(component.offset.x, component.offset.y);
     if (component.filter) {
       this.ctx.filter = component.filter;
     }

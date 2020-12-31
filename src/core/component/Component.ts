@@ -10,7 +10,6 @@ export interface ShadowOptions {
 export class Component {
   type? = "Component";
   shadow? = { enable: false } as ShadowOptions;
-  center?: { x: number; y: number } = { x: 0, y: 0 };
   position?: { x: number; y: number } = { x: 0, y: 0 };
   offset?: { x: number; y: number } = { x: 0, y: 0 };
   children?: Component[] = [];
@@ -20,7 +19,6 @@ export class Component {
   strokeStyle?: string | CanvasGradient | CanvasPattern = "#0000";
   constructor(component?: Component) {
     if (component) {
-      if (component.center) this.center = component.center;
       if (component.shadow) this.shadow = component.shadow;
       if (component.position) this.position = component.position;
       if (component.alpha) this.alpha = component.alpha;

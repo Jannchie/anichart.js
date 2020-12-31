@@ -9,12 +9,7 @@ export class TextLinesAni extends Ani {
     this.component.children = [];
     let basePosY = 0;
     this.children.forEach((textAni) => {
-      let comp;
-      if (textAni instanceof Ani) {
-        comp = textAni.getComponent(sec);
-      } else {
-        comp = textAni;
-      }
+      const comp = textAni.getComponent(sec);
       comp.position.y = basePosY;
       if (comp instanceof Text) {
         const fontSize = comp.fontSize
