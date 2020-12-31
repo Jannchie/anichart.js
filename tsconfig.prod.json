@@ -16,7 +16,8 @@
         "moduleResolution":"Node",
         "allowUmdGlobalAccess": true,
         "esModuleInterop": true,
-        "allowJs": true
+        "allowJs": true,
+        "downlevelIteration": true
     },
     "compileOnSave": true,
     "include": [
