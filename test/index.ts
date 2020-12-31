@@ -64,6 +64,15 @@ const rectAni = createAni(
 );
 
 recourse.load("./data/ANI.png");
+const logoCenter = new Image({
+  path: "./data/ANI.png",
+  position: {
+    x: stage.canvas.width / 2,
+    y: stage.canvas.height / 2,
+  },
+  shape: { width: 128, height: 128 },
+});
+
 const logo = new Image({
   path: "./data/ANI.png",
   position: {
@@ -72,6 +81,7 @@ const logo = new Image({
   },
   shape: { width: 128, height: 128 },
 });
+
 const logo0 = new Image({
   path: "./data/ANI.png",
   position: {
@@ -80,13 +90,13 @@ const logo0 = new Image({
   },
   shape: { width: 128, height: 128 },
 });
-const logoAni = createAni([logo0, logo], [0, 1], ease.easeElastic);
+const logoAni = createAni([logo0, logo], [0, 1], ease.easeBounce);
 
 stage.addChild(bgAni);
+stage.addChild(logoCenter);
 stage.addChild(textLinesAni);
 stage.addChild(rectAni);
 stage.addChild(logoAni);
-
 stage.options.sec = 3;
 stage.play();
 (window as any).stage = stage;
