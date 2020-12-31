@@ -16,8 +16,10 @@ export class CanvasRenderer {
   render(component: Component) {
     this.ctx.save();
     // render itself
+
     // render base component props
     this.renderBase(component);
+
     // render special component props
     if (component.type === "Text") {
       this.renderText(component as Text);
@@ -26,6 +28,7 @@ export class CanvasRenderer {
     } else if (component.type === "Image") {
       this.renderImage(component as Image);
     }
+
     // render children components
     component.children.forEach((child) => {
       this.render(child);
@@ -33,36 +36,26 @@ export class CanvasRenderer {
     this.ctx.restore();
   }
   renderImage(image: Image) {
-    const srcPromise = recourse.images.get(image.path);
-    if (srcPromise instanceof Promise) {
-      srcPromise.then((src) => {
-        if (!src) {
-          return;
-        }
-        if (image.sliceShape) {
-          this.ctx.drawImage(
-            src,
-            image.slicePosition.x,
-            image.slicePosition.y,
-            image.sliceShape.width,
-            image.sliceShape.height,
-            image.position.x,
-            image.position.y,
-            image.shape.width,
-            image.shape.height
-          );
-        } else if (image.shape) {
-          this.ctx.drawImage(
-            src,
-            image.position.x,
-            image.position.y,
-            image.shape.width,
-            image.shape.height
-          );
-        } else {
-          this.ctx.drawImage(src, image.position.x, image.position.y);
-        }
-      });
+    const src = recourse.images.get(image.path);
+    if (!src) {
+      return;
+    }
+    if (image.sliceShape) {
+      this.ctx.drawImage(
+        src,
+        image.slicePosition.x,
+        image.slicePosition.y,
+        image.sliceShape.width,
+        image.sliceShape.height,
+        0,
+        0,
+        image.shape.width,
+        image.shape.height
+      );
+    } else if (image.shape) {
+      this.ctx.drawImage(src, 0, 0, image.shape.width, image.shape.height);
+    } else {
+      this.ctx.drawImage(src, 0, 0);
     }
   }
   private renderRect(component: Rect) {
@@ -76,7 +69,6 @@ export class CanvasRenderer {
 
   private renderBase(component: Component) {
     this.ctx.translate(component.position.x, component.position.y);
-    this.ctx.translate(component.offset.x, component.offset.y);
     if (component.filter) {
       this.ctx.filter = component.filter;
     }

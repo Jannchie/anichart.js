@@ -30,14 +30,18 @@ export class Stage {
     this.renderer = new CanvasRenderer(canvas);
   }
 
-  addChild(child: Ani) {
+  addChild(child: Ani | Component) {
     this.aniRoot.children.push(child);
   }
 
   private preRender(sec: number) {
     this.compRoot = new Component();
     this.aniRoot.children.forEach((child) => {
-      this.compRoot.children.push(child.getComponent(sec));
+      if (child instanceof Component) {
+        this.compRoot.children.push(child);
+      } else {
+        this.compRoot.children.push(child.getComponent(sec));
+      }
     });
     this.renderer.clean();
   }
@@ -48,7 +52,7 @@ export class Stage {
   }
 
   loadRecourse() {
-    return Promise.all(recourse.images.values());
+    return recourse.setup();
   }
 
   play(): void {
