@@ -65,7 +65,10 @@ const rectAni = createAni(
 );
 
 recourse.loadImage("./data/ANI.png");
-
+recourse.loadImage(
+  "https://avatars3.githubusercontent.com/u/29743310?s=460&u=8e0d49b98c35738afadc04e70c7f3918d6ad8cdb&v=4",
+  "jannchie"
+);
 const logoCenter = new Image({
   path: "./data/ANI.png",
   position: {
