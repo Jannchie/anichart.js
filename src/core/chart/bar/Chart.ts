@@ -5,7 +5,7 @@ import { Rect } from "../../component/Rect";
 import { Text } from "../../component/Text";
 import { recourse } from "../../Recourse";
 import * as d3 from "d3";
-
+import * as _ from "lodash-es";
 interface BarOptions {
   name: string;
   value: number;
@@ -17,8 +17,43 @@ interface BarOptions {
 }
 
 export class BarChart extends Ani {
+  data: any[];
+  dataScales: Map<string, any>;
+
+  time = [0, 3];
+  idField = "id";
+  dateField = "date";
+  valueField = "value";
+  valueKeys = ["value"];
+
+  constructor(options?: BarChart) {
+    super();
+    if (!options) return;
+    if (options.time) this.time = options.time;
+    if (options.idField) this.idField = options.idField;
+    if (options.dateField) this.dateField = options.dateField;
+    if (options.valueField) this.valueField = options.valueField;
+  }
+  setup() {
+    this.getData();
+    this.getDataScales();
+  }
+
   getComponent(sec: number) {
+    const currentData = this.getCurrentData(sec);
     const res = new Component();
+    currentData.forEach((d, i) => {
+      res.children.push(
+        this.getBarComponent({
+          name: d[this.idField],
+          pos: { x: 200, y: i * 40 },
+          value: d[this.valueField],
+          shape: { width: d[this.valueField] * 20, height: 30 },
+          color: "#fff",
+          radius: 4,
+        })
+      );
+    });
     res.children.push(
       this.getBarComponent({
         name: "jannchie",
@@ -32,7 +67,18 @@ export class BarChart extends Ani {
     );
     return res;
   }
-  getBarComponent(options: BarOptions) {
+  private getCurrentData(sec: number) {
+    const currentData = [...this.dataScales.values()]
+      .map((scale) => {
+        return scale(sec);
+      })
+      .filter((d) => !Number.isNaN(d[this.valueField]))
+      .sort((a, b) => b[this.valueField] - a[this.valueField])
+      .slice(0, 21);
+    return currentData;
+  }
+
+  private getBarComponent(options: BarOptions) {
     const labelPadding = 8;
     const res = new Component({
       position: options.pos,
@@ -96,5 +142,40 @@ export class BarChart extends Ani {
     res.children.push(valueComp);
     res.children.push(label);
     return res as Component;
+  }
+  private getData() {
+    this.data = _.cloneDeep(recourse.data.get("data"));
+    this.data.forEach((d: any) => {
+      Object.keys(d).forEach((k) => {
+        switch (k) {
+          case this.dateField:
+            d[k] = new Date(
+              new Date().getTimezoneOffset() * 60 * 1000 +
+                new Date(d[this.dateField]).getTime()
+            );
+            break;
+          case this.idField:
+            break;
+          default:
+            if (this.valueKeys.includes(k)) {
+              d[k] = +d[k];
+            }
+        }
+      });
+    });
+  }
+
+  private getDataScales() {
+    const dateExtent = d3.extent(this.data, (d) => d[this.dateField]);
+    const secToDate = d3.scaleLinear(this.time, dateExtent);
+    const g = d3.group(this.data, (d) => d[this.idField]);
+    const dataScales = new Map();
+    g.forEach((dataList, k) => {
+      const dateList = dataList.map((d) => d[this.dateField]);
+      const secList = dateList.map((d) => secToDate.invert(d));
+      const dataScale = d3.scaleLinear(secList, dataList);
+      dataScales.set(k, dataScale);
+    });
+    this.dataScales = dataScales;
   }
 }

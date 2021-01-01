@@ -5,5 +5,10 @@ export class Ani {
   getComponent(sec: number) {
     return this.component;
   }
+  setup() {
+    this.children.forEach((child: Component | Ani) => {
+      child.setup();
+    });
+  }
   children?: (Ani | Component)[] = [];
 }

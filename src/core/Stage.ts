@@ -57,6 +57,7 @@ export class Stage {
 
   play(): void {
     this.loadRecourse().then(() => {
+      this.setup();
       if (this.interval) {
         this.interval.stop();
         this.interval = null;
@@ -80,6 +81,11 @@ export class Stage {
           }
         }, (1 / this.options.fps) * 1000);
       }
+    });
+  }
+  setup() {
+    this.aniRoot.children.forEach((child) => {
+      child.setup();
     });
   }
 }

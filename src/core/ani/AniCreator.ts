@@ -19,6 +19,9 @@ export function createAni<T extends Component>(
     .interpolate(easeInterpolate(ease))
     .clamp(true);
   return {
+    setup() {
+      return;
+    },
     getComponent: (i: number): T => {
       return scale(i);
     },

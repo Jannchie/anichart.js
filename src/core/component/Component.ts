@@ -18,6 +18,11 @@ export class Component {
   filter?: string;
   fillStyle?: string | CanvasGradient | CanvasPattern;
   strokeStyle?: string | CanvasGradient | CanvasPattern = "#0000";
+  setup? = function () {
+    this.children.forEach((child: Component) => {
+      child.setup();
+    });
+  };
   constructor(component?: Component) {
     if (component) {
       if (component.center) this.center = component.center;
