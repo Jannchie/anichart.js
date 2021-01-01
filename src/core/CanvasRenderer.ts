@@ -65,12 +65,22 @@ export class CanvasRenderer {
     }
   }
   private renderRect(component: Rect) {
-    this.ctx.fillRect(
-      component.position.x,
-      component.position.y,
-      component.shape.width,
-      component.shape.height
-    );
+    if (!component.radius || component.radius <= 0) {
+      this.ctx.fillRect(
+        component.position.x,
+        component.position.y,
+        component.shape.width,
+        component.shape.height
+      );
+    } else {
+      this.fillRadiusRect(
+        component.position.x,
+        component.position.y,
+        component.shape.width,
+        component.shape.height,
+        component.radius
+      );
+    }
   }
 
   private renderBase(component: Component) {
@@ -115,5 +125,31 @@ export class CanvasRenderer {
       -component.center.x,
       -component.center.y
     );
+  }
+  private fillRadiusRect(
+    left: number,
+    top: number,
+    w: number,
+    h: number,
+    r: number
+  ) {
+    this.ctx.beginPath();
+    this.radiusArea(left, top, w, h, r);
+    this.ctx.closePath();
+    this.ctx.fill();
+  }
+  private radiusArea(
+    left: number,
+    top: number,
+    w: number,
+    h: number,
+    r: number
+  ) {
+    this.ctx.lineWidth = 0;
+    const pi = Math.PI;
+    this.ctx.arc(left + r, top + r, r, -pi, -pi / 2);
+    this.ctx.arc(left + w - r, top + r, r, -pi / 2, 0);
+    this.ctx.arc(left + w - r, top + h - r, r, 0, pi / 2);
+    this.ctx.arc(left + r, top + h - r, r, pi / 2, pi);
   }
 }
