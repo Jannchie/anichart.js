@@ -10,7 +10,7 @@ export class Recourse {
   }
   imagesPromise: Map<string, Promise<CanvasImageSource>> = new Map();
   images: Map<string, CanvasImageSource> = new Map();
-  load(path: string, name?: string) {
+  loadImage(path: string, name?: string) {
     const src = imageLoader.load(path);
     if (name) {
       this.imagesPromise.set(name, src);
