@@ -6,6 +6,7 @@ import { Text } from "../../component/Text";
 import { recourse } from "../../Recourse";
 import * as d3 from "d3";
 import * as _ from "lodash-es";
+import { colorPicker } from "../../ColorPicker";
 interface BarOptions {
   name: string;
   value: number;
@@ -22,6 +23,7 @@ export class BarChart extends Ani {
 
   time = [0, 3];
   idField = "id";
+  colorField = "id";
   dateField = "date";
   valueField = "value";
   valueKeys = ["value"];
@@ -49,7 +51,7 @@ export class BarChart extends Ani {
           pos: { x: 200, y: i * 40 },
           value: d[this.valueField],
           shape: { width: d[this.valueField] * 20, height: 30 },
-          color: "#fff",
+          color: colorPicker.getColor(d[this.colorField]),
           radius: 4,
         })
       );
