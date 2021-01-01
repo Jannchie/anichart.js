@@ -35,6 +35,19 @@ export class CanvasRenderer {
     });
     this.ctx.restore();
   }
+  private renderClipRect(component: Rect) {
+    this.ctx.beginPath();
+    this.radiusArea(
+      component.position.x,
+      component.position.y,
+      component.shape.width,
+      component.shape.height,
+      component.radius
+    );
+    this.ctx.clip();
+    this.ctx.closePath();
+  }
+
   renderImage(image: Image) {
     const src = recourse.images.get(image.path);
     if (!src) {
@@ -65,6 +78,9 @@ export class CanvasRenderer {
     }
   }
   private renderRect(component: Rect) {
+    if (component.clip) {
+      this.renderClipRect(component);
+    }
     if (!component.radius || component.radius <= 0) {
       this.ctx.fillRect(
         component.position.x,
