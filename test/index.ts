@@ -7,6 +7,7 @@ import { Rect } from "../src/core/component/Rect";
 import { Stage } from "../src/core/Stage";
 import { Image } from "../src/core/component/Image";
 import { recourse } from "../src/core/Recourse";
+import { BarChart } from "../src/core/chart/bar/Chart";
 const stage = new Stage();
 
 const bgAni = new RectAni();
@@ -63,7 +64,11 @@ const rectAni = createAni(
   ease.easeElastic
 );
 
-recourse.load("./data/ANI.png");
+recourse.loadImage("./data/ANI.png");
+recourse.loadImage(
+  "https://avatars3.githubusercontent.com/u/29743310?s=460&u=8e0d49b98c35738afadc04e70c7f3918d6ad8cdb&v=4",
+  "jannchie"
+);
 const logoCenter = new Image({
   path: "./data/ANI.png",
   position: {
@@ -93,12 +98,14 @@ const logo0 = new Image({
   shape: { width: 128, height: 128 },
 });
 const logoAni = createAni([logo0, logo], [0, 1], ease.easeBounce);
+const barChart = new BarChart();
 
 stage.addChild(bgAni);
 stage.addChild(logoCenter);
 stage.addChild(textLinesAni);
 stage.addChild(rectAni);
 stage.addChild(logoAni);
+stage.addChild(barChart);
 stage.options.sec = 3;
 stage.play();
 (window as any).stage = stage;

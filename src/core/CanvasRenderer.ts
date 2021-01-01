@@ -35,6 +35,19 @@ export class CanvasRenderer {
     });
     this.ctx.restore();
   }
+  private renderClipRect(component: Rect) {
+    this.ctx.beginPath();
+    this.radiusArea(
+      component.position.x,
+      component.position.y,
+      component.shape.width,
+      component.shape.height,
+      component.radius
+    );
+    this.ctx.clip();
+    this.ctx.closePath();
+  }
+
   renderImage(image: Image) {
     const src = recourse.images.get(image.path);
     if (!src) {
@@ -65,12 +78,25 @@ export class CanvasRenderer {
     }
   }
   private renderRect(component: Rect) {
-    this.ctx.fillRect(
-      component.position.x,
-      component.position.y,
-      component.shape.width,
-      component.shape.height
-    );
+    if (component.clip) {
+      this.renderClipRect(component);
+    }
+    if (!component.radius || component.radius <= 0) {
+      this.ctx.fillRect(
+        component.position.x,
+        component.position.y,
+        component.shape.width,
+        component.shape.height
+      );
+    } else {
+      this.fillRadiusRect(
+        component.position.x,
+        component.position.y,
+        component.shape.width,
+        component.shape.height,
+        component.radius
+      );
+    }
   }
 
   private renderBase(component: Component) {
@@ -95,10 +121,51 @@ export class CanvasRenderer {
     if (component.textBaseline) {
       this.ctx.textBaseline = component.textBaseline;
     }
-    if (component.fontStr) {
-      this.ctx.font = component.fontStr;
+    const fontStr = `${component.fontStyle ? component.fontStyle : ""} ${
+      component.fontVariant ? component.fontVariant : ""
+    } ${component.fontWeight ? component.fontWeight : ""} ${
+      component.fontSize ? component.fontSize : 16
+    }px ${component.font ? component.font : ""}`;
+    if (
+      component.font ||
+      component.fontSize ||
+      component.fontWeight ||
+      component.fontStyle ||
+      component.fontVariant
+    ) {
+      this.ctx.font = fontStr;
     }
-    this.ctx.fillText(component.text, 0, 0);
-    this.ctx.strokeText(component.text, 0, 0);
+    this.ctx.fillText(component.text, -component.center.x, -component.center.y);
+    this.ctx.strokeText(
+      component.text,
+      -component.center.x,
+      -component.center.y
+    );
+  }
+  private fillRadiusRect(
+    left: number,
+    top: number,
+    w: number,
+    h: number,
+    r: number
+  ) {
+    this.ctx.beginPath();
+    this.radiusArea(left, top, w, h, r);
+    this.ctx.closePath();
+    this.ctx.fill();
+  }
+  private radiusArea(
+    left: number,
+    top: number,
+    w: number,
+    h: number,
+    r: number
+  ) {
+    this.ctx.lineWidth = 0;
+    const pi = Math.PI;
+    this.ctx.arc(left + r, top + r, r, -pi, -pi / 2);
+    this.ctx.arc(left + w - r, top + r, r, -pi / 2, 0);
+    this.ctx.arc(left + w - r, top + h - r, r, 0, pi / 2);
+    this.ctx.arc(left + r, top + h - r, r, pi / 2, pi);
   }
 }
