@@ -111,6 +111,6 @@ stage.addChild(textLinesAni);
 stage.addChild(rectAni);
 stage.addChild(logoAni);
 stage.addChild(barChart);
-stage.options.sec = 3;
+stage.options.sec = 15;
 stage.play();
 (window as any).stage = stage;

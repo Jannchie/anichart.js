@@ -14,7 +14,7 @@ export class Component {
   position?: { x: number; y: number } = { x: 0, y: 0 };
   offset?: { x: number; y: number } = { x: 0, y: 0 };
   children?: Component[] = [];
-  alpha?: number = 1;
+  alpha?: number;
   filter?: string;
   fillStyle?: string | CanvasGradient | CanvasPattern;
   strokeStyle?: string | CanvasGradient | CanvasPattern = "#0000";

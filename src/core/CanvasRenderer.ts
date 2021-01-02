@@ -24,12 +24,16 @@ export class CanvasRenderer {
     this.renderBase(component);
 
     // render special component props
-    if (component.type === "Text") {
-      this.renderText(component as Text);
-    } else if (component.type === "Rect") {
-      this.renderRect(component as Rect);
-    } else if (component.type === "Image") {
-      this.renderImage(component as Image);
+    switch (component.type) {
+      case "Text":
+        this.renderText(component as Text);
+        break;
+      case "Rect":
+        this.renderRect(component as Rect);
+        break;
+      case "Image":
+        this.renderImage(component as Image);
+        break;
     }
 
     // render children components
@@ -113,7 +117,7 @@ export class CanvasRenderer {
     if (component.fillStyle) {
       this.ctx.fillStyle = component.fillStyle;
     }
-    if (component.alpha !== null) {
+    if (component.alpha !== undefined) {
       this.ctx.globalAlpha = component.alpha;
     }
   }
