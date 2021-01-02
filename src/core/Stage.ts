@@ -1,6 +1,6 @@
 import * as d3 from "d3";
 import { Ani } from "./ani/Ani";
-import { CanvasRenderer } from "./CanvasRenderer";
+import { canvasRenderer, CanvasRenderer } from "./CanvasRenderer";
 import { Component } from "./component/Component";
 import { recourse } from "./Recourse";
 
@@ -27,7 +27,8 @@ export class Stage {
       canvas.height = 600;
       document.body.appendChild(canvas);
     }
-    this.renderer = new CanvasRenderer(canvas);
+    this.renderer = canvasRenderer;
+    this.renderer.setCanvas(canvas);
   }
 
   addChild(child: Ani | Component) {
