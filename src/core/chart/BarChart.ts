@@ -34,6 +34,7 @@ interface BarChartOptions {
   valueFormat?: (val: number) => string;
   labelFormat?: (id: string, meta?: Map<string, any>) => string;
   barInfoFormat?: (id: string, meta?: Map<string, any>) => string;
+  dateFormat?: string;
 }
 export class BarChart extends Ani {
   data: any[];
@@ -52,6 +53,8 @@ export class BarChart extends Ani {
   barGap = 8;
   swap = 0.25;
   lastValue = new Map<string, number>();
+  dateFormat = "%Y-%m-%d";
+  private secToDate: d3.ScaleLinear<any, any, never>;
 
   get sampling() {
     return Math.round(144 * this.swap);
@@ -87,6 +90,7 @@ export class BarChart extends Ani {
     if (options.barPadding) this.barPadding = options.barPadding;
     if (options.margin) this.margin = options.margin;
     if (options.barGap) this.barGap = options.barGap;
+    if (options.dateFormat) this.dateFormat = options.dateFormat;
     if (options.valueFormat) this.valueFormat = options.valueFormat;
     if (options.labelFormat) this.labelFormat = options.labelFormat;
   }
@@ -190,17 +194,21 @@ export class BarChart extends Ani {
         res.children.push(this.getBarComponent(barOptions));
       }
     });
-    // res.children.push(
-    //   this.getBarComponent({
-    //     name: "jannchie",
-    //     value: sec,
-    //     pos: { x: 200, y: 200 },
-    //     shape: { width: sec * 100, height: 30 },
-    //     color: "#fff",
-    //     image: "jannchie",
-    //     radius: 4,
-    //   })
-    // );
+
+    const dateLabel = new Text({
+      text: d3.timeFormat(this.dateFormat)(this.secToDate(sec)),
+      font: "Sarasa Mono Slab SC",
+      fontSize: 45,
+      fillStyle: "#777",
+      textAlign: "right",
+      fontWeight: "bolder",
+      textBaseline: "bottom",
+      position: {
+        x: this.shape.width - this.margin.right,
+        y: this.shape.height - this.margin.bottom,
+      },
+    });
+    res.children.push(dateLabel);
     return res;
   }
   private get barHeight() {
@@ -369,12 +377,12 @@ export class BarChart extends Ani {
 
   private setDataScales() {
     const dateExtent = d3.extent(this.data, (d) => d[this.dateField]);
-    const secToDate = d3.scaleLinear(this.time, dateExtent).clamp(true);
+    this.secToDate = d3.scaleLinear(this.time, dateExtent).clamp(true);
     const g = d3.group(this.data, (d) => d[this.idField]);
     const dataScales = new Map();
     g.forEach((dataList, k) => {
       const dateList = dataList.map((d) => d[this.dateField]);
-      const secList = dateList.map((d) => secToDate.invert(d));
+      const secList = dateList.map((d) => this.secToDate.invert(d));
       const dataScale = d3.scaleLinear(secList, dataList).clamp(true);
       dataScales.set(k, dataScale);
     });
