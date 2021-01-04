@@ -51,6 +51,7 @@ recourse.loadImage(
 );
 
 recourse.loadData("./data/steam.csv", "data");
+recourse.loadData("./data/steam-meta.csv", "meta");
 
 const rectAni = createAni(
   [
@@ -103,6 +104,9 @@ const logo0 = new Image({
 const logoAni = createAni([logo0, logo], [0, 1], ease.easeBounce);
 const barChart = new BarChart({
   shape: { width: stage.canvas.width, height: stage.canvas.height },
+  labelFormat(id, meta) {
+    return meta.get(id).name;
+  },
 });
 
 stage.addChild(bgAni);

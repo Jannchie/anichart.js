@@ -9,7 +9,7 @@ import * as _ from "lodash-es";
 import { colorPicker } from "../ColorPicker";
 import { canvasHelper } from "../CanvasHelper";
 interface BarOptions {
-  name: string;
+  id: string;
   value: number;
   pos: { x: number; y: number };
   shape: { width: number; height: number };
@@ -32,13 +32,13 @@ interface BarChartOptions {
   barPadding?: number;
   barGap?: number;
   valueFormat?: (val: number) => string;
+  labelFormat?: (id: string, meta?: Map<string, any>) => string;
+  barInfoFormat?: (id: string, meta?: Map<string, any>) => string;
 }
 export class BarChart extends Ani {
   data: any[];
+  meta: Map<string, any>;
   dataScales: Map<string, any>;
-  get sampling() {
-    return Math.round(144 * this.swap);
-  }
   time = [0, 10];
   itemCount = 20;
   idField = "id";
@@ -53,16 +53,24 @@ export class BarChart extends Ani {
   swap = 0.25;
   lastValue = new Map<string, number>();
 
+  get sampling() {
+    return Math.round(144 * this.swap);
+  }
+
   valueFormat = (val: number) => {
     return d3.format(",.0f")(val);
   };
 
-  barInfoFormat = (item: any) => {
-    return this.labelFormat(item);
+  barInfoFormat = (id: any, meta?: Map<string, any>) => {
+    return this.labelFormat(id, meta);
   };
 
-  labelFormat = (item: any) => {
-    return item[this.idField];
+  labelFormat = (id: string, meta?: Map<string, any>) => {
+    if (meta.get(id) && meta.get(id).name) {
+      return meta.get(id).name;
+    } else {
+      return id;
+    }
   };
 
   historyIndex: Map<any, any>;
@@ -80,14 +88,16 @@ export class BarChart extends Ani {
     if (options.margin) this.margin = options.margin;
     if (options.barGap) this.barGap = options.barGap;
     if (options.valueFormat) this.valueFormat = options.valueFormat;
+    if (options.labelFormat) this.labelFormat = options.labelFormat;
   }
   setup() {
-    this.getData();
-    this.getDataScales();
+    this.setData();
+    this.setMeta();
+    this.setDataScales();
     this.ids = [...this.dataScales.keys()];
-    this.margin.left += this.maxLabelWidth;
+    this.margin.left += this.maxLabelWidth();
     this.margin.left += this.barPadding;
-    this.margin.right += this.maxValueLabelWidth;
+    this.margin.right += this.maxValueLabelWidth();
     const range = d3.range(
       this.time[0] - this.swap,
       this.time[0],
@@ -107,27 +117,42 @@ export class BarChart extends Ani {
       return d;
     }, new Map());
   }
-
-  private get maxValueLabelWidth() {
-    const d = [...this.data.values()];
-    const maxLabelWidth = d3.max(d, (item) => {
-      const text = new Text(
-        this.getLabelTextOptions(item.value, "#FFF", this.barHeight * 0.8)
-      );
-      const result = canvasHelper.measure(text);
-      return result.width;
-    });
-    return maxLabelWidth;
+  setMeta() {
+    this.meta = d3.rollup(
+      _.cloneDeep(recourse.data.get("meta")),
+      (v) => v[0],
+      (d) => d[this.idField]
+    );
   }
-  private get maxLabelWidth() {
-    const maxLabelWidth = d3.max(this.ids, (txt) => {
+
+  private maxValueLabelWidth() {
+    const d = [...this.data.values()];
+    const maxWidth = d3.max(d, (item) => {
       const text = new Text(
-        this.getLabelTextOptions(txt, "#FFF", this.barHeight * 0.8)
+        this.getLabelTextOptions(
+          this.valueFormat(item.value),
+          "#FFF",
+          this.barHeight * 0.8
+        )
       );
       const result = canvasHelper.measure(text);
       return result.width;
     });
-    return maxLabelWidth;
+    return maxWidth;
+  }
+  private maxLabelWidth() {
+    const maxWidth = d3.max(this.ids, (id) => {
+      const text = new Text(
+        this.getLabelTextOptions(
+          this.labelFormat(id, this.meta),
+          "#FFF",
+          this.barHeight * 0.8
+        )
+      );
+      const result = canvasHelper.measure(text);
+      return result.width;
+    });
+    return maxWidth;
   }
 
   getComponent(sec: number) {
@@ -154,10 +179,7 @@ export class BarChart extends Ani {
     const [min, max] = d3.extent(currentData, (d) => d[this.valueField]);
     const scaleX = d3.scaleLinear(
       [0, max],
-      [
-        this.margin.left,
-        this.shape.width - this.margin.left - this.margin.right,
-      ]
+      [0, this.shape.width - this.margin.left - this.margin.right]
     );
 
     const res = new Component();
@@ -204,7 +226,7 @@ export class BarChart extends Ani {
       .scaleLinear([this.itemCount - 1, this.itemCount], [1, 0.001])
       .clamp(true)(indexs.get(data[this.idField]));
     return {
-      name: data[this.idField],
+      id: data[this.idField],
       pos: {
         x: this.margin.left,
         y:
@@ -252,7 +274,7 @@ export class BarChart extends Ani {
     });
     const label = new Text(
       this.getLabelTextOptions(
-        options.name,
+        this.labelFormat(options.id, this.meta),
         options.color,
         options.shape.height * 0.8
       )
@@ -273,7 +295,7 @@ export class BarChart extends Ani {
     const barInfo = new Text({
       textAlign: "right",
       textBaseline: "bottom",
-      text: `${options.name}`,
+      text: this.barInfoFormat(options.id, this.meta),
       position: {
         x: options.shape.width - this.barPadding - imagePlaceholder,
         y: options.shape.height,
@@ -320,7 +342,7 @@ export class BarChart extends Ani {
     };
   }
 
-  private getData() {
+  private setData() {
     this.data = _.cloneDeep(recourse.data.get("data"));
     this.data.forEach((d: any) => {
       Object.keys(d).forEach((k) => {
@@ -345,7 +367,7 @@ export class BarChart extends Ani {
     });
   }
 
-  private getDataScales() {
+  private setDataScales() {
     const dateExtent = d3.extent(this.data, (d) => d[this.dateField]);
     const secToDate = d3.scaleLinear(this.time, dateExtent).clamp(true);
     const g = d3.group(this.data, (d) => d[this.idField]);
