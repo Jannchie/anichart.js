@@ -50,7 +50,7 @@ recourse.loadImage(
   "jannchie"
 );
 
-recourse.loadData("./data/test.csv", "data");
+recourse.loadData("./data/steam.csv", "data");
 
 const rectAni = createAni(
   [

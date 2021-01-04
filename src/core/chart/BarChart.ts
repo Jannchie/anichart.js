@@ -36,9 +36,11 @@ interface BarChartOptions {
 export class BarChart extends Ani {
   data: any[];
   dataScales: Map<string, any>;
-  sampling = 30;
-  time = [0, 15];
-  itemCount = 10;
+  get sampling() {
+    return Math.round(144 * this.swap);
+  }
+  time = [0, 10];
+  itemCount = 20;
   idField = "id";
   colorField = "id";
   dateField = "date";
@@ -47,12 +49,22 @@ export class BarChart extends Ani {
   shape = { width: 400, height: 300 };
   margin = { left: 20, top: 20, right: 20, bottom: 20 };
   barPadding = 8;
-  barGap = 6;
-  swap = 1;
+  barGap = 8;
+  swap = 0.25;
   lastValue = new Map<string, number>();
+
   valueFormat = (val: number) => {
     return d3.format(",.0f")(val);
   };
+
+  barInfoFormat = (item: any) => {
+    return this.labelFormat(item);
+  };
+
+  labelFormat = (item: any) => {
+    return item[this.idField];
+  };
+
   historyIndex: Map<any, any>;
   ids: string[];
   constructor(options?: BarChartOptions) {
@@ -150,10 +162,11 @@ export class BarChart extends Ani {
 
     const res = new Component();
 
-    currentData.forEach((data, index) => {
-      res.children.push(
-        this.getBarComponent(this.getBarOptions(data, index, scaleX, indexs))
-      );
+    currentData.forEach((data) => {
+      const barOptions = this.getBarOptions(data, scaleX, indexs);
+      if (barOptions.alpha > 0.02) {
+        res.children.push(this.getBarComponent(barOptions));
+      }
     });
     // res.children.push(
     //   this.getBarComponent({
@@ -179,30 +192,29 @@ export class BarChart extends Ani {
   }
 
   private getBarOptions(
-    d: any,
-    i: number,
+    data: any,
     scaleX: d3.ScaleLinear<number, number, never>,
     indexs: Map<string, number>
   ): BarOptions {
-    if (!Number.isNaN(d[this.valueField])) {
-      this.lastValue.set(d[this.idField], d[this.valueField]);
+    if (!Number.isNaN(data[this.valueField])) {
+      this.lastValue.set(data[this.idField], data[this.valueField]);
     }
-    d[this.valueField] = this.lastValue.get(d[this.idField]);
+    data[this.valueField] = this.lastValue.get(data[this.idField]);
     const alpha = d3
       .scaleLinear([this.itemCount - 1, this.itemCount], [1, 0.001])
-      .clamp(true)(indexs.get(d[this.idField]));
+      .clamp(true)(indexs.get(data[this.idField]));
     return {
-      name: d[this.idField],
+      name: data[this.idField],
       pos: {
         x: this.margin.left,
         y:
           this.margin.top +
-          indexs.get(d[this.idField]) * (this.barHeight + this.barGap),
+          indexs.get(data[this.idField]) * (this.barHeight + this.barGap),
       },
       alpha,
-      value: d[this.valueField],
-      shape: { width: scaleX(d[this.valueField]), height: this.barHeight },
-      color: colorPicker.getColor(d[this.colorField]),
+      value: data[this.valueField],
+      shape: { width: scaleX(data[this.valueField]), height: this.barHeight },
+      color: colorPicker.getColor(data[this.colorField]),
       radius: 4,
     };
   }
@@ -213,6 +225,7 @@ export class BarChart extends Ani {
         return scale(sec);
       })
       // .filter((d) => !Number.isNaN(d[this.valueField]))
+      .filter((d) => d !== undefined)
       .sort((a, b) => {
         if (Number.isNaN(b[this.valueField])) {
           return -1;
@@ -221,8 +234,8 @@ export class BarChart extends Ani {
         } else {
           return b[this.valueField] - a[this.valueField];
         }
-      })
-      .slice(0, this.itemCount);
+      });
+    // .slice(0, this.itemCount);
     return currentData;
   }
 
