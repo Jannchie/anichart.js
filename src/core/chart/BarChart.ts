@@ -190,7 +190,7 @@ export class BarChart extends Ani {
 
     currentData.forEach((data) => {
       const barOptions = this.getBarOptions(data, scaleX, indexs);
-      if (barOptions.alpha > 0.02) {
+      if (barOptions.alpha > 0) {
         res.children.push(this.getBarComponent(barOptions));
       }
     });

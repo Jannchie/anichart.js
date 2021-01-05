@@ -79,4 +79,3 @@ export async function pngToMp4(pngPath: any, name: any, fps: any, thread = 16) {
   fs.writeFileSync(`${name}.${out}`, data);
   process.exit(0);
 }
-(window as any).outputMP4 = outputMP4;

@@ -28,7 +28,7 @@ export class Component {
       if (component.center) this.center = component.center;
       if (component.shadow) this.shadow = component.shadow;
       if (component.position) this.position = component.position;
-      if (component.alpha) this.alpha = component.alpha;
+      if (component.alpha !== undefined) this.alpha = component.alpha;
       if (component.offset) this.offset = component.offset;
       if (component.children) this.children = component.children;
       if (component.filter) this.filter = component.filter;

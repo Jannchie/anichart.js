@@ -8,6 +8,7 @@ import { Stage } from "../src/core/Stage";
 import { Image } from "../src/core/component/Image";
 import { recourse } from "../src/core/Recourse";
 import { BarChart } from "../src/core/chart/BarChart";
+import * as d3 from "d3";
 const stage = new Stage();
 // stage.output = true;
 
@@ -95,7 +96,6 @@ const logoAni = createAni(
         y: stage.canvas.height - 108,
       },
       shape: { width: 128, height: 128 },
-      alpha: 1.0,
     }),
     new Image({
       path: "./data/ANI.png",
@@ -113,7 +113,7 @@ const logoAni = createAni(
         y: stage.canvas.height - 108,
       },
       shape: { width: 128, height: 128 },
-      alpha: 0.01,
+      alpha: 0,
     }),
   ],
   [0, 1, 2],
@@ -135,3 +135,4 @@ stage.addChild(barChart);
 stage.options.sec = 15;
 stage.play();
 (window as any).stage = stage;
+(window as any).d3 = d3;
