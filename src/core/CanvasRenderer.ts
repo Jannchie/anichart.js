@@ -35,12 +35,11 @@ export class CanvasRenderer {
           this.renderImage(component as Image);
           break;
       }
+      // render children components
+      component.children.forEach((child) => {
+        this.render(child);
+      });
     }
-
-    // render children components
-    component.children.forEach((child) => {
-      this.render(child);
-    });
     this.ctx.restore();
   }
   renderClipRect(component: Rect) {

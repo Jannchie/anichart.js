@@ -8,6 +8,7 @@ import * as d3 from "d3";
 import * as _ from "lodash-es";
 import { colorPicker } from "../ColorPicker";
 import { canvasHelper } from "../CanvasHelper";
+import { Stage } from "../Stage";
 interface BarOptions {
   id: string;
   value: number;
@@ -46,6 +47,7 @@ export class BarChart extends Ani {
   colorField = "id";
   dateField = "date";
   valueField = "value";
+  fade = 0.5;
   valueKeys = ["value"];
   shape = { width: 400, height: 300 };
   margin = { left: 20, top: 20, right: 20, bottom: 20 };
@@ -55,9 +57,16 @@ export class BarChart extends Ani {
   lastValue = new Map<string, number>();
   dateFormat = "%Y-%m-%d";
   private secToDate: d3.ScaleLinear<any, any, never>;
+  labelPlaceholder: number;
+  valuePlaceholder: number;
+  alphaScale: d3.ScaleLinear<number, number, never>;
 
   get sampling() {
-    return Math.round(30 * this.swap);
+    if (this.stage) {
+      return Math.round(this.stage.options.fps * this.swap);
+    } else {
+      return Math.round(30 * this.swap);
+    }
   }
 
   valueFormat = (val: number) => {
@@ -94,14 +103,14 @@ export class BarChart extends Ani {
     if (options.valueFormat) this.valueFormat = options.valueFormat;
     if (options.labelFormat) this.labelFormat = options.labelFormat;
   }
-  setup() {
+  setup(stage: Stage) {
+    super.setup(stage);
     this.setData();
     this.setMeta();
     this.setDataScales();
     this.ids = [...this.dataScales.keys()];
-    this.margin.left += this.maxLabelWidth();
-    this.margin.left += this.barPadding;
-    this.margin.right += this.maxValueLabelWidth();
+    this.labelPlaceholder = this.maxLabelWidth;
+    this.valuePlaceholder = this.maxValueLabelWidth;
     const range = d3.range(
       this.time[0] - this.swap,
       this.time[0],
@@ -120,6 +129,17 @@ export class BarChart extends Ani {
       d.set(id, indexList);
       return d;
     }, new Map());
+    this.alphaScale = d3
+      .scaleLinear(
+        [
+          this.time[0] - this.fade,
+          this.time[0],
+          this.time[1],
+          this.time[1] + this.fade,
+        ],
+        [0, 1, 1, 0]
+      )
+      .clamp(true);
   }
   setMeta() {
     this.meta = d3.rollup(
@@ -129,7 +149,7 @@ export class BarChart extends Ani {
     );
   }
 
-  private maxValueLabelWidth() {
+  private get maxValueLabelWidth() {
     const d = [...this.data.values()];
     const maxWidth = d3.max(d, (item) => {
       const text = new Text(
@@ -144,7 +164,7 @@ export class BarChart extends Ani {
     });
     return maxWidth;
   }
-  private maxLabelWidth() {
+  private get maxLabelWidth() {
     const maxWidth = d3.max(this.ids, (id) => {
       const text = new Text(
         this.getLabelTextOptions(
@@ -183,13 +203,20 @@ export class BarChart extends Ani {
     const [min, max] = d3.extent(currentData, (d) => d[this.valueField]);
     const scaleX = d3.scaleLinear(
       [0, max],
-      [0, this.shape.width - this.margin.left - this.margin.right]
+      [
+        0,
+        this.shape.width -
+          this.margin.left -
+          this.barPadding -
+          this.labelPlaceholder -
+          this.margin.right -
+          this.valuePlaceholder,
+      ]
     );
 
-    const res = new Component();
-
+    const res = new Component({ alpha: this.alphaScale(sec) });
     currentData.forEach((data) => {
-      const barOptions = this.getBarOptions(data, scaleX, indexs);
+      const barOptions = this.getBarOptions(data, scaleX, indexs, sec);
       if (barOptions.alpha > 0) {
         res.children.push(this.getBarComponent(barOptions));
       }
@@ -224,7 +251,8 @@ export class BarChart extends Ani {
   private getBarOptions(
     data: any,
     scaleX: d3.ScaleLinear<number, number, never>,
-    indexs: Map<string, number>
+    indexs: Map<string, number>,
+    sec: number
   ): BarOptions {
     if (!Number.isNaN(data[this.valueField])) {
       this.lastValue.set(data[this.idField], data[this.valueField]);
@@ -236,12 +264,12 @@ export class BarChart extends Ani {
     return {
       id: data[this.idField],
       pos: {
-        x: this.margin.left,
+        x: this.margin.left + this.barPadding + this.labelPlaceholder,
         y:
           this.margin.top +
           indexs.get(data[this.idField]) * (this.barHeight + this.barGap),
       },
-      alpha,
+      alpha: alpha * this.alphaScale(sec),
       value: data[this.valueField],
       shape: { width: scaleX(data[this.valueField]), height: this.barHeight },
       color: colorPicker.getColor(data[this.colorField]),

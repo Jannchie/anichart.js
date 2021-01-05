@@ -10,6 +10,7 @@ import { recourse } from "../src/core/Recourse";
 import { BarChart } from "../src/core/chart/BarChart";
 import * as d3 from "d3";
 const stage = new Stage();
+stage.options.fps = 60;
 // stage.output = true;
 
 const bgAni = new RectAni();
@@ -125,6 +126,7 @@ const barChart = new BarChart({
   labelFormat(id, meta) {
     return meta.get(id).name;
   },
+  time: [4, 15],
 });
 stage.addChild(bgAni);
 stage.addChild(logoCenter);
@@ -132,7 +134,7 @@ stage.addChild(textLinesAni);
 stage.addChild(rectAni);
 stage.addChild(logoAni);
 stage.addChild(barChart);
-stage.options.sec = 15;
+stage.options.sec = 12;
 stage.play();
 (window as any).stage = stage;
 (window as any).d3 = d3;

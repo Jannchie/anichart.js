@@ -1,13 +1,16 @@
 import { Component } from "../component/Component";
+import { Stage } from "../Stage";
 
 export class Ani {
+  stage?: Stage;
   component?: Component = new Component();
   getComponent(sec: number) {
     return this.component;
   }
-  setup() {
+  setup(stage: Stage) {
     this.children.forEach((child: Component | Ani) => {
-      child.setup();
+      this.stage = stage;
+      child.setup(stage);
     });
   }
   children?: (Ani | Component)[] = [];

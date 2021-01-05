@@ -24,7 +24,7 @@ export async function addFrameToFFmpeg(
   const imageData = canvas.toDataURL("image/png", qulity);
   ffmpeg.FS("writeFile", `${name}-${frame}.png`, await fetchFile(imageData));
 }
-export async function outputMP4(fps: any, name = "output") {
+export async function outputMP4(fps: any, name = "output", thread = 16) {
   const out = `mp4`;
   await ffmpeg.run(
     "-r",
@@ -37,6 +37,8 @@ export async function outputMP4(fps: any, name = "output") {
     `ultrafast`,
     `-tune`,
     `animation`,
+    `-threads`,
+    `${thread}`,
     `${name}.${out}`
   );
   const data = ffmpeg.FS("readFile", `./${name}.${out}`);
@@ -72,7 +74,7 @@ export async function pngToMp4(pngPath: any, name: any, fps: any, thread = 16) {
     `-tune`,
     `animation`,
     `-threads`,
-    `128`,
+    `${thread}`,
     `${name}.${out}`
   );
   const data = await ffmpeg.FS("readFile", `${name}.${out}`);

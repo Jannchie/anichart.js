@@ -10,11 +10,15 @@ export class Stage {
   compRoot: Component = new Component();
   renderer: CanvasRenderer;
 
-  options = { sec: 5, fps: 30 };
+  options = { sec: 5, fps: 60 };
   interval: d3.Timer;
   output: boolean;
   mode = "output";
-  cFrame = 0;
+  private cFrame = 0;
+  setFrame(val: number) {
+    this.cFrame = val;
+    this.setup();
+  }
   get totalFrames() {
     return this.options.sec * this.options.fps;
   }
@@ -94,8 +98,14 @@ export class Stage {
     });
   }
   setup() {
-    this.aniRoot.children.forEach((child) => {
-      child.setup();
+    this.setupChildren(this.aniRoot);
+  }
+  private setupChildren(ani: Ani) {
+    ani.setup(this);
+    ani.children.forEach((child) => {
+      if (child instanceof Ani) {
+        this.setupChildren(child);
+      }
     });
   }
 }
