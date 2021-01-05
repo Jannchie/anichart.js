@@ -2,6 +2,7 @@ import * as d3 from "d3";
 import { Ani } from "./ani/Ani";
 import { canvasRenderer, CanvasRenderer } from "./CanvasRenderer";
 import { Component } from "./component/Component";
+import { addFrameToFFmpeg, ffmpeg, outputMP4 } from "./FFmpeg";
 import { recourse } from "./Recourse";
 
 export class Stage {
@@ -9,7 +10,7 @@ export class Stage {
   compRoot: Component = new Component();
   renderer: CanvasRenderer;
 
-  options = { sec: 5, fps: 144 };
+  options = { sec: 5, fps: 30 };
   interval: d3.Timer;
   output: boolean;
   mode = "output";
@@ -57,6 +58,7 @@ export class Stage {
   }
 
   play(): void {
+    let frame = 0;
     this.loadRecourse().then(() => {
       this.setup();
       if (this.interval) {
@@ -65,10 +67,17 @@ export class Stage {
         return;
       }
       if (this.output) {
-        while (this.cFrame < this.totalFrames) {
-          this.cFrame++;
-          this.render(Math.floor(this.cFrame / this.options.fps));
-        }
+        ffmpeg.load().then(() => {
+          const promises = [];
+          while (this.cFrame < this.totalFrames) {
+            this.cFrame++;
+            this.render(this.cFrame / this.options.fps);
+            promises.push(addFrameToFFmpeg(this.canvas, frame++));
+          }
+          Promise.all(promises).then(() => {
+            outputMP4(this.options.fps);
+          });
+        });
       } else {
         this.interval = d3.interval((elapsed) => {
           if (this.output || this.mode === "output") {

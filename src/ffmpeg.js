@@ -15,14 +15,16 @@ export async function addFrameToFFmpeg(
   name = "output",
   qulity = 1
 ) {
-  await ffmpeg.write(
-    `${name}-${frame}.png`,
-    canvas.toDataURL("image/png", qulity)
-  );
+  var data = canvas
+    .toDataURL("image/png", qulity)
+    .replace(/^data:image\/\w+;base64,/, "");
+  var buf = new Buffer.from(data, "base64");
+  await ffmpeg.FS("writeFile", `${name}-${frame}.png`, buf);
 }
 export async function outputMP4(ffmpeg, fps, name = "output") {
   await ffmpeg.run(`-r ${fps} -threads ${16} -i ${name}-%d.png ${name}.mp4`);
   let data = await ffmpeg.read(`./${name}.mp4`);
+
   this.downloadBlob(new Blob([data.buffer], { type: "video/mp4" }), name);
 }
 

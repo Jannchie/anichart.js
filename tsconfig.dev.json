@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "outDir": "lib",
-        "noImplicitAny": true,
+        "noImplicitAny": false,
         "module": "es6",
         "target": "es5",
         "declarationMap": false,

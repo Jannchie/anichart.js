@@ -57,7 +57,7 @@ export class BarChart extends Ani {
   private secToDate: d3.ScaleLinear<any, any, never>;
 
   get sampling() {
-    return Math.round(144 * this.swap);
+    return Math.round(30 * this.swap);
   }
 
   valueFormat = (val: number) => {

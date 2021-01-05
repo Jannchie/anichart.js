@@ -22,18 +22,19 @@ export class CanvasRenderer {
 
     // render base component props
     this.renderBase(component);
-
     // render special component props
-    switch (component.type) {
-      case "Text":
-        this.renderText(component as Text);
-        break;
-      case "Rect":
-        this.renderRect(component as Rect);
-        break;
-      case "Image":
-        this.renderImage(component as Image);
-        break;
+    if (this.ctx.globalAlpha !== 0) {
+      switch (component.type) {
+        case "Text":
+          this.renderText(component as Text);
+          break;
+        case "Rect":
+          this.renderRect(component as Rect);
+          break;
+        case "Image":
+          this.renderImage(component as Image);
+          break;
+      }
     }
 
     // render children components

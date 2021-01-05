@@ -9,6 +9,7 @@ import { Image } from "../src/core/component/Image";
 import { recourse } from "../src/core/Recourse";
 import { BarChart } from "../src/core/chart/BarChart";
 const stage = new Stage();
+// stage.output = true;
 
 const bgAni = new RectAni();
 bgAni.component.shape = {
@@ -63,10 +64,12 @@ const rectAni = createAni(
     new Rect({
       shape: { width: 100, height: 200 },
       fillStyle: "#2a3",
+      alpha: 1,
     }),
     new Rect({
       shape: { width: 100, height: 0 },
       fillStyle: "#569",
+      alpha: 0,
     }),
   ],
   [0, 1, 2],
@@ -83,32 +86,46 @@ const logoCenter = new Image({
   center: { x: 128, y: 128 },
   shape: { width: 256, height: 256 },
 });
+const logoAni = createAni(
+  [
+    new Image({
+      path: "./data/ANI.png",
+      position: {
+        x: 0,
+        y: stage.canvas.height - 108,
+      },
+      shape: { width: 128, height: 128 },
+      alpha: 1.0,
+    }),
+    new Image({
+      path: "./data/ANI.png",
+      position: {
+        x: stage.canvas.width - 128,
+        y: stage.canvas.height - 108,
+      },
+      shape: { width: 128, height: 128 },
+      alpha: 1.0,
+    }),
+    new Image({
+      path: "./data/ANI.png",
+      position: {
+        x: stage.canvas.width - 128,
+        y: stage.canvas.height - 108,
+      },
+      shape: { width: 128, height: 128 },
+      alpha: 0.01,
+    }),
+  ],
+  [0, 1, 2],
+  ease.easeBounce
+);
 
-const logo = new Image({
-  path: "./data/ANI.png",
-  position: {
-    x: stage.canvas.width - 128,
-    y: stage.canvas.height - 108,
-  },
-  shape: { width: 128, height: 128 },
-});
-
-const logo0 = new Image({
-  path: "./data/ANI.png",
-  position: {
-    x: 0,
-    y: stage.canvas.height - 108,
-  },
-  shape: { width: 128, height: 128 },
-});
-const logoAni = createAni([logo0, logo], [0, 1], ease.easeBounce);
 const barChart = new BarChart({
   shape: { width: stage.canvas.width, height: stage.canvas.height },
   labelFormat(id, meta) {
     return meta.get(id).name;
   },
 });
-
 stage.addChild(bgAni);
 stage.addChild(logoCenter);
 stage.addChild(textLinesAni);
