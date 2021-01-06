@@ -9,7 +9,6 @@ import { Image } from "../src/core/component/Image";
 import { recourse } from "../src/core/Recourse";
 import { BarChart } from "../src/core/chart/bar/Chart";
 const stage = new Stage();
-
 const bgAni = new RectAni();
 bgAni.component.shape = {
   width: stage.canvas.width,
