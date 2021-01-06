@@ -1,7 +1,8 @@
 import * as d3 from "d3";
 import { Ani } from "./ani/Ani";
-import { CanvasRenderer } from "./CanvasRenderer";
+import { canvasRenderer, CanvasRenderer } from "./CanvasRenderer";
 import { Component } from "./component/Component";
+import { addFrameToFFmpeg, ffmpeg, outputMP4 } from "./FFmpeg";
 import { recourse } from "./Recourse";
 
 export class Stage {
@@ -9,11 +10,15 @@ export class Stage {
   compRoot: Component = new Component();
   renderer: CanvasRenderer;
 
-  options = { sec: 5, fps: 144 };
+  options = { sec: 5, fps: 60 };
   interval: d3.Timer;
   output: boolean;
   mode = "output";
-  cFrame = 0;
+  private cFrame = 0;
+  setFrame(val: number) {
+    this.cFrame = val;
+    this.setup();
+  }
   get totalFrames() {
     return this.options.sec * this.options.fps;
   }
@@ -27,7 +32,8 @@ export class Stage {
       canvas.height = 600;
       document.body.appendChild(canvas);
     }
-    this.renderer = new CanvasRenderer(canvas);
+    this.renderer = canvasRenderer;
+    this.renderer.setCanvas(canvas);
   }
 
   addChild(child: Ani | Component) {
@@ -56,17 +62,26 @@ export class Stage {
   }
 
   play(): void {
+    let frame = 0;
     this.loadRecourse().then(() => {
+      this.setup();
       if (this.interval) {
         this.interval.stop();
         this.interval = null;
         return;
       }
       if (this.output) {
-        while (this.cFrame < this.totalFrames) {
-          this.cFrame++;
-          this.render(Math.floor(this.cFrame / this.options.fps));
-        }
+        ffmpeg.load().then(() => {
+          const promises = [];
+          while (this.cFrame < this.totalFrames) {
+            this.cFrame++;
+            this.render(this.cFrame / this.options.fps);
+            promises.push(addFrameToFFmpeg(this.canvas, frame++));
+          }
+          Promise.all(promises).then(() => {
+            outputMP4(this.options.fps);
+          });
+        });
       } else {
         this.interval = d3.interval((elapsed) => {
           if (this.output || this.mode === "output") {
@@ -79,6 +94,17 @@ export class Stage {
             this.interval.stop();
           }
         }, (1 / this.options.fps) * 1000);
+      }
+    });
+  }
+  setup() {
+    this.setupChildren(this.aniRoot);
+  }
+  private setupChildren(ani: Ani) {
+    ani.setup(this);
+    ani.children.forEach((child) => {
+      if (child instanceof Ani) {
+        this.setupChildren(child);
       }
     });
   }

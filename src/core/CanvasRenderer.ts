@@ -6,12 +6,15 @@ import { recourse } from "./Recourse";
 export class CanvasRenderer {
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
-  constructor(canvas: HTMLCanvasElement) {
-    this.canvas = canvas;
-    this.ctx = this.canvas.getContext("2d");
+  constructor(canvas?: HTMLCanvasElement) {
+    if (canvas) this.setCanvas(canvas);
   }
   clean() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  }
+  setCanvas(canvas: HTMLCanvasElement) {
+    this.canvas = canvas;
+    this.ctx = this.canvas.getContext("2d");
   }
   render(component: Component) {
     this.ctx.save();
@@ -19,23 +22,27 @@ export class CanvasRenderer {
 
     // render base component props
     this.renderBase(component);
-
     // render special component props
-    if (component.type === "Text") {
-      this.renderText(component as Text);
-    } else if (component.type === "Rect") {
-      this.renderRect(component as Rect);
-    } else if (component.type === "Image") {
-      this.renderImage(component as Image);
+    if (this.ctx.globalAlpha !== 0) {
+      switch (component.type) {
+        case "Text":
+          this.renderText(component as Text);
+          break;
+        case "Rect":
+          this.renderRect(component as Rect);
+          break;
+        case "Image":
+          this.renderImage(component as Image);
+          break;
+      }
+      // render children components
+      component.children.forEach((child) => {
+        this.render(child);
+      });
     }
-
-    // render children components
-    component.children.forEach((child) => {
-      this.render(child);
-    });
     this.ctx.restore();
   }
-  private renderClipRect(component: Rect) {
+  renderClipRect(component: Rect) {
     this.ctx.beginPath();
     this.radiusArea(
       component.position.x,
@@ -77,7 +84,7 @@ export class CanvasRenderer {
       this.ctx.drawImage(src, -image.center.x, -image.center.y);
     }
   }
-  private renderRect(component: Rect) {
+  renderRect(component: Rect) {
     if (component.clip) {
       this.renderClipRect(component);
     }
@@ -99,7 +106,7 @@ export class CanvasRenderer {
     }
   }
 
-  private renderBase(component: Component) {
+  renderBase(component: Component) {
     this.ctx.translate(component.position.x, component.position.y);
     if (component.filter) {
       this.ctx.filter = component.filter;
@@ -110,11 +117,20 @@ export class CanvasRenderer {
     if (component.fillStyle) {
       this.ctx.fillStyle = component.fillStyle;
     }
-    if (component.alpha !== null) {
+    if (component.alpha !== undefined) {
       this.ctx.globalAlpha = component.alpha;
     }
   }
-  private renderText(component: Text) {
+  renderText(component: Text) {
+    this.prerenderText(component);
+    this.ctx.fillText(component.text, -component.center.x, -component.center.y);
+    this.ctx.strokeText(
+      component.text,
+      -component.center.x,
+      -component.center.y
+    );
+  }
+  prerenderText(component: Text) {
     if (component.textAlign) {
       this.ctx.textAlign = component.textAlign;
     }
@@ -135,13 +151,8 @@ export class CanvasRenderer {
     ) {
       this.ctx.font = fontStr;
     }
-    this.ctx.fillText(component.text, -component.center.x, -component.center.y);
-    this.ctx.strokeText(
-      component.text,
-      -component.center.x,
-      -component.center.y
-    );
   }
+
   private fillRadiusRect(
     left: number,
     top: number,
@@ -169,3 +180,4 @@ export class CanvasRenderer {
     this.ctx.arc(left + r, top + h - r, r, pi / 2, pi);
   }
 }
+export const canvasRenderer = new CanvasRenderer();
