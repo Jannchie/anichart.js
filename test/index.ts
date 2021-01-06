@@ -126,7 +126,7 @@ const barChart = new BarChart({
   labelFormat(id, meta) {
     return meta.get(id).name;
   },
-  time: [4, 15],
+  aniTime: [4, 10],
 });
 stage.addChild(bgAni);
 stage.addChild(logoCenter);

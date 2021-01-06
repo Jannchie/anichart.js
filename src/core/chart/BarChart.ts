@@ -21,9 +21,11 @@ interface BarOptions {
 }
 
 interface BarChartOptions {
-  time?: number[];
+  aniTime?: [number, number];
+  freezeTime?: [number, number];
   itemCount?: number;
   idField?: string;
+  fadeTime?: [number, number];
   colorField?: string;
   dateField?: string;
   valueField?: string;
@@ -41,13 +43,14 @@ export class BarChart extends Ani {
   data: any[];
   meta: Map<string, any>;
   dataScales: Map<string, any>;
-  time = [0, 10];
+  aniTime: [number, number];
+  freezeTime = [2, 2];
   itemCount = 20;
   idField = "id";
   colorField = "id";
   dateField = "date";
   valueField = "value";
-  fade = 0.5;
+  fadeTime = [0.5, 0];
   valueKeys = ["value"];
   shape = { width: 400, height: 300 };
   margin = { left: 20, top: 20, right: 20, bottom: 20 };
@@ -90,21 +93,29 @@ export class BarChart extends Ani {
   constructor(options?: BarChartOptions) {
     super();
     if (!options) return;
-    if (options.time) this.time = options.time;
+    if (options.fadeTime) this.fadeTime = options.fadeTime;
+    if (options.aniTime) this.aniTime = options.aniTime;
+    if (options.freezeTime) this.freezeTime = options.freezeTime;
     if (options.shape) this.shape = options.shape;
     if (options.idField) this.idField = options.idField;
     if (options.dateField) this.dateField = options.dateField;
     if (options.valueField) this.valueField = options.valueField;
     if (options.itemCount) this.itemCount = options.itemCount;
-    if (options.barPadding) this.barPadding = options.barPadding;
-    if (options.margin) this.margin = options.margin;
-    if (options.barGap) this.barGap = options.barGap;
+    if (options.barPadding !== undefined) this.barPadding = options.barPadding;
+    if (options.margin !== undefined) this.margin = options.margin;
+    if (options.barGap !== undefined) this.barGap = options.barGap;
     if (options.dateFormat) this.dateFormat = options.dateFormat;
     if (options.valueFormat) this.valueFormat = options.valueFormat;
     if (options.labelFormat) this.labelFormat = options.labelFormat;
   }
   setup(stage: Stage) {
     super.setup(stage);
+    if (this.aniTime === undefined) {
+      this.aniTime = [
+        0 + this.fadeTime[0] + this.freezeTime[0],
+        stage.options.sec - this.freezeTime[1] - this.fadeTime[1],
+      ];
+    }
     this.setData();
     this.setMeta();
     this.setDataScales();
@@ -112,8 +123,8 @@ export class BarChart extends Ani {
     this.labelPlaceholder = this.maxLabelWidth;
     this.valuePlaceholder = this.maxValueLabelWidth;
     const range = d3.range(
-      this.time[0] - this.swap,
-      this.time[0],
+      this.aniTime[0] - this.swap,
+      this.aniTime[0],
       this.swap / this.sampling
     );
     const datas = range.map((t) =>
@@ -132,12 +143,12 @@ export class BarChart extends Ani {
     this.alphaScale = d3
       .scaleLinear(
         [
-          this.time[0] - this.fade,
-          this.time[0],
-          this.time[1],
-          this.time[1] + this.fade,
+          this.aniTime[0] - this.freezeTime[0] - this.fadeTime[0],
+          this.aniTime[0] - this.freezeTime[0],
+          this.aniTime[1] + this.freezeTime[1],
+          this.aniTime[1] + this.freezeTime[1] + this.fadeTime[1],
         ],
-        [0, 1, 1, 0]
+        [this.fadeTime[0] ? 0 : 1, 1, 1, this.fadeTime[1] ? 0 : 1]
       )
       .clamp(true);
   }
@@ -405,7 +416,7 @@ export class BarChart extends Ani {
 
   private setDataScales() {
     const dateExtent = d3.extent(this.data, (d) => d[this.dateField]);
-    this.secToDate = d3.scaleLinear(this.time, dateExtent).clamp(true);
+    this.secToDate = d3.scaleLinear(this.aniTime, dateExtent).clamp(true);
     const g = d3.group(this.data, (d) => d[this.idField]);
     const dataScales = new Map();
     g.forEach((dataList, k) => {
