@@ -18,7 +18,6 @@
 
 ### 在线编辑
 
-
 <p align="center">
     <a href="https://codesandbox.io/s/dreamy-microservice-e8em0?fontsize=14&hidenavigation=1&theme=dark&view=preview">
         <img alt="Edit e8em0" src="https://codesandbox.io/static/img/play-codesandbox.svg">
@@ -74,6 +73,9 @@
 - [ ] 动画器
   - [x] 自定义动画器
   - [ ] 更酷炫的文字效果动画器
+- [ ] 调试器
+  - [ ] 当前帧信息显示
+  - [ ] 播放进度控制
 
 ### 图表
 
@@ -83,6 +85,7 @@
   - [x] 导入图片
   - [x] 文字测量
   - [ ] 封装刻度线标尺
+  - [ ] 提取通用图表动画
 - [ ] 柱状图
   - [x] 基本功能
     - [x] 柱交换动画实时计算
