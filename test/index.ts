@@ -132,8 +132,8 @@ const barChart = new BarChart({
 const a = customAni(0)
   .keyFrame(
     new Rect({
-      position: { x: 150, y: 150 },
-      center: { x: 300, y: 300 },
+      position: { x: 300, y: 300 },
+      center: { x: 150, y: 150 },
       shape: { width: 300, height: 300 },
       fillStyle: "#fff",
       radius: 150,
@@ -142,8 +142,8 @@ const a = customAni(0)
   .duration(1)
   .keyFrame(
     new Rect({
-      position: { x: 150, y: 150 },
-      center: { x: 300, y: 300 },
+      position: { x: 300, y: 300 },
+      center: { x: 0, y: 0 },
       shape: { width: 0, height: 0 },
       fillStyle: "#d23",
       radius: 0,
