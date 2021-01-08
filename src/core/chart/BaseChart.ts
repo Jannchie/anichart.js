@@ -21,6 +21,9 @@ export interface BaseChartOptions {
   valueFormat?: (val: number) => string;
   labelFormat?: (id: string, meta?: Map<string, any>) => string;
   dateFormat?: string;
+
+  data?: string;
+  meta?: string;
 }
 
 export abstract class BaseChart extends Ani {
@@ -36,6 +39,10 @@ export abstract class BaseChart extends Ani {
   fadeTime = [0.5, 0];
   data: any[];
   meta: Map<string, any>;
+
+  dataName = "data";
+  metaName = "meta";
+
   alphaScale: d3.ScaleLinear<number, number, never>;
   secToDate: d3.ScaleLinear<any, any, never>;
   dataScales: Map<any, any>;
@@ -54,6 +61,8 @@ export abstract class BaseChart extends Ani {
     if (options.margin !== undefined) this.margin = options.margin;
     if (options.shape) this.shape = options.shape;
     if (options.dateFormat) this.dateFormat = options.dateFormat;
+    if (options.data) this.dataName = options.data;
+    if (options.meta) this.metaName = options.meta;
   }
   setup(stage: Stage) {
     super.setup(stage);
@@ -64,7 +73,7 @@ export abstract class BaseChart extends Ani {
     this.setAlphaScale();
   }
   private setData() {
-    this.data = _.cloneDeep(recourse.data.get("data"));
+    this.data = _.cloneDeep(recourse.data.get(this.dataName));
     this.data.forEach((d: any) => {
       Object.keys(d).forEach((k) => {
         switch (k) {
@@ -103,7 +112,7 @@ export abstract class BaseChart extends Ani {
 
   setMeta() {
     this.meta = d3.rollup(
-      _.cloneDeep(recourse.data.get("meta")),
+      _.cloneDeep(recourse.data.get(this.metaName)),
       (v) => v[0],
       (d) => d[this.idField]
     );
