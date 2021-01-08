@@ -3,7 +3,6 @@ import * as _ from "lodash-es";
 import { Ani } from "../ani/Ani";
 import { recourse } from "../Recourse";
 import { Stage } from "../Stage";
-
 export interface BaseChartOptions {
   aniTime?: [number, number];
   fadeTime?: [number, number];

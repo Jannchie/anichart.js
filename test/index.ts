@@ -1,4 +1,4 @@
-import { createAni } from "../src/core/ani/AniCreator";
+import { customAni, createAni } from "../src/core/ani/AniCreator";
 import { ease } from "../src/core/ani/Ease";
 import { RectAni } from "../src/core/ani/RectAni";
 import { TextAni } from "../src/core/ani/TextAni";
@@ -128,7 +128,30 @@ const barChart = new BarChart({
   },
   aniTime: [4, 10],
 });
+
+const a = customAni(0)
+  .keyFrame(
+    new Rect({
+      position: { x: 150, y: 150 },
+      center: { x: 300, y: 300 },
+      shape: { width: 300, height: 300 },
+      fillStyle: "#fff",
+      radius: 150,
+    })
+  )
+  .duration(1)
+  .keyFrame(
+    new Rect({
+      position: { x: 150, y: 150 },
+      center: { x: 300, y: 300 },
+      shape: { width: 0, height: 0 },
+      fillStyle: "#d23",
+      radius: 0,
+    })
+  );
+
 stage.addChild(bgAni);
+stage.addChild(a);
 stage.addChild(logoCenter);
 stage.addChild(textLinesAni);
 stage.addChild(rectAni);
@@ -136,5 +159,6 @@ stage.addChild(logoAni);
 stage.addChild(barChart);
 stage.options.sec = 12;
 stage.play();
+
 (window as any).stage = stage;
 (window as any).d3 = d3;
