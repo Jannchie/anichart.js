@@ -1,4 +1,5 @@
 import * as d3 from "d3";
+import { canvasHelper } from "../CanvasHelper";
 import { colorPicker } from "../ColorPicker";
 import { Arc } from "../component/Arc";
 import { Component } from "../component/Component";
@@ -59,7 +60,8 @@ export class LineChart extends BaseChart {
     const points = new Component({
       position: { x: this.margin.left, y: this.margin.top },
     });
-    const res = new Component();
+    const res = new Component({ position: this.position });
+    const maxX = d3.max(this.scales.x.range());
     this.dataGroup.forEach((v: any[], k) => {
       const line = new Line();
       const color = colorPicker.getColor(k);
@@ -67,16 +69,33 @@ export class LineChart extends BaseChart {
       line.path = new Path2D(lineGen.curve(d3.curveMonotoneX)(v));
       line.lineWidth = 3;
       lineArea.children.push(line);
-      // line.area = new Path2D(areaGen.curve(d3.curveMonotoneX)(v));
+
+      const areaPath = new Path2D(areaGen.curve(d3.curveMonotoneX)(v));
+      const y = this.findY(areaPath, maxX);
       const point = new Arc({
         fillStyle: color,
-        radius: 15,
-        position: { x: 100, y: 100 },
+        radius: 5,
+        alpha: y !== undefined ? 1 : 0,
+        position: { x: maxX, y },
       });
+
       points.children.push(point);
     });
-    res.children.push(points);
     res.children.push(lineArea);
+    res.children.push(points);
     return res;
+  }
+
+  private findY(area: Path2D, x: number) {
+    const l = 0;
+    const r = this.shape.height;
+    // 9w => 4k
+    // 使用中值优化，提升>22倍的性能
+    const b = d3.bisector((d: number) => {
+      return canvasHelper.isPointInPath(area, x, d);
+    }).left;
+    const range = d3.range(l, r, 1);
+    const index = b(range, true);
+    return range[index];
   }
 }
