@@ -133,6 +133,8 @@ const barChart = new BarChart({
 
 const lineChart = new LineChart({
   aniTime: [4, 10],
+  shape: { width: stage.canvas.width, height: stage.canvas.height / 2 },
+  position: { x: 0, y: stage.canvas.height / 2 },
 });
 const a = customAni(0)
   .keyFrame(

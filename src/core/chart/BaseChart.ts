@@ -8,6 +8,8 @@ export interface BaseChartOptions {
   fadeTime?: [number, number];
   freezeTime?: [number, number];
 
+  position?: { x: number; y: number };
+
   shape?: { width: number; height: number };
   margin?: { left: number; top: number; bottom: number; right: number };
 
@@ -34,6 +36,7 @@ export abstract class BaseChart extends Ani {
   valueField = "value";
   valueKeys = ["value"];
   shape = { width: 400, height: 300 };
+  position = { x: 0, y: 0 };
   margin = { left: 20, top: 20, right: 20, bottom: 20 };
   aniTime: [number, number];
   freezeTime = [2, 2];
@@ -64,6 +67,7 @@ export abstract class BaseChart extends Ani {
     if (options.dateFormat) this.dateFormat = options.dateFormat;
     if (options.data) this.dataName = options.data;
     if (options.meta) this.metaName = options.meta;
+    if (options.position) this.position = options.position;
   }
   setup(stage: Stage) {
     super.setup(stage);
