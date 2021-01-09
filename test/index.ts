@@ -131,7 +131,9 @@ const barChart = new BarChart({
   aniTime: [4, 10],
 });
 
-const lineChart = new LineChart();
+const lineChart = new LineChart({
+  aniTime: [4, 10],
+});
 const a = customAni(0)
   .keyFrame(
     new Rect({

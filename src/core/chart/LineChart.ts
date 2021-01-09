@@ -4,9 +4,16 @@ import { Component } from "../component/Component";
 import { Line } from "../component/Line";
 import { Rect } from "../component/Rect";
 import { Stage } from "../Stage";
-import { BaseChart } from "./BaseChart";
+import { BaseChart, BaseChartOptions } from "./BaseChart";
 
+interface LineChartOptions extends BaseChartOptions {
+  pointerR?: number;
+}
 export class LineChart extends BaseChart {
+  constructor(options: LineChartOptions) {
+    super(options);
+    if (!options) return;
+  }
   scales: {
     x: d3.ScaleLinear<number, number, never>;
     y: d3.ScaleLinear<number, number, never>;
