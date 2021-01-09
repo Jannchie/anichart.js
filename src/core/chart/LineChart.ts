@@ -16,12 +16,16 @@ export class LineChart extends BaseChart {
   }
   getComponent(sec: number) {
     const currentData = this.getCurrentData(sec);
-    const valueRange = d3.extent(currentData, (d) => d[this.valueField]);
+    // const valueRange = d3.extent(currentData, (d) => d[this.valueField]);
+    const valueRange = [0, 12];
     this.scales = {
-      x: d3.scaleLinear([this.aniTime[0], sec], [0, this.shape.width]),
+      x: d3.scaleLinear(
+        [this.aniTime[0], d3.min([sec, this.aniTime[1]])],
+        [0, this.shape.width - this.margin.left - this.margin.right]
+      ),
       y: d3.scaleLinear(valueRange, [
-        this.shape.height - this.margin.bottom,
-        this.margin.top,
+        this.shape.height - this.margin.top - this.margin.bottom,
+        0,
       ]),
     };
     const lineGen = d3
@@ -42,7 +46,7 @@ export class LineChart extends BaseChart {
         width: this.shape.width - this.margin.left - this.margin.right,
         height: this.shape.height - this.margin.top - this.margin.bottom,
       },
-      fillStyle: "#0003",
+      fillStyle: "#0002",
     });
     const res = new Component();
     this.dataGroup.forEach((v: any[], k) => {
