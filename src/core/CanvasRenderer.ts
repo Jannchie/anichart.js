@@ -90,15 +90,15 @@ export class CanvasRenderer {
     }
     if (!component.radius || component.radius <= 0) {
       this.ctx.fillRect(
-        component.position.x,
-        component.position.y,
+        -component.center.x,
+        -component.center.y,
         component.shape.width,
         component.shape.height
       );
     } else {
       this.fillRadiusRect(
-        component.position.x,
-        component.position.y,
+        -component.center.x,
+        -component.center.y,
         component.shape.width,
         component.shape.height,
         component.radius
