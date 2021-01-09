@@ -25,6 +25,7 @@ export interface BaseChartOptions {
 }
 
 export abstract class BaseChart extends Ani {
+  dataScales: Map<string, any>;
   idField = "id";
   colorField = "id";
   dateField = "date";
@@ -39,7 +40,6 @@ export abstract class BaseChart extends Ani {
   meta: Map<string, any>;
   alphaScale: d3.ScaleLinear<number, number, never>;
   secToDate: d3.ScaleLinear<any, any, never>;
-  dataScales: Map<any, any>;
   dateFormat = "%Y-%m-%d";
   constructor(options?: BaseChartOptions) {
     super();
@@ -60,8 +60,8 @@ export abstract class BaseChart extends Ani {
     super.setup(stage);
     this.setData();
     this.setMeta();
-    this.setDataScales();
     this.setDefaultAniTime(stage);
+    this.setDataScales();
     this.setAlphaScale();
   }
   private setData() {

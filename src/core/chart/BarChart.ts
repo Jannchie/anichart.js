@@ -27,7 +27,6 @@ interface BarChartOptions extends BaseChartOptions {
   barInfoFormat?: (id: string, meta?: Map<string, any>) => string;
 }
 export class BarChart extends BaseChart {
-  dataScales: Map<string, any>;
 
   itemCount = 20;
 

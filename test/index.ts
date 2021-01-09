@@ -9,6 +9,7 @@ import { Image } from "../src/core/component/Image";
 import { recourse } from "../src/core/Recourse";
 import { BarChart } from "../src/core/chart/BarChart";
 import * as d3 from "d3";
+import { LineChart } from "../src/core/chart/LineChart";
 const stage = new Stage();
 stage.options.fps = 60;
 // stage.output = true;
@@ -53,8 +54,8 @@ recourse.loadImage(
   "jannchie"
 );
 
-recourse.loadData("./data/steam.csv", "data");
-recourse.loadData("./data/steam-meta.csv", "meta");
+recourse.loadData("./data/test.csv", "data");
+recourse.loadData("./data/test-meta.csv", "meta");
 
 const rectAni = createAni(
   [
@@ -124,10 +125,15 @@ const logoAni = createAni(
 const barChart = new BarChart({
   shape: { width: stage.canvas.width, height: stage.canvas.height },
   labelFormat(id, meta) {
-    return meta.get(id).name;
+    return id;
+    // return meta.get(id).name;
   },
   aniTime: [4, 10],
 });
+
+const lineChart = new LineChart();
+stage.addChild(lineChart);
+
 stage.addChild(bgAni);
 stage.addChild(logoCenter);
 stage.addChild(textLinesAni);
