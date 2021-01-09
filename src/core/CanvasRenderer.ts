@@ -38,6 +38,7 @@ export class CanvasRenderer {
           break;
         case "Arc":
           this.renderArc(component as Arc);
+          break;
         case "Line":
           this.renderLine(component as Line);
           break;
@@ -50,9 +51,10 @@ export class CanvasRenderer {
     this.ctx.restore();
   }
   renderArc(arc: Arc) {
+    this.ctx.beginPath();
     this.ctx.arc(
-      -arc.center,
-      -arc.center,
+      -arc.center.x,
+      -arc.center.y,
       arc.radius,
       arc.startAngle,
       arc.endAngle,

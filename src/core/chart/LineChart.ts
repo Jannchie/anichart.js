@@ -1,5 +1,6 @@
 import * as d3 from "d3";
 import { colorPicker } from "../ColorPicker";
+import { Arc } from "../component/Arc";
 import { Component } from "../component/Component";
 import { Line } from "../component/Line";
 import { Rect } from "../component/Rect";
@@ -55,15 +56,26 @@ export class LineChart extends BaseChart {
       },
       fillStyle: "#0000",
     });
+    const points = new Component({
+      position: { x: this.margin.left, y: this.margin.top },
+    });
     const res = new Component();
     this.dataGroup.forEach((v: any[], k) => {
       const line = new Line();
-      line.strokeStyle = colorPicker.getColor(k);
+      const color = colorPicker.getColor(k);
+      line.strokeStyle = color;
       line.path = new Path2D(lineGen.curve(d3.curveMonotoneX)(v));
       line.lineWidth = 3;
       lineArea.children.push(line);
       // line.area = new Path2D(areaGen.curve(d3.curveMonotoneX)(v));
+      const point = new Arc({
+        fillStyle: color,
+        radius: 15,
+        position: { x: 100, y: 100 },
+      });
+      points.children.push(point);
     });
+    res.children.push(points);
     res.children.push(lineArea);
     return res;
   }

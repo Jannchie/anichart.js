@@ -4,7 +4,7 @@ export class Arc extends Component {
   readonly type? = "Arc";
   radius? = 10;
   startAngle? = 0;
-  endAngle? = 0;
+  endAngle? = 2 * Math.PI;
   anticlockwise? = false;
   constructor(options?: Arc) {
     super(options);
