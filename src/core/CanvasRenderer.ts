@@ -3,6 +3,7 @@ import { Rect } from "./component/Rect";
 import { Text } from "./component/Text";
 import { Image } from "./component/Image";
 import { recourse } from "./Recourse";
+import { Line } from "./component/Line";
 export class CanvasRenderer {
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
@@ -34,6 +35,9 @@ export class CanvasRenderer {
         case "Image":
           this.renderImage(component as Image);
           break;
+        case "Line":
+          this.renderLine(component as Line);
+          break;
       }
       // render children components
       component.children.forEach((child) => {
@@ -42,11 +46,14 @@ export class CanvasRenderer {
     }
     this.ctx.restore();
   }
+  renderLine(line: Line) {
+    this.ctx.stroke(line.path);
+  }
   renderClipRect(component: Rect) {
     this.ctx.beginPath();
     this.radiusArea(
-      component.position.x,
-      component.position.y,
+      -component.center.x,
+      -component.center.y,
       component.shape.width,
       component.shape.height,
       component.radius
@@ -116,6 +123,9 @@ export class CanvasRenderer {
     }
     if (component.fillStyle) {
       this.ctx.fillStyle = component.fillStyle;
+    }
+    if (component.lineWidth) {
+      this.ctx.lineWidth = component.lineWidth;
     }
     if (component.alpha !== undefined) {
       this.ctx.globalAlpha = component.alpha;

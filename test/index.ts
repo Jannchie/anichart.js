@@ -132,7 +132,6 @@ const barChart = new BarChart({
 });
 
 const lineChart = new LineChart();
-stage.addChild(lineChart);
 const a = customAni(0)
   .keyFrame(
     new Rect({
@@ -161,6 +160,7 @@ stage.addChild(textLinesAni);
 stage.addChild(rectAni);
 stage.addChild(logoAni);
 stage.addChild(barChart);
+stage.addChild(lineChart);
 stage.options.sec = 12;
 stage.play();
 

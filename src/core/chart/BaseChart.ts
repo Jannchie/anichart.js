@@ -39,6 +39,7 @@ export abstract class BaseChart extends Ani {
   freezeTime = [2, 2];
   fadeTime = [0.5, 0];
   data: any[];
+  dataGroup: Map<string, any>;
   meta: Map<string, any>;
 
   dataName = "data";
@@ -95,6 +96,7 @@ export abstract class BaseChart extends Ani {
         }
       });
     });
+    this.dataGroup = d3.group(this.data, (d) => d[this.idField]);
   }
   private setDataScales() {
     const dateExtent = d3.extent(this.data, (d) => d[this.dateField]);
