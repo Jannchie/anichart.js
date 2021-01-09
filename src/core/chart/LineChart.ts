@@ -53,7 +53,7 @@ export class LineChart extends BaseChart {
         width: this.shape.width - this.margin.left - this.margin.right,
         height: this.shape.height - this.margin.top - this.margin.bottom,
       },
-      fillStyle: "#0002",
+      fillStyle: "#0000",
     });
     const res = new Component();
     this.dataGroup.forEach((v: any[], k) => {

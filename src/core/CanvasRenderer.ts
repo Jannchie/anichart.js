@@ -4,6 +4,7 @@ import { Text } from "./component/Text";
 import { Image } from "./component/Image";
 import { recourse } from "./Recourse";
 import { Line } from "./component/Line";
+import { Arc } from "./component/Arc";
 export class CanvasRenderer {
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
@@ -35,6 +36,8 @@ export class CanvasRenderer {
         case "Image":
           this.renderImage(component as Image);
           break;
+        case "Arc":
+          this.renderArc(component as Arc);
         case "Line":
           this.renderLine(component as Line);
           break;
@@ -46,8 +49,21 @@ export class CanvasRenderer {
     }
     this.ctx.restore();
   }
+  renderArc(arc: Arc) {
+    this.ctx.arc(
+      -arc.center,
+      -arc.center,
+      arc.radius,
+      arc.startAngle,
+      arc.endAngle,
+      arc.anticlockwise
+    );
+    if (arc.strokeStyle) this.ctx.stroke();
+    if (arc.fillStyle) this.ctx.fill();
+  }
   renderLine(line: Line) {
-    this.ctx.stroke(line.path);
+    if (this.ctx.fillStyle) this.ctx.fill(line.path);
+    if (this.ctx.strokeStyle) this.ctx.stroke(line.path);
   }
   renderClipRect(component: Rect) {
     this.ctx.beginPath();
@@ -133,12 +149,20 @@ export class CanvasRenderer {
   }
   renderText(component: Text) {
     this.prerenderText(component);
-    this.ctx.fillText(component.text, -component.center.x, -component.center.y);
-    this.ctx.strokeText(
-      component.text,
-      -component.center.x,
-      -component.center.y
-    );
+    if (component.fillStyle) {
+      this.ctx.fillText(
+        component.text,
+        -component.center.x,
+        -component.center.y
+      );
+    }
+    if (component.strokeStyle) {
+      this.ctx.strokeText(
+        component.text,
+        -component.center.x,
+        -component.center.y
+      );
+    }
   }
   prerenderText(component: Text) {
     if (component.textAlign) {

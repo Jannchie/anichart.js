@@ -2,7 +2,7 @@ import { imageLoader } from "../../image-loader";
 import { Component } from "./Component";
 
 export class Image extends Component {
-  type? = "Image";
+  readonly type? = "Image";
   path?: string;
   slicePosition?: { x: number; y: number } = { x: 0, y: 0 };
   sliceShape?: { width: number; height: number };
