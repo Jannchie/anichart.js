@@ -8,10 +8,7 @@ if (typeof window === "undefined") {
 }
 
 import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
-export const ffmpeg = createFFmpeg({
-  log: true,
-});
-
+export const ffmpeg = createFFmpeg();
 export async function addFrameToFFmpeg(
   canvas: HTMLCanvasElement,
   frame: number,

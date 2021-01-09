@@ -22,16 +22,27 @@ export class LineChart extends BaseChart {
   };
   setup(stage: Stage) {
     super.setup(stage);
+    this.yTickFormat = (n: number | { valueOf(): number }) => {
+      return d3.timeFormat("%Y-%m-%d")(this.secToDate(n));
+    };
   }
   getComponent(sec: number) {
     const currentData = this.getCurrentData(sec);
-    // const valueRange = d3.extent(currentData, (d) => d[this.valueField]);
-    const valueRange = [0, 12];
+    const valueRange = d3.extent(currentData, (d) => d[this.valueField]);
+    valueRange[0] *= 0.7;
+    valueRange[1] *= 1.3;
+    const temp =
+      sec < this.aniTime[0]
+        ? this.aniTime[0]
+        : sec > this.aniTime[1]
+        ? this.aniTime[1]
+        : sec;
     this.scales = {
       x: d3.scaleLinear(
-        [this.aniTime[0], d3.min([sec, this.aniTime[1]])],
+        [this.aniTime[0], temp],
         [0, this.shape.width - this.margin.left - this.margin.right]
       ),
+
       y: d3.scaleLinear(valueRange, [
         this.shape.height - this.margin.top - this.margin.bottom,
         0,
@@ -83,6 +94,10 @@ export class LineChart extends BaseChart {
     });
     res.children.push(lineArea);
     res.children.push(points);
+    const x = this.getXAxisComponent(this.scales.y);
+    const y = this.getYAxisComponent(this.scales.x);
+    res.children.push(x);
+    res.children.push(y);
     return res;
   }
 
