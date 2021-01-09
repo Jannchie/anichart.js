@@ -3,12 +3,12 @@ import { Component } from "../component/Component";
 import { Image } from "../component/Image";
 import { Rect } from "../component/Rect";
 import { Text } from "../component/Text";
-import { recourse } from "../Recourse";
 import * as d3 from "d3";
 import * as _ from "lodash-es";
 import { colorPicker } from "../ColorPicker";
 import { canvasHelper } from "../CanvasHelper";
 import { Stage } from "../Stage";
+import { BaseChart, BaseChartOptions } from "./BaseChart";
 interface BarOptions {
   id: string;
   value: number;
@@ -20,46 +20,21 @@ interface BarOptions {
   image?: string;
 }
 
-interface BarChartOptions {
-  time?: number[];
+interface BarChartOptions extends BaseChartOptions {
   itemCount?: number;
-  idField?: string;
-  colorField?: string;
-  dateField?: string;
-  valueField?: string;
-  valueKeys?: string[];
-  shape?: { width: number; height: number };
-  margin?: { left: number; top: number; bottom: number; right: number };
   barPadding?: number;
   barGap?: number;
-  valueFormat?: (val: number) => string;
-  labelFormat?: (id: string, meta?: Map<string, any>) => string;
   barInfoFormat?: (id: string, meta?: Map<string, any>) => string;
-  dateFormat?: string;
 }
-export class BarChart extends Ani {
-  data: any[];
-  meta: Map<string, any>;
-  dataScales: Map<string, any>;
-  time = [0, 10];
+export class BarChart extends BaseChart {
   itemCount = 20;
-  idField = "id";
-  colorField = "id";
-  dateField = "date";
-  valueField = "value";
-  fade = 0.5;
-  valueKeys = ["value"];
-  shape = { width: 400, height: 300 };
-  margin = { left: 20, top: 20, right: 20, bottom: 20 };
+
   barPadding = 8;
   barGap = 8;
   swap = 0.25;
   lastValue = new Map<string, number>();
-  dateFormat = "%Y-%m-%d";
-  private secToDate: d3.ScaleLinear<any, any, never>;
   labelPlaceholder: number;
   valuePlaceholder: number;
-  alphaScale: d3.ScaleLinear<number, number, never>;
 
   get sampling() {
     if (this.stage) {
@@ -69,51 +44,31 @@ export class BarChart extends Ani {
     }
   }
 
-  valueFormat = (val: number) => {
-    return d3.format(",.0f")(val);
-  };
-
   barInfoFormat = (id: any, meta?: Map<string, any>) => {
     return this.labelFormat(id, meta);
-  };
-
-  labelFormat = (id: string, meta?: Map<string, any>) => {
-    if (meta.get(id) && meta.get(id).name) {
-      return meta.get(id).name;
-    } else {
-      return id;
-    }
   };
 
   historyIndex: Map<any, any>;
   ids: string[];
   constructor(options?: BarChartOptions) {
-    super();
+    super(options);
     if (!options) return;
-    if (options.time) this.time = options.time;
-    if (options.shape) this.shape = options.shape;
-    if (options.idField) this.idField = options.idField;
-    if (options.dateField) this.dateField = options.dateField;
-    if (options.valueField) this.valueField = options.valueField;
     if (options.itemCount) this.itemCount = options.itemCount;
-    if (options.barPadding) this.barPadding = options.barPadding;
-    if (options.margin) this.margin = options.margin;
-    if (options.barGap) this.barGap = options.barGap;
-    if (options.dateFormat) this.dateFormat = options.dateFormat;
-    if (options.valueFormat) this.valueFormat = options.valueFormat;
-    if (options.labelFormat) this.labelFormat = options.labelFormat;
+    if (options.barPadding !== undefined) this.barPadding = options.barPadding;
+    if (options.barGap !== undefined) this.barGap = options.barGap;
   }
   setup(stage: Stage) {
     super.setup(stage);
-    this.setData();
-    this.setMeta();
-    this.setDataScales();
     this.ids = [...this.dataScales.keys()];
     this.labelPlaceholder = this.maxLabelWidth;
     this.valuePlaceholder = this.maxValueLabelWidth;
+    this.setHistoryIndex();
+  }
+
+  private setHistoryIndex() {
     const range = d3.range(
-      this.time[0] - this.swap,
-      this.time[0],
+      this.aniTime[0] - this.swap,
+      this.aniTime[0],
       this.swap / this.sampling
     );
     const datas = range.map((t) =>
@@ -129,24 +84,6 @@ export class BarChart extends Ani {
       d.set(id, indexList);
       return d;
     }, new Map());
-    this.alphaScale = d3
-      .scaleLinear(
-        [
-          this.time[0] - this.fade,
-          this.time[0],
-          this.time[1],
-          this.time[1] + this.fade,
-        ],
-        [0, 1, 1, 0]
-      )
-      .clamp(true);
-  }
-  setMeta() {
-    this.meta = d3.rollup(
-      _.cloneDeep(recourse.data.get("meta")),
-      (v) => v[0],
-      (d) => d[this.idField]
-    );
   }
 
   private get maxValueLabelWidth() {
@@ -214,7 +151,10 @@ export class BarChart extends Ani {
       ]
     );
 
-    const res = new Component({ alpha: this.alphaScale(sec) });
+    const res = new Component({
+      alpha: this.alphaScale(sec),
+      position: this.position,
+    });
     currentData.forEach((data) => {
       const barOptions = this.getBarOptions(data, scaleX, indexs, sec);
       if (barOptions.alpha > 0) {
@@ -275,26 +215,6 @@ export class BarChart extends Ani {
       color: colorPicker.getColor(data[this.colorField]),
       radius: 4,
     };
-  }
-
-  private getCurrentData(sec: number) {
-    const currentData = [...this.dataScales.values()]
-      .map((scale) => {
-        return scale(sec);
-      })
-      // .filter((d) => !Number.isNaN(d[this.valueField]))
-      .filter((d) => d !== undefined)
-      .sort((a, b) => {
-        if (Number.isNaN(b[this.valueField])) {
-          return -1;
-        } else if (Number.isNaN(a[this.valueField])) {
-          return 1;
-        } else {
-          return b[this.valueField] - a[this.valueField];
-        }
-      });
-    // .slice(0, this.itemCount);
-    return currentData;
   }
 
   private getBarComponent(options: BarOptions) {
@@ -376,44 +296,5 @@ export class BarChart extends Ani {
       position: { x: 0 - this.barPadding, y: fontSize / 0.8 },
       fillStyle: color,
     };
-  }
-
-  private setData() {
-    this.data = _.cloneDeep(recourse.data.get("data"));
-    this.data.forEach((d: any) => {
-      Object.keys(d).forEach((k) => {
-        switch (k) {
-          case this.dateField:
-            // 日期字符串转成日期
-            d[k] = new Date(
-              new Date().getTimezoneOffset() * 60 * 1000 +
-                new Date(d[this.dateField]).getTime()
-            );
-            break;
-          case this.idField:
-            // ID保持不变
-            break;
-          default:
-            // 数值转成数字
-            if (this.valueKeys.includes(k)) {
-              d[k] = +d[k];
-            }
-        }
-      });
-    });
-  }
-
-  private setDataScales() {
-    const dateExtent = d3.extent(this.data, (d) => d[this.dateField]);
-    this.secToDate = d3.scaleLinear(this.time, dateExtent).clamp(true);
-    const g = d3.group(this.data, (d) => d[this.idField]);
-    const dataScales = new Map();
-    g.forEach((dataList, k) => {
-      const dateList = dataList.map((d) => d[this.dateField]);
-      const secList = dateList.map((d) => this.secToDate.invert(d));
-      const dataScale = d3.scaleLinear(secList, dataList).clamp(true);
-      dataScales.set(k, dataScale);
-    });
-    this.dataScales = dataScales;
   }
 }

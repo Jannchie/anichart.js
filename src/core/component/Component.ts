@@ -17,7 +17,8 @@ export class Component {
   alpha?: number;
   filter?: string;
   fillStyle?: string | CanvasGradient | CanvasPattern;
-  strokeStyle?: string | CanvasGradient | CanvasPattern = "#0000";
+  strokeStyle?: string | CanvasGradient | CanvasPattern;
+  lineWidth?: number;
   setup? = function () {
     this.children.forEach((child: Component) => {
       child.setup();
@@ -34,6 +35,7 @@ export class Component {
       if (component.filter) this.filter = component.filter;
       if (component.fillStyle) this.fillStyle = component.fillStyle;
       if (component.strokeStyle) this.strokeStyle = component.strokeStyle;
+      if (component.lineWidth) this.lineWidth = component.lineWidth;
     }
   }
 }

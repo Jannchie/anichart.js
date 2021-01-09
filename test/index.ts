@@ -1,4 +1,4 @@
-import { createAni } from "../src/core/ani/AniCreator";
+import { customAni, createAni } from "../src/core/ani/AniCreator";
 import { ease } from "../src/core/ani/Ease";
 import { RectAni } from "../src/core/ani/RectAni";
 import { TextAni } from "../src/core/ani/TextAni";
@@ -9,6 +9,7 @@ import { Image } from "../src/core/component/Image";
 import { recourse } from "../src/core/Recourse";
 import { BarChart } from "../src/core/chart/BarChart";
 import * as d3 from "d3";
+import { LineChart } from "../src/core/chart/LineChart";
 const stage = new Stage();
 stage.options.fps = 60;
 // stage.output = true;
@@ -53,8 +54,8 @@ recourse.loadImage(
   "jannchie"
 );
 
-recourse.loadData("./data/steam.csv", "data");
-recourse.loadData("./data/steam-meta.csv", "meta");
+recourse.loadData("./data/test.csv", "data");
+recourse.loadData("./data/test-meta.csv", "meta");
 
 const rectAni = createAni(
   [
@@ -124,17 +125,48 @@ const logoAni = createAni(
 const barChart = new BarChart({
   shape: { width: stage.canvas.width, height: stage.canvas.height },
   labelFormat(id, meta) {
-    return meta.get(id).name;
+    return id;
+    // return meta.get(id).name;
   },
-  time: [4, 15],
+  aniTime: [4, 10],
 });
+
+const lineChart = new LineChart({
+  aniTime: [4, 10],
+  shape: { width: stage.canvas.width, height: stage.canvas.height / 2 },
+  position: { x: 0, y: stage.canvas.height / 2 },
+});
+const a = customAni(0)
+  .keyFrame(
+    new Rect({
+      position: { x: 300, y: 300 },
+      center: { x: 150, y: 150 },
+      shape: { width: 300, height: 300 },
+      fillStyle: "#fff",
+      radius: 150,
+    })
+  )
+  .duration(1)
+  .keyFrame(
+    new Rect({
+      position: { x: 300, y: 300 },
+      center: { x: 0, y: 0 },
+      shape: { width: 0, height: 0 },
+      fillStyle: "#d23",
+      radius: 0,
+    })
+  );
+
 stage.addChild(bgAni);
+stage.addChild(a);
 stage.addChild(logoCenter);
 stage.addChild(textLinesAni);
 stage.addChild(rectAni);
 stage.addChild(logoAni);
 stage.addChild(barChart);
+stage.addChild(lineChart);
 stage.options.sec = 12;
 stage.play();
+
 (window as any).stage = stage;
 (window as any).d3 = d3;

@@ -3,6 +3,8 @@ import { Rect } from "./component/Rect";
 import { Text } from "./component/Text";
 import { Image } from "./component/Image";
 import { recourse } from "./Recourse";
+import { Line } from "./component/Line";
+import { Arc } from "./component/Arc";
 export class CanvasRenderer {
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
@@ -34,6 +36,12 @@ export class CanvasRenderer {
         case "Image":
           this.renderImage(component as Image);
           break;
+        case "Arc":
+          this.renderArc(component as Arc);
+          break;
+        case "Line":
+          this.renderLine(component as Line);
+          break;
       }
       // render children components
       component.children.forEach((child) => {
@@ -42,11 +50,28 @@ export class CanvasRenderer {
     }
     this.ctx.restore();
   }
+  renderArc(arc: Arc) {
+    this.ctx.beginPath();
+    this.ctx.arc(
+      -arc.center.x,
+      -arc.center.y,
+      arc.radius,
+      arc.startAngle,
+      arc.endAngle,
+      arc.anticlockwise
+    );
+    if (arc.strokeStyle) this.ctx.stroke();
+    if (arc.fillStyle) this.ctx.fill();
+  }
+  renderLine(line: Line) {
+    if (this.ctx.fillStyle) this.ctx.fill(line.path);
+    if (this.ctx.strokeStyle) this.ctx.stroke(line.path);
+  }
   renderClipRect(component: Rect) {
     this.ctx.beginPath();
     this.radiusArea(
-      component.position.x,
-      component.position.y,
+      -component.center.x,
+      -component.center.y,
       component.shape.width,
       component.shape.height,
       component.radius
@@ -90,15 +115,15 @@ export class CanvasRenderer {
     }
     if (!component.radius || component.radius <= 0) {
       this.ctx.fillRect(
-        component.position.x,
-        component.position.y,
+        -component.center.x,
+        -component.center.y,
         component.shape.width,
         component.shape.height
       );
     } else {
       this.fillRadiusRect(
-        component.position.x,
-        component.position.y,
+        -component.center.x,
+        -component.center.y,
         component.shape.width,
         component.shape.height,
         component.radius
@@ -117,18 +142,29 @@ export class CanvasRenderer {
     if (component.fillStyle) {
       this.ctx.fillStyle = component.fillStyle;
     }
+    if (component.lineWidth) {
+      this.ctx.lineWidth = component.lineWidth;
+    }
     if (component.alpha !== undefined) {
       this.ctx.globalAlpha = component.alpha;
     }
   }
   renderText(component: Text) {
     this.prerenderText(component);
-    this.ctx.fillText(component.text, -component.center.x, -component.center.y);
-    this.ctx.strokeText(
-      component.text,
-      -component.center.x,
-      -component.center.y
-    );
+    if (component.fillStyle) {
+      this.ctx.fillText(
+        component.text,
+        -component.center.x,
+        -component.center.y
+      );
+    }
+    if (component.strokeStyle) {
+      this.ctx.strokeText(
+        component.text,
+        -component.center.x,
+        -component.center.y
+      );
+    }
   }
   prerenderText(component: Text) {
     if (component.textAlign) {

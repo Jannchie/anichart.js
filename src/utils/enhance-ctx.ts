@@ -49,7 +49,7 @@ export function enhanceCtx(ctx: any): EnhancedCanvasRenderingContext2D {
         // tslint:disable-next-line:no-console
         console.log(error);
       }
-      ctx.stroke();
+      if (ctx.strokeStyle) ctx.stroke();
       ctx.restore();
     }
   };

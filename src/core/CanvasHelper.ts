@@ -2,6 +2,9 @@ import { canvasRenderer, CanvasRenderer } from "./CanvasRenderer";
 import { Component } from "./component/Component";
 import { Text } from "./component/Text";
 export class CanvasHelper {
+  isPointInPath(area: Path2D, x: number, d: number): any {
+    return this.renderer.canvas.getContext("2d").isPointInPath(area, x, d);
+  }
   renderer: CanvasRenderer = canvasRenderer;
   constructor() {
     this.renderer.canvas = document.querySelector("canvas");
