@@ -27,7 +27,6 @@ interface BarChartOptions extends BaseChartOptions {
   barInfoFormat?: (id: string, meta?: Map<string, any>) => string;
 }
 export class BarChart extends BaseChart {
-
   itemCount = 20;
 
   barPadding = 8;
@@ -152,7 +151,10 @@ export class BarChart extends BaseChart {
       ]
     );
 
-    const res = new Component({ alpha: this.alphaScale(sec) });
+    const res = new Component({
+      alpha: this.alphaScale(sec),
+      position: this.position,
+    });
     currentData.forEach((data) => {
       const barOptions = this.getBarOptions(data, scaleX, indexs, sec);
       if (barOptions.alpha > 0) {
