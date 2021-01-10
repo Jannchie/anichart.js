@@ -48,12 +48,12 @@ export class LineChart extends BaseChart {
         : sec > this.aniTime[1]
         ? this.aniTime[1]
         : sec;
+    if (this.aniTime[0] === temp) return new Component();
     this.scales = {
       x: d3.scaleLinear(
         [this.aniTime[0], temp],
         [0, this.shape.width - this.margin.left - this.margin.right]
       ),
-
       y: d3.scaleLinear(valueRange, [
         this.shape.height - this.margin.top - this.margin.bottom,
         0,
@@ -82,7 +82,10 @@ export class LineChart extends BaseChart {
     const points = new Component({
       position: { x: this.margin.left, y: this.margin.top },
     });
-    const res = new Component({ position: this.position });
+    const res = new Component({
+      position: this.position,
+      alpha: this.alphaScale(sec - this.fadeTime[0] - this.freezeTime[0]),
+    });
     const maxX = d3.max(this.scales.x.range());
     this.dataGroup.forEach((v: any[], k) => {
       const line = new Line();
@@ -106,9 +109,9 @@ export class LineChart extends BaseChart {
       } else if (maxValue < this.historyMin) {
         this.historyMin = maxValue;
       }
-
       points.children.push(point);
     });
+
     res.children.push(lineArea);
     res.children.push(points);
     const x = this.getXAxisComponent(this.scales.y);
