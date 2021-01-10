@@ -10,6 +10,7 @@ import { recourse } from "../src/core/Recourse";
 import { BarChart } from "../src/core/chart/BarChart";
 import * as d3 from "d3";
 import { LineChart } from "../src/core/chart/LineChart";
+import { Progress } from "../src/core/ani/Progress";
 const stage = new Stage();
 stage.options.fps = 60;
 // stage.output = true;
@@ -146,7 +147,7 @@ const a = customAni(0)
       radius: 150,
     })
   )
-  .duration(1)
+  .duration(1, d3.easeBounce)
   .keyFrame(
     new Rect({
       position: { x: 300, y: 300 },
@@ -165,6 +166,11 @@ stage.addChild(rectAni);
 stage.addChild(logoAni);
 stage.addChild(barChart);
 stage.addChild(lineChart);
+
+const progress = new Progress({
+  position: { x: stage.canvas.width / 2, y: stage.canvas.height / 2 },
+});
+stage.addChild(progress);
 stage.options.sec = 12;
 stage.play();
 

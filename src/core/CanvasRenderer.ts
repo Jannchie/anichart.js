@@ -129,6 +129,24 @@ export class CanvasRenderer {
         component.radius
       );
     }
+    if (component.strokeStyle) {
+      if (!component.radius || component.radius <= 0) {
+        this.ctx.strokeRect(
+          -component.center.x,
+          -component.center.y,
+          component.shape.width,
+          component.shape.height
+        );
+      } else {
+        this.strokeRadiusRect(
+          -component.center.x,
+          -component.center.y,
+          component.shape.width,
+          component.shape.height,
+          component.radius
+        );
+      }
+    }
   }
 
   renderBase(component: Component) {
@@ -200,6 +218,18 @@ export class CanvasRenderer {
     this.radiusArea(left, top, w, h, r);
     this.ctx.closePath();
     this.ctx.fill();
+  }
+  private strokeRadiusRect(
+    left: number,
+    top: number,
+    w: number,
+    h: number,
+    r: number
+  ) {
+    this.ctx.beginPath();
+    this.radiusArea(left, top, w, h, r);
+    this.ctx.closePath();
+    this.ctx.stroke();
   }
   private radiusArea(
     left: number,
