@@ -25,12 +25,23 @@ export class LineChart extends BaseChart {
     this.yTickFormat = (n: number | { valueOf(): number }) => {
       return d3.timeFormat("%Y-%m-%d")(this.secToDate(n));
     };
+    this.historyMax = d3.min(this.data, (d) => d[this.valueField]);
+    this.historyMin = d3.max(this.data, (d) => d[this.valueField]);
   }
+
+  historyMax: number;
+  historyMin: number;
   getComponent(sec: number) {
     const currentData = this.getCurrentData(sec);
     const valueRange = d3.extent(currentData, (d) => d[this.valueField]);
-    valueRange[0] *= 0.7;
-    valueRange[1] *= 1.3;
+    if (this.historyMax > valueRange[1]) {
+      valueRange[1] = this.historyMax;
+    }
+    if (this.historyMin < valueRange[0]) {
+      valueRange[0] = this.historyMin;
+    }
+    valueRange[0] *= 0.8;
+    valueRange[1] *= 1.2;
     const temp =
       sec < this.aniTime[0]
         ? this.aniTime[0]
@@ -82,13 +93,19 @@ export class LineChart extends BaseChart {
       lineArea.children.push(line);
 
       const areaPath = new Path2D(areaGen.curve(d3.curveMonotoneX)(v));
-      const y = this.findY(areaPath, maxX);
+      const currentY = this.findY(areaPath, maxX);
       const point = new Arc({
         fillStyle: color,
         radius: 5,
-        alpha: y !== undefined ? 1 : 0,
-        position: { x: maxX, y },
+        alpha: currentY !== undefined ? 1 : 0,
+        position: { x: maxX, y: currentY },
       });
+      const maxValue = this.scales.y.invert(currentY);
+      if (maxValue > this.historyMax) {
+        this.historyMax = maxValue;
+      } else if (maxValue < this.historyMin) {
+        this.historyMin = maxValue;
+      }
 
       points.children.push(point);
     });
