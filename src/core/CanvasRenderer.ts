@@ -25,7 +25,7 @@ export class CanvasRenderer {
     // render base component props
     this.renderBase(component);
     // render special component props
-    if (this.ctx.globalAlpha !== 0) {
+    if (this.ctx.globalAlpha >= 0) {
       switch (component.type) {
         case "Text":
           this.renderText(component as Text);
@@ -164,7 +164,7 @@ export class CanvasRenderer {
       this.ctx.lineWidth = component.lineWidth;
     }
     if (component.alpha !== undefined) {
-      this.ctx.globalAlpha = component.alpha;
+      this.ctx.globalAlpha *= component.alpha;
     }
   }
   renderText(component: Text) {

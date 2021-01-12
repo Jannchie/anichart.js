@@ -6,6 +6,7 @@ import { customAni } from "./AniCreator";
 import * as d3 from "d3";
 export interface ProgressOptions {
   position?: { x: number; y: number };
+  aniTime?: [number, number];
 }
 export class Progress extends Ani {
   ani: Ani;
@@ -20,30 +21,9 @@ export class Progress extends Ani {
   constructor(options?: ProgressOptions) {
     super();
     if (options) {
-      if (options.position) {
-        this.position = options.position;
-      }
+      if (options.position) this.position = options.position;
+      if (options.aniTime) this.aniTime = options.aniTime;
     }
-    const text0 = new Text({
-      text: `0.0 %`,
-      center: { x: this.shape.width / 2, y: this.shape.height / 2 },
-      position: { x: this.shape.width + 10, y: this.shape.height },
-      textAlign: "left",
-      textBaseline: "bottom",
-      fillStyle: "#FFF",
-      fontSize: this.shape.height * 0.8,
-      font: "Sarasa Mono SC",
-    });
-    const text1 = new Text({
-      text: `100.0 %`,
-      center: { x: (this.shape.width / 2) * 1.75, y: this.shape.height / 2 },
-      position: { x: this.shape.width * 1.75 + 10, y: this.shape.height },
-      textAlign: "left",
-      textBaseline: "bottom",
-      fillStyle: "#FFF",
-      fontSize: this.shape.height * 0.8,
-      font: "Sarasa Mono SC",
-    });
     const border0 = new Rect({
       shape: {
         width: this.shape.width,
@@ -92,11 +72,9 @@ export class Progress extends Ani {
     const start = new Component({ position: this.position });
     start.children.push(border0);
     start.children.push(bar0);
-    start.children.push(text0);
     const end = new Component({ position: this.position });
     end.children.push(border1);
     end.children.push(bar1);
-    end.children.push(text1);
 
     const borderFinished = new Rect({
       shape: {
@@ -128,24 +106,13 @@ export class Progress extends Ani {
     final.children.push(borderFinished);
     final.children.push(bar2);
 
-    const text2 = new Text({
-      text: `=== FINISHED ===`,
-      center: { x: this.shape.width / 2, y: this.shape.height / 2 },
-      position: { x: this.shape.width / 2, y: this.shape.height },
-      textAlign: "center",
-      textBaseline: "bottom",
-      fillStyle: "#FFF",
-      fontSize: this.shape.height * 0.8,
-      font: "Sarasa Mono SC",
-    });
-    final.children.push(text2);
     const objCopy = Object.assign({}, final);
     objCopy.alpha = 0;
     this.ani = customAni(this.aniTime[0])
       .keyFrame(start)
       .duration(this.aniTime[1], d3.easePolyOut.exponent(5))
       .keyFrame(end)
-      .duration(0.2, d3.easePolyOut.exponent(2))
+      .duration(0.25)
       .keyFrame(final)
       .duration(0.5)
       .keyFrame(final)
