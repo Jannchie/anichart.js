@@ -1,6 +1,8 @@
 import * as d3 from "d3";
 import * as _ from "lodash-es";
 import { Ani } from "../ani/Ani";
+import { Component } from "../component/Component";
+import { Text } from "../component/Text";
 import { recourse } from "../Recourse";
 import { Stage } from "../Stage";
 export interface BaseChartOptions {
@@ -51,6 +53,10 @@ export abstract class BaseChart extends Ani {
   alphaScale: d3.ScaleLinear<number, number, never>;
   secToDate: d3.ScaleLinear<any, any, never>;
   dateFormat = "%Y-%m-%d";
+
+  xTickFormat = d3.format(",d");
+  yTickFormat = d3.format(",d");
+
   constructor(options?: BaseChartOptions) {
     super();
     if (!options) return;
@@ -173,5 +179,57 @@ export abstract class BaseChart extends Ani {
         }
       });
     return currentData;
+  }
+
+  protected getXAxisComponent(
+    scale: d3.ScaleLinear<number, number, never>,
+    x = 20,
+    text = new Text({
+      font: "Sarasa Mono Slab SC",
+      fillStyle: "#777",
+      fontSize: 16,
+      textAlign: "right",
+      textBaseline: "middle",
+    }),
+    count = 5
+  ): Component {
+    return this.getAxisComponent(this.xTickFormat, scale, x, count, text, "x");
+  }
+
+  private getAxisComponent(
+    format: (v: number | { valueOf(): number }) => string,
+    scale: d3.ScaleLinear<number, number, never>,
+    pos: number,
+    count: number,
+    text: Text,
+    type: "x" | "y"
+  ) {
+    const ticks = scale.ticks(count);
+    const res = new Component();
+    res.children = ticks.map((v) => {
+      const t = new Text(text);
+      if (type === "x") {
+        t.position = { y: scale(v), x: pos };
+      } else {
+        t.position = { x: scale(v), y: pos };
+      }
+      t.text = format(v);
+      return t;
+    });
+    return res;
+  }
+  protected getYAxisComponent(
+    scale: d3.ScaleLinear<number, number, never>,
+    y = 20,
+    text = new Text({
+      font: "Sarasa Mono Slab SC",
+      fillStyle: "#777",
+      fontSize: 16,
+      textAlign: "center",
+      textBaseline: "bottom",
+    }),
+    count = 5
+  ): Component {
+    return this.getAxisComponent(this.yTickFormat, scale, y, count, text, "y");
   }
 }

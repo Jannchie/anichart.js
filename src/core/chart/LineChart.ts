@@ -22,14 +22,36 @@ export class LineChart extends BaseChart {
   };
   setup(stage: Stage) {
     super.setup(stage);
+    this.yTickFormat = (n: number | { valueOf(): number }) => {
+      return d3.timeFormat("%Y-%m-%d")(this.secToDate(n));
+    };
+    this.historyMax = d3.min(this.data, (d) => d[this.valueField]);
+    this.historyMin = d3.max(this.data, (d) => d[this.valueField]);
   }
+
+  historyMax: number;
+  historyMin: number;
   getComponent(sec: number) {
     const currentData = this.getCurrentData(sec);
-    // const valueRange = d3.extent(currentData, (d) => d[this.valueField]);
-    const valueRange = [0, 12];
+    const valueRange = d3.extent(currentData, (d) => d[this.valueField]);
+    if (this.historyMax > valueRange[1]) {
+      valueRange[1] = this.historyMax;
+    }
+    if (this.historyMin < valueRange[0]) {
+      valueRange[0] = this.historyMin;
+    }
+    valueRange[0] *= 0.8;
+    valueRange[1] *= 1.2;
+    const temp =
+      sec < this.aniTime[0]
+        ? this.aniTime[0]
+        : sec > this.aniTime[1]
+        ? this.aniTime[1]
+        : sec;
+    if (this.aniTime[0] === temp) return new Component();
     this.scales = {
       x: d3.scaleLinear(
-        [this.aniTime[0], d3.min([sec, this.aniTime[1]])],
+        [this.aniTime[0], temp],
         [0, this.shape.width - this.margin.left - this.margin.right]
       ),
       y: d3.scaleLinear(valueRange, [
@@ -60,7 +82,10 @@ export class LineChart extends BaseChart {
     const points = new Component({
       position: { x: this.margin.left, y: this.margin.top },
     });
-    const res = new Component({ position: this.position });
+    const res = new Component({
+      position: this.position,
+      alpha: this.alphaScale(sec - this.fadeTime[0] - this.freezeTime[0]),
+    });
     const maxX = d3.max(this.scales.x.range());
     this.dataGroup.forEach((v: any[], k) => {
       const line = new Line();
@@ -71,18 +96,28 @@ export class LineChart extends BaseChart {
       lineArea.children.push(line);
 
       const areaPath = new Path2D(areaGen.curve(d3.curveMonotoneX)(v));
-      const y = this.findY(areaPath, maxX);
+      const currentY = this.findY(areaPath, maxX);
       const point = new Arc({
         fillStyle: color,
         radius: 5,
-        alpha: y !== undefined ? 1 : 0,
-        position: { x: maxX, y },
+        alpha: currentY !== undefined ? 1 : 0,
+        position: { x: maxX, y: currentY },
       });
-
+      const maxValue = this.scales.y.invert(currentY);
+      if (maxValue > this.historyMax) {
+        this.historyMax = maxValue;
+      } else if (maxValue < this.historyMin) {
+        this.historyMin = maxValue;
+      }
       points.children.push(point);
     });
+
     res.children.push(lineArea);
     res.children.push(points);
+    const x = this.getXAxisComponent(this.scales.y);
+    const y = this.getYAxisComponent(this.scales.x);
+    res.children.push(x);
+    res.children.push(y);
     return res;
   }
 

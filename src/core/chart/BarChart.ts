@@ -199,7 +199,7 @@ export class BarChart extends BaseChart {
     }
     data[this.valueField] = this.lastValue.get(data[this.idField]);
     const alpha = d3
-      .scaleLinear([this.itemCount - 1, this.itemCount], [1, 0.001])
+      .scaleLinear([this.itemCount - 1, this.itemCount], [1, 0])
       .clamp(true)(indexs.get(data[this.idField]));
     return {
       id: data[this.idField],
@@ -209,7 +209,7 @@ export class BarChart extends BaseChart {
           this.margin.top +
           indexs.get(data[this.idField]) * (this.barHeight + this.barGap),
       },
-      alpha: alpha * this.alphaScale(sec),
+      alpha,
       value: data[this.valueField],
       shape: { width: scaleX(data[this.valueField]), height: this.barHeight },
       color: colorPicker.getColor(data[this.colorField]),
