@@ -13,7 +13,7 @@ import { LineChart } from "../src/core/chart/LineChart";
 import { Progress } from "../src/core/ani/Progress";
 const stage = new Stage();
 stage.options.fps = 60;
-// stage.output = true;
+stage.output = false;
 
 const bgAni = new RectAni();
 bgAni.component.shape = {
