@@ -1,4 +1,4 @@
-import { imageLoader } from "./imageLoader";
+import { imageLoader } from "./ImageLoader";
 import { csv } from "d3";
 import { csvParse, DSVRowArray } from "d3-dsv";
 export class Recourse {
