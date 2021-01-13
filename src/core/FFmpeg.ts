@@ -8,7 +8,18 @@ if (typeof window === "undefined") {
 }
 
 import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
-export const ffmpeg = createFFmpeg();
+export type Preset =
+  | "ultrafast"
+  | "superfast"
+  | "veryfast"
+  | "faster"
+  | "fast"
+  | "medium"
+  | "slow"
+  | "slower"
+  | "veryslow"
+  | "placebo ";
+export const ffmpeg = createFFmpeg({ log: true });
 export async function addFrameToFFmpeg(
   canvas: HTMLCanvasElement,
   frame: number,
@@ -21,7 +32,12 @@ export async function addFrameToFFmpeg(
   const imageData = canvas.toDataURL("image/png", qulity);
   ffmpeg.FS("writeFile", `${name}-${frame}.png`, await fetchFile(imageData));
 }
-export async function outputMP4(fps: any, name = "output", thread = 16) {
+export async function outputMP4(
+  fps: any,
+  name = "output",
+  preset: Preset = "ultrafast",
+  tune = "animation"
+) {
   const out = `mp4`;
   await ffmpeg.run(
     "-r",
@@ -31,11 +47,9 @@ export async function outputMP4(fps: any, name = "output", thread = 16) {
     `-c:v`,
     `libx264`,
     `-preset`,
-    `ultrafast`,
+    preset,
     `-tune`,
-    `animation`,
-    `-threads`,
-    `${thread}`,
+    tune,
     `${name}.${out}`
   );
   const data = ffmpeg.FS("readFile", `./${name}.${out}`);
@@ -50,31 +64,4 @@ function downloadBlob(blob: Blob, name = "untitled.mp4") {
   a.download = `${name}`;
   a.click();
   window.URL.revokeObjectURL(url);
-}
-
-export async function pngToMp4(pngPath: any, name: any, fps: any, thread = 16) {
-  await ffmpeg.load();
-  const out = "mp4";
-  const nameList = fs.readdirSync(pngPath);
-  for (const n of nameList) {
-    await ffmpeg.FS("writeFile", n, `${pngPath}${name}`);
-  }
-  await ffmpeg.run(
-    "-r",
-    `${fps}`,
-    `-i`,
-    `${name}-%d.png`,
-    `-c:v`,
-    `libx264`,
-    `-preset`,
-    `ultrafast`,
-    `-tune`,
-    `animation`,
-    `-threads`,
-    `${thread}`,
-    `${name}.${out}`
-  );
-  const data = await ffmpeg.FS("readFile", `${name}.${out}`);
-  fs.writeFileSync(`${name}.${out}`, data);
-  process.exit(0);
 }
