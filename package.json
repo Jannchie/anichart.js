@@ -1,7 +1,7 @@
 {
   "name": "anichart",
   "sideEffects": false,
-  "version": "1.4.1",
+  "version": "2.0.0-0",
   "description": "",
   "author": "jannchie <jannchie@gmail.com>",
   "license": "MIT",
@@ -46,6 +46,7 @@
   },
   "dependencies": {
     "@canvas/image": "^1.0.1",
+    "@ffmpeg/core": "^0.8.5",
     "@ffmpeg/ffmpeg": "0.9.6",
     "@types/d3": "^6.2.0",
     "@types/d3-array": "^2.8.0",

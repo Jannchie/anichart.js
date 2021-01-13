@@ -237,6 +237,11 @@
   resolved "https://registry.yarnpkg.com/@discoveryjs/json-ext/-/json-ext-0.5.2.tgz#8f03a22a04de437254e8ce8cc84ba39689288752"
   integrity sha512-HyYEUDeIj5rRQU2Hk5HTB2uHsbRQpF70nvMhVzi+VJR0X+xNEhjPui4/kBf3VeH/wqD28PT4sVOm8qqLjBrSZg==
 
+"@ffmpeg/core@^0.8.5":
+  version "0.8.5"
+  resolved "https://registry.yarnpkg.com/@ffmpeg/core/-/core-0.8.5.tgz#2d0b7d4409a4348fa6a1888c247de706ffc0e63f"
+  integrity sha512-hemVFmhVLbD/VZaCG2BvCzFglKytMIMJ5aJfc12eXN4O4cG0wXnGTMVzlK1KKW/6viHhJMPkc9h4UDnJW8Uivg==
+
 "@ffmpeg/ffmpeg@0.9.6":
   version "0.9.6"
   resolved "https://registry.yarnpkg.com/@ffmpeg/ffmpeg/-/ffmpeg-0.9.6.tgz#b44fa1ab34dd860785bb7c317dbfbe8b9ded7036"
