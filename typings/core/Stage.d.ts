@@ -15,14 +15,15 @@ export declare class Stage {
     mode: string;
     private cFrame;
     setFrame(val: number): void;
+    setSec(val: number): void;
     get totalFrames(): number;
     get canvas(): HTMLCanvasElement;
     constructor(canvas?: HTMLCanvasElement);
     addChild(child: Ani | Component): void;
-    private preRender;
     render(sec: number): void;
     loadRecourse(): Promise<any[]>;
     play(): void;
     setup(): void;
+    private preRender;
     private setupChildren;
 }

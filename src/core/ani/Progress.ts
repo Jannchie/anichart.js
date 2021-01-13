@@ -12,7 +12,7 @@ export class Progress extends Ani {
   ani: Ani;
   shape = { width: 200, height: 24 };
   radius: number = 6;
-  padding: number = 6;
+  padding: number = 3;
   color: string = "#FFF";
   lineWidth: number = 2;
   aniTime = [0, 3];

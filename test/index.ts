@@ -125,7 +125,7 @@ const logoAni = createAni(
 
 const barChart = new BarChart({
   shape: { width: stage.canvas.width, height: stage.canvas.height },
-  labelFormat(id, meta) {
+  labelFormat(id) {
     return id;
     // return meta.get(id).name;
   },

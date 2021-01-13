@@ -1,11 +1,11 @@
 import { Component } from "../component/Component";
 import { Stage } from "../Stage";
-import { BaseChart, BaseChartOptions } from "./BaseChart";
+import { BaseChart, BaseChartOptions, KeyGener } from "./BaseChart";
 interface BarChartOptions extends BaseChartOptions {
     itemCount?: number;
     barPadding?: number;
     barGap?: number;
-    barInfoFormat?: (id: string, meta?: Map<string, any>) => string;
+    barInfoFormat?: KeyGener;
 }
 export declare class BarChart extends BaseChart {
     itemCount: number;
@@ -16,7 +16,7 @@ export declare class BarChart extends BaseChart {
     labelPlaceholder: number;
     valuePlaceholder: number;
     get sampling(): number;
-    barInfoFormat: (id: any, meta?: Map<string, any>) => any;
+    barInfoFormat: (id: any, data?: Map<string, any>, meta?: Map<string, any>) => string;
     historyIndex: Map<any, any>;
     ids: string[];
     constructor(options?: BarChartOptions);
