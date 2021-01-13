@@ -1,4 +1,3 @@
-import { imageLoader } from "../../image-loader";
 import { Component } from "./Component";
 
 export class Image extends Component {

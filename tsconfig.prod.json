@@ -1,26 +1,21 @@
 {
-    "compilerOptions": {
-        "outDir": "lib",
-        "declarationDir": "typings",
-        "noImplicitAny": false,
-        "module": "es6",
-        "target": "es5",
-        "declarationMap": false,
-        "declaration": true,
-        "inlineSourceMap": true,
-        "typeRoots": [
-            "./src/**/*",
-            "./typings/**/*",
-            "./node_modules/@types"
-        ],
-        "moduleResolution":"Node",
-        "allowUmdGlobalAccess": true,
-        "esModuleInterop": true,
-        "allowJs": true,
-        "downlevelIteration": true
-    },
-    "compileOnSave": true,
-    "include": [
-        "./src/**/*", "@types", "typings/**/*"
-    ],
+  "compilerOptions": {
+    "outDir": "lib",
+    "declarationDir": "typings",
+    "noImplicitAny": false,
+    "module": "es6",
+    "target": "es5",
+    "declarationMap": false,
+    "declaration": true,
+    "inlineSourceMap": true,
+    "typeRoots": ["./src/**/*", "./typings/**/*", "./node_modules/@types"],
+    "moduleResolution": "Node",
+    "allowUmdGlobalAccess": true,
+    "esModuleInterop": true,
+    "allowJs": true,
+    "skipLibCheck": true,
+    "downlevelIteration": true
+  },
+  "compileOnSave": true,
+  "include": ["./src/**/*", "@types", "typings/**/*"]
 }
