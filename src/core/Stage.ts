@@ -10,7 +10,7 @@ export class Stage {
   compRoot: Component = new Component();
   renderer: CanvasRenderer;
 
-  options = { sec: 5, fps: 60 };
+  options = { sec: 5, fps: 30 };
   interval: d3.Timer;
   output: boolean;
   mode = "output";
@@ -77,6 +77,13 @@ export class Stage {
           while (this.cFrame < this.totalFrames) {
             this.cFrame++;
             this.render(this.cFrame / this.options.fps);
+            if (this.cFrame % this.options.fps === 0)
+              // tslint:disable-next-line:no-console
+              console.log(
+                `Drawing frame: ${d3.format(".2f")(
+                  (this.cFrame / this.totalFrames) * 100
+                )}%`
+              );
             promises.push(addFrameToFFmpeg(this.canvas, frame++));
           }
           Promise.all(promises).then(() => {

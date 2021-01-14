@@ -6,7 +6,7 @@ interface BarChartOptions extends BaseChartOptions {
     barPadding?: number;
     barGap?: number;
     barInfoFormat?: KeyGener;
-    dataLabelSize?: number;
+    dateLabelSize?: number;
     showDateLabel?: boolean;
 }
 export declare class BarChart extends BaseChart {
@@ -18,7 +18,7 @@ export declare class BarChart extends BaseChart {
     lastValue: Map<string, number>;
     labelPlaceholder: number;
     valuePlaceholder: number;
-    dataLabelSize: number;
+    dateLabelSize: number;
     showDateLabel: boolean;
     get sampling(): number;
     barInfoFormat: (id: any, data?: Map<string, any>, meta?: Map<string, any>) => string;
