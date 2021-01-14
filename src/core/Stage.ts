@@ -16,14 +16,19 @@ export class Stage {
   mode = "output";
   private cFrame = 0;
 
-  setFrame(val: number) {
-    this.cFrame = val;
-    this.setup();
+  get frame(): number {
+    return this.cFrame;
   }
 
-  setSec(val: number) {
-    this.cFrame = Math.round(val * this.options.fps);
-    this.setup();
+  set frame(val: number) {
+    this.cFrame = val;
+  }
+  get sec() {
+    return this.cFrame / this.options.fps;
+  }
+
+  set sec(val: number) {
+    this.cFrame = val * this.options.fps;
   }
 
   get totalFrames() {
@@ -41,6 +46,7 @@ export class Stage {
     }
     this.renderer = canvasRenderer;
     this.renderer.setCanvas(canvas);
+    this.sec = 0;
   }
 
   addChild(child: Ani | Component) {
