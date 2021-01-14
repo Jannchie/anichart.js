@@ -1,7 +1,7 @@
 {
   "name": "anichart",
   "sideEffects": false,
-  "version": "2.0.0-3",
+  "version": "2.0.0-4",
   "description": "",
   "author": "jannchie <jannchie@gmail.com>",
   "license": "MIT",
@@ -29,7 +29,6 @@
   },
   "devDependencies": {
     "@babel/core": "^7.11.6",
-    "@types/d3": "^6.2.0",
     "@types/lodash-es": "^4.17.4",
     "babel-loader": "^8.1.0",
     "clean-webpack-plugin": "^3.0.0",
@@ -49,6 +48,7 @@
   "dependencies": {
     "@ffmpeg/core": "^0.8.5",
     "@ffmpeg/ffmpeg": "0.9.6",
+    "@types/d3": "^6.2.0",
     "async": "^3.2.0",
     "canvas-5-polyfill": "^0.1.5",
     "d3": "^6.2.0",

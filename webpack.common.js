@@ -28,5 +28,4 @@ module.exports = {
       },
     ],
   },
-  externals: ["canvas", "fs"],
 };

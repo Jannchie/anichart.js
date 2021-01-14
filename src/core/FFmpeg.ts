@@ -1,12 +1,3 @@
-let fs: {
-  readdirSync: (arg0: any) => any;
-  writeFileSync: (arg0: string, arg1: any) => void;
-};
-if (typeof window === "undefined") {
-  // tslint:disable-next-line:no-var-requires
-  fs = require("fs");
-}
-
 import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
 export type Preset =
   | "ultrafast"
@@ -26,9 +17,6 @@ export async function addFrameToFFmpeg(
   name = "output",
   qulity = 1
 ) {
-  // const imageData = canvas
-  //   .getContext("2d")
-  //   .getImageData(0, 0, canvas.width, canvas.height)
   const imageData = canvas.toDataURL("image/png", qulity);
   ffmpeg.FS("writeFile", `${name}-${frame}.png`, await fetchFile(imageData));
 }
