@@ -12,6 +12,7 @@ export declare class Stage {
     };
     interval: d3.Timer;
     output: boolean;
+    outputConcurrency: number;
     mode: string;
     private cFrame;
     get frame(): number;
