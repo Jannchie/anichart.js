@@ -12,9 +12,9 @@ import * as d3 from "d3";
 import { LineChart } from "../src/core/chart/LineChart";
 import { Progress } from "../src/core/ani/Progress";
 const stage = new Stage();
-stage.options.fps = 20;
+stage.options.fps = 60;
 stage.options.sec = 12;
-stage.output = false;
+stage.output = true;
 
 const bgAni = new RectAni();
 bgAni.component.shape = {
@@ -52,7 +52,7 @@ textLinesAni.children.push(textJannchieStudio);
 
 recourse.loadImage("./data/ANI.png", "logo");
 recourse.loadImage(
-  "http://i1.hdslb.com/bfs/face/628b1bfeaae9387bdb337cfc5ca334004bee71c1.jpg",
+  "https://avatars3.githubusercontent.com/u/29743310?s=460&u=8e0d49b98c35738afadc04e70c7f3918d6ad8cdb&v=4",
   "jannchie"
 );
 

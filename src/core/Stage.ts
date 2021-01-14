@@ -4,7 +4,7 @@ import { canvasRenderer, CanvasRenderer } from "./CanvasRenderer";
 import { Component } from "./component/Component";
 import { addFrameToFFmpeg, ffmpeg, outputMP4 } from "./FFmpeg";
 import { recourse } from "./Recourse";
-
+import * as async from "async";
 export class Stage {
   aniRoot: Ani = new Ani();
   compRoot: Component = new Component();
@@ -13,6 +13,7 @@ export class Stage {
   options = { sec: 5, fps: 30 };
   interval: d3.Timer;
   output: boolean;
+  outputConcurrency = 128;
   mode = "output";
   private cFrame = 0;
 
@@ -63,7 +64,6 @@ export class Stage {
   }
 
   play(): void {
-    let frame = 0;
     this.loadRecourse().then(() => {
       this.setup();
       if (this.interval) {
@@ -73,22 +73,19 @@ export class Stage {
       }
       if (this.output) {
         ffmpeg.load().then(() => {
-          const promises = [];
+          const frames: number[] = [];
           while (this.cFrame < this.totalFrames) {
             this.cFrame++;
-            this.render(this.cFrame / this.options.fps);
-            if (this.cFrame % this.options.fps === 0)
-              // tslint:disable-next-line:no-console
-              console.log(
-                `Drawing frame: ${d3.format(".2f")(
-                  (this.cFrame / this.totalFrames) * 100
-                )}%`
-              );
-            promises.push(addFrameToFFmpeg(this.canvas, frame++));
+            frames.push(this.cFrame);
           }
-          Promise.all(promises).then(() => {
-            outputMP4(this.options.fps);
-          });
+          async
+            .eachLimit(frames, this.outputConcurrency, (f, callback) => {
+              this.render(f / this.options.fps);
+              addFrameToFFmpeg(this.canvas, f).then(() => callback());
+            })
+            .then(() => {
+              outputMP4(this.options.fps);
+            });
         });
       } else {
         this.interval = d3.interval((elapsed) => {
