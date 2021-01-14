@@ -9,6 +9,16 @@ import { colorPicker } from "../ColorPicker";
 import { canvasHelper } from "../CanvasHelper";
 import { Stage } from "../Stage";
 import { BaseChart, BaseChartOptions, KeyGener } from "./BaseChart";
+
+interface BarChartOptions extends BaseChartOptions {
+  itemCount?: number;
+  barPadding?: number;
+  barGap?: number;
+  barInfoFormat?: KeyGener;
+  dataLabelSize?: number;
+  showDateLabel?: boolean;
+}
+
 interface BarOptions {
   id: string;
   data: any;
@@ -20,14 +30,21 @@ interface BarOptions {
   alpha: number;
   image?: string;
 }
-
-interface BarChartOptions extends BaseChartOptions {
-  itemCount?: number;
-  barPadding?: number;
-  barGap?: number;
-  barInfoFormat?: KeyGener;
-}
 export class BarChart extends BaseChart {
+  constructor(options?: BarChartOptions) {
+    super(options);
+    if (!options) return;
+    if (options.itemCount) this.itemCount = options.itemCount;
+    if (options.barPadding !== undefined) this.barPadding = options.barPadding;
+    if (options.barGap !== undefined) this.barGap = options.barGap;
+    if (options.barInfoFormat !== undefined)
+      this.barInfoFormat = options.barInfoFormat;
+    if (options.dataLabelSize !== undefined)
+      this.dataLabelSize = options.dataLabelSize;
+    if (options.showDateLabel !== undefined)
+      this.showDateLabel = options.showDateLabel;
+  }
+
   itemCount = 20;
 
   barPadding = 8;
@@ -36,6 +53,8 @@ export class BarChart extends BaseChart {
   lastValue = new Map<string, number>();
   labelPlaceholder: number;
   valuePlaceholder: number;
+  dataLabelSize: number = 60;
+  showDateLabel: boolean = true;
 
   get sampling() {
     if (this.stage) {
@@ -55,13 +74,6 @@ export class BarChart extends BaseChart {
 
   historyIndex: Map<any, any>;
   ids: string[];
-  constructor(options?: BarChartOptions) {
-    super(options);
-    if (!options) return;
-    if (options.itemCount) this.itemCount = options.itemCount;
-    if (options.barPadding !== undefined) this.barPadding = options.barPadding;
-    if (options.barGap !== undefined) this.barGap = options.barGap;
-  }
   setup(stage: Stage) {
     super.setup(stage);
     this.ids = [...this.dataScales.keys()];
@@ -167,20 +179,22 @@ export class BarChart extends BaseChart {
       }
     });
 
-    const dateLabel = new Text({
-      text: d3.timeFormat(this.dateFormat)(this.secToDate(sec)),
-      font: "Sarasa Mono Slab SC",
-      fontSize: 45,
-      fillStyle: "#777",
-      textAlign: "right",
-      fontWeight: "bolder",
-      textBaseline: "bottom",
-      position: {
-        x: this.shape.width - this.margin.right,
-        y: this.shape.height - this.margin.bottom,
-      },
-    });
-    res.children.push(dateLabel);
+    if (this.showDateLabel) {
+      const dateLabel = new Text({
+        text: d3.timeFormat(this.dateFormat)(this.secToDate(sec)),
+        font: "Sarasa Mono Slab SC",
+        fontSize: this.dataLabelSize,
+        fillStyle: "#777",
+        textAlign: "right",
+        fontWeight: "bolder",
+        textBaseline: "bottom",
+        position: {
+          x: this.shape.width - this.margin.right,
+          y: this.shape.height - this.margin.bottom,
+        },
+      });
+      res.children.push(dateLabel);
+    }
     return res;
   }
   private get barHeight() {

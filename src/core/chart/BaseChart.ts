@@ -39,6 +39,27 @@ export type KeyGener =
   | ((id: string, meta: Map<string, any>) => string)
   | ((id: string, meta: Map<string, any>, data: Map<string, any>) => string);
 export abstract class BaseChart extends Ani {
+  constructor(options?: BaseChartOptions) {
+    super();
+    if (!options) return;
+    if (options.fadeTime) this.fadeTime = options.fadeTime;
+    if (options.aniTime) this.aniTime = options.aniTime;
+    if (options.freezeTime) this.freezeTime = options.freezeTime;
+    if (options.idField) this.idField = options.idField;
+    if (options.colorField) this.colorField = options.colorField;
+    if (options.dateField) this.dateField = options.dateField;
+    if (options.valueKeys) this.valueKeys = options.valueKeys;
+    if (options.valueField) this.valueField = options.valueField;
+    if (options.imageField) this.imageField = options.imageField;
+    if (options.margin !== undefined) this.margin = options.margin;
+    if (options.shape) this.shape = options.shape;
+    if (options.dateFormat) this.dateFormat = options.dateFormat;
+    if (options.labelFormat) this.labelFormat = options.labelFormat;
+    if (options.valueFormat) this.valueFormat = options.valueFormat;
+    if (options.data) this.dataName = options.data;
+    if (options.meta) this.metaName = options.meta;
+    if (options.position) this.position = options.position;
+  }
   dataScales: Map<string, any>;
   idField = "id";
   colorField: string | KeyGener = "id";
@@ -67,25 +88,6 @@ export abstract class BaseChart extends Ani {
   xTickFormat = d3.format(",d");
   yTickFormat = d3.format(",d");
 
-  constructor(options?: BaseChartOptions) {
-    super();
-    if (!options) return;
-    if (options.fadeTime) this.fadeTime = options.fadeTime;
-    if (options.aniTime) this.aniTime = options.aniTime;
-    if (options.freezeTime) this.freezeTime = options.freezeTime;
-    if (options.idField) this.idField = options.idField;
-    if (options.colorField) this.colorField = options.colorField;
-    if (options.dateField) this.dateField = options.dateField;
-    if (options.valueKeys) this.valueKeys = options.valueKeys;
-    if (options.valueField) this.valueField = options.valueField;
-    if (options.imageField) this.imageField = options.imageField;
-    if (options.margin !== undefined) this.margin = options.margin;
-    if (options.shape) this.shape = options.shape;
-    if (options.dateFormat) this.dateFormat = options.dateFormat;
-    if (options.data) this.dataName = options.data;
-    if (options.meta) this.metaName = options.meta;
-    if (options.position) this.position = options.position;
-  }
   setup(stage: Stage) {
     super.setup(stage);
     this.setData();
