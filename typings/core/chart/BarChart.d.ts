@@ -16,7 +16,7 @@ export declare class BarChart extends BaseChart {
     labelPlaceholder: number;
     valuePlaceholder: number;
     get sampling(): number;
-    barInfoFormat: (id: any, meta?: Map<string, any>, data?: Map<string, any>) => string;
+    barInfoFormat: (id: any, data?: Map<string, any>, meta?: Map<string, any>) => string;
     historyIndex: Map<any, any>;
     ids: string[];
     constructor(options?: BarChartOptions);
