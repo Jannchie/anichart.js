@@ -11,6 +11,7 @@ import { Stage } from "../Stage";
 import { BaseChart, BaseChartOptions, KeyGener } from "./BaseChart";
 interface BarOptions {
   id: string;
+  data: any;
   value: number;
   pos: { x: number; y: number };
   shape: { width: number; height: number };
@@ -46,10 +47,10 @@ export class BarChart extends BaseChart {
 
   barInfoFormat = (
     id: any,
-    meta?: Map<string, any>,
-    data?: Map<string, any>
+    data?: Map<string, any>,
+    meta?: Map<string, any>
   ) => {
-    return this.labelFormat(id, meta, data);
+    return this.labelFormat(id, data, meta);
   };
 
   historyIndex: Map<any, any>;
@@ -60,7 +61,6 @@ export class BarChart extends BaseChart {
     if (options.itemCount) this.itemCount = options.itemCount;
     if (options.barPadding !== undefined) this.barPadding = options.barPadding;
     if (options.barGap !== undefined) this.barGap = options.barGap;
-    if (options.barInfoFormat) this.barInfoFormat = options.barInfoFormat;
   }
   setup(stage: Stage) {
     super.setup(stage);
@@ -96,7 +96,7 @@ export class BarChart extends BaseChart {
     const maxWidth = d3.max(d, (item) => {
       const text = new Text(
         this.getLabelTextOptions(
-          this.valueFormat(item.value),
+          this.valueFormat(item),
           "#FFF",
           this.barHeight * 0.8
         )
@@ -161,7 +161,7 @@ export class BarChart extends BaseChart {
       position: this.position,
     });
     currentData.forEach((data) => {
-      const barOptions = this.getBarOptions(data, scaleX, indexs);
+      const barOptions = this.getBarOptions(data, scaleX, indexs, sec);
       if (barOptions.alpha > 0) {
         res.children.push(this.getBarComponent(barOptions));
       }
@@ -196,7 +196,8 @@ export class BarChart extends BaseChart {
   private getBarOptions(
     data: any,
     scaleX: d3.ScaleLinear<number, number, never>,
-    indexs: Map<string, number>
+    indexs: Map<string, number>,
+    sec: number
   ): BarOptions {
     if (!Number.isNaN(data[this.valueField])) {
       this.lastValue.set(data[this.idField], data[this.valueField]);
@@ -211,10 +212,6 @@ export class BarChart extends BaseChart {
     } else {
       color = this.colorField(data[this.idField], this.meta, this.dataGroup);
     }
-    const imageKey =
-      typeof this.imageField === "string"
-        ? data[this.imageField]
-        : this.imageField(data[this.idField], this.meta, this.dataGroup);
     return {
       id: data[this.idField],
       pos: {
@@ -224,9 +221,9 @@ export class BarChart extends BaseChart {
           indexs.get(data[this.idField]) * (this.barHeight + this.barGap),
       },
       alpha,
+      data,
       value: data[this.valueField],
       shape: { width: scaleX(data[this.valueField]), height: this.barHeight },
-      image: imageKey,
       color: colorPicker.getColor(color),
       radius: 4,
     };
@@ -252,7 +249,7 @@ export class BarChart extends BaseChart {
     );
     const valueLabel = new Text({
       textBaseline: "bottom",
-      text: `${this.valueFormat(options.value)}`,
+      text: `${this.valueFormat(options.data)}`,
       // textAlign: "left",
       position: {
         x: options.shape.width + this.barPadding,
