@@ -8,7 +8,7 @@ import * as _ from "lodash-es";
 import { colorPicker } from "../ColorPicker";
 import { canvasHelper } from "../CanvasHelper";
 import { Stage } from "../Stage";
-import { BaseChart, BaseChartOptions } from "./BaseChart";
+import { BaseChart, BaseChartOptions, KeyGener } from "./BaseChart";
 interface BarOptions {
   id: string;
   value: number;
@@ -24,7 +24,7 @@ interface BarChartOptions extends BaseChartOptions {
   itemCount?: number;
   barPadding?: number;
   barGap?: number;
-  barInfoFormat?: (id: string, meta?: Map<string, any>) => string;
+  barInfoFormat?: KeyGener;
 }
 export class BarChart extends BaseChart {
   itemCount = 20;
@@ -44,8 +44,12 @@ export class BarChart extends BaseChart {
     }
   }
 
-  barInfoFormat = (id: any, meta?: Map<string, any>) => {
-    return this.labelFormat(id, meta);
+  barInfoFormat = (
+    id: any,
+    data?: Map<string, any>,
+    meta?: Map<string, any>
+  ) => {
+    return this.labelFormat(id, data, meta);
   };
 
   historyIndex: Map<any, any>;
@@ -105,7 +109,7 @@ export class BarChart extends BaseChart {
     const maxWidth = d3.max(this.ids, (id) => {
       const text = new Text(
         this.getLabelTextOptions(
-          this.labelFormat(id, this.meta),
+          this.labelFormat(id, this.meta, this.dataGroup),
           "#FFF",
           this.barHeight * 0.8
         )
@@ -201,6 +205,12 @@ export class BarChart extends BaseChart {
     const alpha = d3
       .scaleLinear([this.itemCount - 1, this.itemCount], [1, 0])
       .clamp(true)(indexs.get(data[this.idField]));
+    let color: string;
+    if (typeof this.colorField === "string") {
+      color = data[this.idField];
+    } else {
+      color = this.colorField(data[this.idField], this.meta, this.dataGroup);
+    }
     return {
       id: data[this.idField],
       pos: {
@@ -212,7 +222,7 @@ export class BarChart extends BaseChart {
       alpha,
       value: data[this.valueField],
       shape: { width: scaleX(data[this.valueField]), height: this.barHeight },
-      color: colorPicker.getColor(data[this.colorField]),
+      color: colorPicker.getColor(color),
       radius: 4,
     };
   }
@@ -230,7 +240,7 @@ export class BarChart extends BaseChart {
     });
     const label = new Text(
       this.getLabelTextOptions(
-        this.labelFormat(options.id, this.meta),
+        this.labelFormat(options.id, this.meta, this.dataGroup),
         options.color,
         options.shape.height * 0.8
       )

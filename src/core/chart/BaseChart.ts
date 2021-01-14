@@ -16,24 +16,31 @@ export interface BaseChartOptions {
   margin?: { left: number; top: number; bottom: number; right: number };
 
   idField?: string;
-  colorField?: string;
+  colorField?: string | KeyGener;
   dateField?: string;
   valueField?: string;
 
   valueKeys?: string[];
 
   valueFormat?: (val: number) => string;
-  labelFormat?: (id: string, meta?: Map<string, any>) => string;
+  labelFormat?: (
+    id: string,
+    meta: Map<string, any>,
+    data: Map<string, any>
+  ) => string;
   dateFormat?: string;
 
   data?: string;
   meta?: string;
 }
-
+export type KeyGener =
+  | ((id: string) => string)
+  | ((id: string, meta: Map<string, any>) => string)
+  | ((id: string, meta: Map<string, any>, data: Map<string, any>) => string);
 export abstract class BaseChart extends Ani {
   dataScales: Map<string, any>;
   idField = "id";
-  colorField = "id";
+  colorField: string | KeyGener = "id";
   dateField = "date";
   valueField = "value";
   valueKeys = ["value"];
@@ -133,7 +140,7 @@ export abstract class BaseChart extends Ani {
     return d3.format(",.0f")(val);
   };
 
-  labelFormat = (id: string, meta?: Map<string, any>) => {
+  labelFormat: KeyGener = (id: string, meta?: Map<string, any>) => {
     if (meta.get(id) && meta.get(id).name) {
       return meta.get(id).name;
     } else {
