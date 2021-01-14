@@ -212,6 +212,10 @@ export class BarChart extends BaseChart {
     } else {
       color = this.colorField(data[this.idField], this.meta, this.dataGroup);
     }
+    const image =
+      typeof this.imageField === "string"
+        ? data[this.imageField]
+        : this.imageField(data[this.idField], this.meta, this.dataGroup);
     return {
       id: data[this.idField],
       pos: {
@@ -222,6 +226,7 @@ export class BarChart extends BaseChart {
       },
       alpha,
       data,
+      image,
       value: data[this.valueField],
       shape: { width: scaleX(data[this.valueField]), height: this.barHeight },
       color: colorPicker.getColor(color),

@@ -27,7 +27,7 @@ export interface BaseChartOptions {
     dateField?: string;
     valueField?: string;
     valueKeys?: string[];
-    valueFormat?: (val: number) => string;
+    valueFormat?: (cData: any) => string;
     labelFormat?: (id: string, meta: Map<string, any>, data: Map<string, any>) => string;
     dateFormat?: string;
     data?: string;
@@ -79,7 +79,7 @@ export declare abstract class BaseChart extends Ani {
     private setData;
     private setDataScales;
     setMeta(): void;
-    valueFormat: (val: number) => string;
+    valueFormat: (cData: any) => string;
     labelFormat: KeyGener;
     private setAlphaScale;
     private setDefaultAniTime;
