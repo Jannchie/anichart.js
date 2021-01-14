@@ -23,7 +23,7 @@ export interface BaseChartOptions {
 
   valueKeys?: string[];
 
-  valueFormat?: (val: number) => string;
+  valueFormat?: (cData: any) => string;
   labelFormat?: (
     id: string,
     meta: Map<string, any>,
@@ -140,8 +140,8 @@ export abstract class BaseChart extends Ani {
       (d) => d[this.idField]
     );
   }
-  valueFormat = (val: number) => {
-    return d3.format(",.0f")(val);
+  valueFormat = (cData: any) => {
+    return d3.format(",.0f")(cData[this.valueField]);
   };
 
   labelFormat: KeyGener = (id: string, meta?: Map<string, any>) => {
