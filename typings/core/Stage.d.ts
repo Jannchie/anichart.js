@@ -14,8 +14,10 @@ export declare class Stage {
     output: boolean;
     mode: string;
     private cFrame;
-    setFrame(val: number): void;
-    setSec(val: number): void;
+    get frame(): number;
+    set frame(val: number);
+    get sec(): number;
+    set sec(val: number);
     get totalFrames(): number;
     get canvas(): HTMLCanvasElement;
     constructor(canvas?: HTMLCanvasElement);

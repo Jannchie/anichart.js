@@ -1,7 +1,7 @@
 {
   "name": "anichart",
   "sideEffects": false,
-  "version": "2.0.0-5",
+  "version": "2.0.0-6",
   "description": "",
   "author": "jannchie <jannchie@gmail.com>",
   "license": "MIT",
@@ -25,7 +25,8 @@
     "deploy": "npm version prerelease",
     "serve": "webpack serve --open  --config webpack.dev.js --port 12341",
     "dev": "webpack  --config webpack.dev.js",
-    "watch": "webpack --watch  --config webpack.dev.js"
+    "watch": "webpack --watch  --config webpack.dev.js",
+    "prepublish": "yarn build"
   },
   "devDependencies": {
     "@babel/core": "^7.11.6",
