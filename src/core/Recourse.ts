@@ -32,12 +32,7 @@ export class Recourse {
     if (typeof path !== "string") {
       path = path.default;
     }
-    if (typeof window === "undefined") {
-      const fs = require("fs");
-      this.data.set(name, csvParse(fs.readFileSync(path).toString()));
-    } else {
-      this.dataPromise.set(name, csv(path));
-    }
+    this.dataPromise.set(name, csv(path));
   }
 }
 export const recourse = new Recourse();
