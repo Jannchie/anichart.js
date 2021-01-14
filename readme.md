@@ -88,7 +88,7 @@ npm i anichart
 
 ## 用法
 
-以下用法为1.x版本的API，2.x版本正在开发中，暂无API文档，但可以通过test文件夹的测试用例浏览用法。
+**即将过时**：以下用法为1.x版本的API，2.x版本正在开发中，暂无API文档，但可以通过test文件夹的测试用例浏览用法。
 
 ### 使用Npm或者Yarn导入
 
@@ -185,8 +185,10 @@ npm run serve
 
 #### Node.js环境
 
-Node.js 的版本被暂时移除了。因为相关依赖的包安装速度过于缓慢，使用体验较差。Node.js版本将来会作为独立的版本进行安装。
+**不建议使用**：Node.js 的版本在未来被暂时移除。因为相关依赖的包安装速度过于缓慢，使用体验较差。Node.js版本将来会作为独立的版本进行安装。
 
-<!-- ```bash
+如果有特殊需求，比如服务器端定时导出视频的用户，请等待正式版本。
+
+```bash
 node --experimental-wasm-threads --experimental-wasm-bulk-memory index.js
-``` -->
+```
