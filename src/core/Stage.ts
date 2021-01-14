@@ -15,10 +15,17 @@ export class Stage {
   output: boolean;
   mode = "output";
   private cFrame = 0;
+
   setFrame(val: number) {
     this.cFrame = val;
     this.setup();
   }
+
+  setSec(val: number) {
+    this.cFrame = Math.round(val * this.options.fps);
+    this.setup();
+  }
+
   get totalFrames() {
     return this.options.sec * this.options.fps;
   }
@@ -38,18 +45,6 @@ export class Stage {
 
   addChild(child: Ani | Component) {
     this.aniRoot.children.push(child);
-  }
-
-  private preRender(sec: number) {
-    this.compRoot = new Component();
-    this.aniRoot.children.forEach((child) => {
-      if (child instanceof Component) {
-        this.compRoot.children.push(child);
-      } else {
-        this.compRoot.children.push(child.getComponent(sec));
-      }
-    });
-    this.renderer.clean();
   }
 
   render(sec: number) {
@@ -100,6 +95,19 @@ export class Stage {
   setup() {
     this.setupChildren(this.aniRoot);
   }
+
+  private preRender(sec: number) {
+    this.compRoot = new Component();
+    this.aniRoot.children.forEach((child) => {
+      if (child instanceof Component) {
+        this.compRoot.children.push(child);
+      } else {
+        this.compRoot.children.push(child.getComponent(sec));
+      }
+    });
+    this.renderer.clean();
+  }
+
   private setupChildren(ani: Ani) {
     ani.setup(this);
     ani.children.forEach((child) => {

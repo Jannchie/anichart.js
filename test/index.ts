@@ -13,7 +13,7 @@ import { LineChart } from "../src/core/chart/LineChart";
 import { Progress } from "../src/core/ani/Progress";
 const stage = new Stage();
 stage.options.fps = 60;
-stage.output = true;
+stage.output = false;
 
 const bgAni = new RectAni();
 bgAni.component.shape = {
@@ -125,7 +125,7 @@ const logoAni = createAni(
 
 const barChart = new BarChart({
   shape: { width: stage.canvas.width, height: stage.canvas.height },
-  labelFormat(id, meta) {
+  labelFormat(id) {
     return id;
     // return meta.get(id).name;
   },
