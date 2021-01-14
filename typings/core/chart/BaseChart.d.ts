@@ -35,6 +35,7 @@ export interface BaseChartOptions {
 }
 export declare type KeyGener = ((id: string) => string) | ((id: string, meta: Map<string, any>) => string) | ((id: string, meta: Map<string, any>, data: Map<string, any>) => string);
 export declare abstract class BaseChart extends Ani {
+    constructor(options?: BaseChartOptions);
     dataScales: Map<string, any>;
     idField: string;
     colorField: string | KeyGener;
@@ -74,7 +75,6 @@ export declare abstract class BaseChart extends Ani {
     yTickFormat: (n: number | {
         valueOf(): number;
     }) => string;
-    constructor(options?: BaseChartOptions);
     setup(stage: Stage): void;
     private setData;
     private setDataScales;

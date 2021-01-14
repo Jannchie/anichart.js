@@ -6,8 +6,11 @@ interface BarChartOptions extends BaseChartOptions {
     barPadding?: number;
     barGap?: number;
     barInfoFormat?: KeyGener;
+    dataLabelSize?: number;
+    showDateLabel?: boolean;
 }
 export declare class BarChart extends BaseChart {
+    constructor(options?: BarChartOptions);
     itemCount: number;
     barPadding: number;
     barGap: number;
@@ -15,11 +18,12 @@ export declare class BarChart extends BaseChart {
     lastValue: Map<string, number>;
     labelPlaceholder: number;
     valuePlaceholder: number;
+    dataLabelSize: number;
+    showDateLabel: boolean;
     get sampling(): number;
     barInfoFormat: (id: any, data?: Map<string, any>, meta?: Map<string, any>) => string;
     historyIndex: Map<any, any>;
     ids: string[];
-    constructor(options?: BarChartOptions);
     setup(stage: Stage): void;
     private setHistoryIndex;
     private get maxValueLabelWidth();

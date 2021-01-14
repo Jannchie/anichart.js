@@ -15,7 +15,7 @@ interface BarChartOptions extends BaseChartOptions {
   barPadding?: number;
   barGap?: number;
   barInfoFormat?: KeyGener;
-  dataLabelSize?: number;
+  dateLabelSize?: number;
   showDateLabel?: boolean;
 }
 
@@ -39,8 +39,8 @@ export class BarChart extends BaseChart {
     if (options.barGap !== undefined) this.barGap = options.barGap;
     if (options.barInfoFormat !== undefined)
       this.barInfoFormat = options.barInfoFormat;
-    if (options.dataLabelSize !== undefined)
-      this.dataLabelSize = options.dataLabelSize;
+    if (options.dateLabelSize !== undefined)
+      this.dateLabelSize = options.dateLabelSize;
     if (options.showDateLabel !== undefined)
       this.showDateLabel = options.showDateLabel;
   }
@@ -53,7 +53,7 @@ export class BarChart extends BaseChart {
   lastValue = new Map<string, number>();
   labelPlaceholder: number;
   valuePlaceholder: number;
-  dataLabelSize: number = 60;
+  dateLabelSize: number = 60;
   showDateLabel: boolean = true;
 
   get sampling() {
@@ -183,7 +183,7 @@ export class BarChart extends BaseChart {
       const dateLabel = new Text({
         text: d3.timeFormat(this.dateFormat)(this.secToDate(sec)),
         font: "Sarasa Mono Slab SC",
-        fontSize: this.dataLabelSize,
+        fontSize: this.dateLabelSize,
         fillStyle: "#777",
         textAlign: "right",
         fontWeight: "bolder",

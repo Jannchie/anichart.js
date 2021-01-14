@@ -9,6 +9,7 @@ export class ImageLoader {
           resolve(image);
         };
         image.src = url;
+        image.crossOrigin = "anonymous";
       });
   }
 }
