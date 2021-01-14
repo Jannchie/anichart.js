@@ -46,10 +46,10 @@ export class BarChart extends BaseChart {
 
   barInfoFormat = (
     id: any,
-    data?: Map<string, any>,
-    meta?: Map<string, any>
+    meta?: Map<string, any>,
+    data?: Map<string, any>
   ) => {
-    return this.labelFormat(id, data, meta);
+    return this.labelFormat(id, meta, data);
   };
 
   historyIndex: Map<any, any>;
@@ -60,6 +60,7 @@ export class BarChart extends BaseChart {
     if (options.itemCount) this.itemCount = options.itemCount;
     if (options.barPadding !== undefined) this.barPadding = options.barPadding;
     if (options.barGap !== undefined) this.barGap = options.barGap;
+    if (options.barInfoFormat) this.barInfoFormat = options.barInfoFormat;
   }
   setup(stage: Stage) {
     super.setup(stage);
@@ -160,7 +161,7 @@ export class BarChart extends BaseChart {
       position: this.position,
     });
     currentData.forEach((data) => {
-      const barOptions = this.getBarOptions(data, scaleX, indexs, sec);
+      const barOptions = this.getBarOptions(data, scaleX, indexs);
       if (barOptions.alpha > 0) {
         res.children.push(this.getBarComponent(barOptions));
       }
@@ -195,8 +196,7 @@ export class BarChart extends BaseChart {
   private getBarOptions(
     data: any,
     scaleX: d3.ScaleLinear<number, number, never>,
-    indexs: Map<string, number>,
-    sec: number
+    indexs: Map<string, number>
   ): BarOptions {
     if (!Number.isNaN(data[this.valueField])) {
       this.lastValue.set(data[this.idField], data[this.valueField]);
@@ -211,6 +211,10 @@ export class BarChart extends BaseChart {
     } else {
       color = this.colorField(data[this.idField], this.meta, this.dataGroup);
     }
+    const imageKey =
+      typeof this.imageField === "string"
+        ? data[this.imageField]
+        : this.imageField(data[this.idField], this.meta, this.dataGroup);
     return {
       id: data[this.idField],
       pos: {
@@ -222,6 +226,7 @@ export class BarChart extends BaseChart {
       alpha,
       value: data[this.valueField],
       shape: { width: scaleX(data[this.valueField]), height: this.barHeight },
+      image: imageKey,
       color: colorPicker.getColor(color),
       radius: 4,
     };
