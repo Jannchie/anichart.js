@@ -17,6 +17,7 @@ export interface BaseChartOptions {
 
   idField?: string;
   colorField?: string | KeyGener;
+  imageField?: string | KeyGener;
   dateField?: string;
   valueField?: string;
 
@@ -41,9 +42,11 @@ export abstract class BaseChart extends Ani {
   dataScales: Map<string, any>;
   idField = "id";
   colorField: string | KeyGener = "id";
+  imageField: string | KeyGener = "id";
   dateField = "date";
   valueField = "value";
   valueKeys = ["value"];
+  imageKey = "image";
   shape = { width: 400, height: 300 };
   position = { x: 0, y: 0 };
   margin = { left: 20, top: 20, right: 20, bottom: 20 };
@@ -75,6 +78,7 @@ export abstract class BaseChart extends Ani {
     if (options.dateField) this.dateField = options.dateField;
     if (options.valueKeys) this.valueKeys = options.valueKeys;
     if (options.valueField) this.valueField = options.valueField;
+    if (options.imageField) this.imageField = options.imageField;
     if (options.margin !== undefined) this.margin = options.margin;
     if (options.shape) this.shape = options.shape;
     if (options.dateFormat) this.dateFormat = options.dateFormat;
