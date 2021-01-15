@@ -10,6 +10,10 @@ export declare class Stage {
         sec: number;
         fps: number;
     };
+    outputOptions: {
+        fileName: string;
+        splitSec: number;
+    };
     interval: d3.Timer;
     output: boolean;
     outputConcurrency: number;
