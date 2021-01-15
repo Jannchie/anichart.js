@@ -20,6 +20,11 @@ export async function addFrameToFFmpeg(
   const imageData = canvas.toDataURL("image/png", qulity);
   ffmpeg.FS("writeFile", `${name}-${frame}.png`, await fetchFile(imageData));
 }
+export function removePNG(list: string[]) {
+  for (const name of list) {
+    ffmpeg.FS("unlink", name);
+  }
+}
 export async function outputMP4(
   fps: any,
   name = "output",
