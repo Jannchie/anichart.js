@@ -31,8 +31,8 @@ export interface BaseChartOptions {
   ) => string;
   dateFormat?: string;
 
-  data?: string;
-  meta?: string;
+  dataName?: string;
+  metaName?: string;
 }
 export type KeyGener =
   | ((id: string) => string)
@@ -56,8 +56,8 @@ export abstract class BaseChart extends Ani {
     if (options.dateFormat) this.dateFormat = options.dateFormat;
     if (options.labelFormat) this.labelFormat = options.labelFormat;
     if (options.valueFormat) this.valueFormat = options.valueFormat;
-    if (options.data) this.dataName = options.data;
-    if (options.meta) this.metaName = options.meta;
+    if (options.dataName) this.dataName = options.dataName;
+    if (options.metaName) this.metaName = options.metaName;
     if (options.position) this.position = options.position;
   }
   dataScales: Map<string, any>;
@@ -72,8 +72,8 @@ export abstract class BaseChart extends Ani {
   position = { x: 0, y: 0 };
   margin = { left: 20, top: 20, right: 20, bottom: 20 };
   aniTime: [number, number];
-  freezeTime = [2, 2];
-  fadeTime = [0.5, 0];
+  freezeTime: [number, number] = [2, 2];
+  fadeTime: [number, number] = [0.5, 0];
   data: any[];
   dataGroup: Map<string, any>;
   meta: Map<string, any>;
