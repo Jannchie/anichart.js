@@ -12,9 +12,11 @@ interface LineChartOptions extends BaseChartOptions {
   pointerR?: number;
 }
 export class LineChart extends BaseChart {
+  pointerR: number = 10;
   constructor(options: LineChartOptions) {
     super(options);
     if (!options) return;
+    if (options.pointerR) this.pointerR = options.pointerR;
   }
   scales: {
     x: d3.ScaleLinear<number, number, never>;
@@ -99,7 +101,7 @@ export class LineChart extends BaseChart {
       const currentY = this.findY(areaPath, maxX);
       const point = new Arc({
         fillStyle: color,
-        radius: 5,
+        radius: this.pointerR,
         alpha: currentY !== undefined ? 1 : 0,
         position: { x: maxX, y: currentY },
       });
