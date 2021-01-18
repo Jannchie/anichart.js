@@ -11,10 +11,11 @@ import { BarChart } from "../src/core/chart/BarChart";
 import * as d3 from "d3";
 import { LineChart } from "../src/core/chart/LineChart";
 import { Progress } from "../src/core/ani/Progress";
+import { PieChart } from "../src/core/chart/PieChart";
 const stage = new Stage();
 stage.options.fps = 60;
 stage.options.sec = 12;
-stage.output = true;
+stage.output = false;
 
 const bgAni = new RectAni();
 bgAni.component.shape = {
@@ -171,6 +172,12 @@ stage.addChild(lineChart);
 const progress = new Progress({
   position: { x: stage.canvas.width / 2, y: stage.canvas.height / 2 },
 });
+
+const pie = new PieChart({
+  aniTime: [4, 10],
+  position: { x: stage.canvas.width / 2, y: stage.canvas.height / 2 },
+});
+stage.addChild(pie);
 stage.addChild(progress);
 stage.play();
 
