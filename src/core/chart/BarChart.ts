@@ -9,6 +9,7 @@ import { colorPicker } from "../ColorPicker";
 import { canvasHelper } from "../CanvasHelper";
 import { Stage } from "../Stage";
 import { BaseChart, BaseChartOptions, KeyGener } from "./BaseChart";
+import { recourse } from "../Recourse";
 
 interface BarChartOptions extends BaseChartOptions {
   itemCount?: number;
@@ -278,7 +279,10 @@ export class BarChart extends BaseChart {
       font: "Sarasa Mono SC",
       fillStyle: options.color,
     });
-    const imagePlaceholder = options.image ? options.shape.height : 0;
+    const imagePlaceholder =
+      options.image && recourse.images.get(options.image)
+        ? options.shape.height
+        : 0;
     const barInfo = new Text({
       textAlign: "right",
       textBaseline: "bottom",
@@ -292,7 +296,7 @@ export class BarChart extends BaseChart {
       fontWeight: "bolder",
       fillStyle: "#1e1e1e",
     });
-    if (options.image) {
+    if (options.image && recourse.images.get(options.image)) {
       const img = new Image({
         path: options.image,
         position: {
