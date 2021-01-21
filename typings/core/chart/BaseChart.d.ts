@@ -30,8 +30,8 @@ export interface BaseChartOptions {
     valueFormat?: (cData: any) => string;
     labelFormat?: (id: string, meta: Map<string, any>, data: Map<string, any>) => string;
     dateFormat?: string;
-    data?: string;
-    meta?: string;
+    dataName?: string;
+    metaName?: string;
 }
 export declare type KeyGener = ((id: string) => string) | ((id: string, meta: Map<string, any>) => string) | ((id: string, meta: Map<string, any>, data: Map<string, any>) => string);
 export declare abstract class BaseChart extends Ani {
@@ -59,8 +59,8 @@ export declare abstract class BaseChart extends Ani {
         bottom: number;
     };
     aniTime: [number, number];
-    freezeTime: number[];
-    fadeTime: number[];
+    freezeTime: [number, number];
+    fadeTime: [number, number];
     data: any[];
     dataGroup: Map<string, any>;
     meta: Map<string, any>;
@@ -83,7 +83,7 @@ export declare abstract class BaseChart extends Ani {
     labelFormat: KeyGener;
     private setAlphaScale;
     private setDefaultAniTime;
-    getCurrentData(sec: number): any[];
+    getCurrentData(sec: number, filter?: boolean): any[];
     protected getXAxisComponent(scale: d3.ScaleLinear<number, number, never>, x?: number, text?: Text, count?: number): Component;
     private getAxisComponent;
     protected getYAxisComponent(scale: d3.ScaleLinear<number, number, never>, y?: number, text?: Text, count?: number): Component;

@@ -6,6 +6,7 @@ interface LineChartOptions extends BaseChartOptions {
     pointerR?: number;
 }
 export declare class LineChart extends BaseChart {
+    pointerR: number;
     constructor(options: LineChartOptions);
     scales: {
         x: d3.ScaleLinear<number, number, never>;
