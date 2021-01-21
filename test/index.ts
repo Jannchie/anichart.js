@@ -175,6 +175,7 @@ const progress = new Progress({
 
 const pie = new PieChart({
   aniTime: [4, 10],
+  radius: [80, 120],
   position: { x: stage.canvas.width / 2, y: stage.canvas.height / 2 },
 });
 stage.addChild(pie);

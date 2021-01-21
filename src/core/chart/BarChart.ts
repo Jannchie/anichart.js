@@ -183,7 +183,7 @@ export class BarChart extends BaseChart {
     if (this.showDateLabel) {
       const dateLabel = new Text({
         text: d3.timeFormat(this.dateFormat)(this.secToDate(sec)),
-        font: "Sarasa Mono Slab SC",
+        font: "Sarasa Mono SC",
         fontSize: this.dateLabelSize,
         fillStyle: "#777",
         textAlign: "right",
