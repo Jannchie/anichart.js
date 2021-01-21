@@ -1,11 +1,11 @@
 import { Component } from "../component/Component";
 import { Stage } from "../Stage";
-import { BaseChart, BaseChartOptions, KeyGener } from "./BaseChart";
+import { BaseChart, BaseChartOptions, KeyGenerate } from "./BaseChart";
 interface BarChartOptions extends BaseChartOptions {
     itemCount?: number;
     barPadding?: number;
     barGap?: number;
-    barInfoFormat?: KeyGener;
+    barInfoFormat?: KeyGenerate;
     dateLabelSize?: number;
     showDateLabel?: boolean;
 }

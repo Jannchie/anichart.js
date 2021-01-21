@@ -8,14 +8,14 @@ import * as _ from "lodash-es";
 import { colorPicker } from "../ColorPicker";
 import { canvasHelper } from "../CanvasHelper";
 import { Stage } from "../Stage";
-import { BaseChart, BaseChartOptions, KeyGener } from "./BaseChart";
+import { BaseChart, BaseChartOptions, KeyGenerate } from "./BaseChart";
 import { recourse } from "../Recourse";
 
 interface BarChartOptions extends BaseChartOptions {
   itemCount?: number;
   barPadding?: number;
   barGap?: number;
-  barInfoFormat?: KeyGener;
+  barInfoFormat?: KeyGenerate;
   dateLabelSize?: number;
   showDateLabel?: boolean;
 }

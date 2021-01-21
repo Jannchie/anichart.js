@@ -22,8 +22,8 @@ export interface BaseChartOptions {
         right: number;
     };
     idField?: string;
-    colorField?: string | KeyGener;
-    imageField?: string | KeyGener;
+    colorField?: string | KeyGenerate;
+    imageField?: string | KeyGenerate;
     dateField?: string;
     valueField?: string;
     valueKeys?: string[];
@@ -33,13 +33,13 @@ export interface BaseChartOptions {
     dataName?: string;
     metaName?: string;
 }
-export declare type KeyGener = ((id: string) => string) | ((id: string, meta: Map<string, any>) => string) | ((id: string, meta: Map<string, any>, data: Map<string, any>) => string);
+export declare type KeyGenerate = ((id: string) => string) | ((id: string, meta: Map<string, any>) => string) | ((id: string, meta: Map<string, any>, data: Map<string, any>) => string);
 export declare abstract class BaseChart extends Ani {
     constructor(options?: BaseChartOptions);
     dataScales: Map<string, any>;
     idField: string;
-    colorField: string | KeyGener;
-    imageField: string | KeyGener;
+    colorField: string | KeyGenerate;
+    imageField: string | KeyGenerate;
     dateField: string;
     valueField: string;
     valueKeys: string[];
@@ -80,7 +80,7 @@ export declare abstract class BaseChart extends Ani {
     private setDataScales;
     setMeta(): void;
     valueFormat: (cData: any) => string;
-    labelFormat: KeyGener;
+    labelFormat: KeyGenerate;
     private setAlphaScale;
     private setDefaultAniTime;
     getCurrentData(sec: number, filter?: boolean): any[];
