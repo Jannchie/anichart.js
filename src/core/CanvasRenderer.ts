@@ -64,8 +64,14 @@ export class CanvasRenderer {
     if (arc.fillStyle) this.ctx.fill();
   }
   renderLine(line: Line) {
-    if (this.ctx.fillStyle) this.ctx.fill(line.path);
-    if (this.ctx.strokeStyle) this.ctx.stroke(line.path);
+    let path: Path2D;
+    if (typeof line.path === "string") {
+      path = new Path2D(line.path);
+    } else {
+      path = line.path;
+    }
+    if (this.ctx.fillStyle) this.ctx.fill(path);
+    if (this.ctx.strokeStyle) this.ctx.stroke(path);
   }
   renderClipRect(component: Rect) {
     this.ctx.beginPath();

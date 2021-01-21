@@ -176,21 +176,22 @@ export abstract class BaseChart extends Ani {
       ];
     }
   }
-  getCurrentData(sec: number) {
-    const currentData = [...this.dataScales.values()]
-      .map((scale) => {
-        return scale(sec);
-      })
-      .filter((d) => d !== undefined)
-      .sort((a, b) => {
-        if (Number.isNaN(b[this.valueField])) {
-          return -1;
-        } else if (Number.isNaN(a[this.valueField])) {
-          return 1;
-        } else {
-          return b[this.valueField] - a[this.valueField];
-        }
-      });
+  getCurrentData(sec: number, filter = true) {
+    const currentData = [...this.dataScales.values()].map((scale) => {
+      return scale(sec);
+    });
+    if (filter) {
+      currentData.filter((d) => d !== undefined);
+    }
+    currentData.sort((a, b) => {
+      if (Number.isNaN(b[this.valueField])) {
+        return -1;
+      } else if (Number.isNaN(a[this.valueField])) {
+        return 1;
+      } else {
+        return b[this.valueField] - a[this.valueField];
+      }
+    });
     return currentData;
   }
 
