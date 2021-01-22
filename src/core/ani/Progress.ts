@@ -2,8 +2,9 @@ import { Component } from "../component/Component";
 import { Text } from "../component/Text";
 import { Rect } from "../component/Rect";
 import { Ani } from "./Ani";
-import { customAni } from "./AniCreator";
+import { customAni, easeInterpolate } from "./AniCreator";
 import * as d3 from "d3";
+import { easePolyOut } from "d3";
 export interface ProgressOptions {
   position?: { x: number; y: number };
   aniTime?: [number, number];
@@ -120,6 +121,23 @@ export class Progress extends Ani {
       .keyFrame(objCopy);
   }
   getComponent(sec: number) {
-    return this.ani.getComponent(sec);
+    const val = d3
+      .scaleLinear(this.aniTime, [0, 100])
+      .clamp(true)
+      .interpolate(easeInterpolate(d3.easePolyOut.exponent(5)))(sec);
+
+    const label = d3.format("d")(val);
+    const res = this.ani.getComponent(sec);
+    const textLabel = new Text({
+      text: val === 100 ? `Finished.` : `Loading ${label} %`,
+      font: "Sarasa Mono SC",
+      fontSize: 24,
+      textAlign: "center",
+      textBaseline: "top",
+      position: { x: 0, y: this.shape.height },
+      fillStyle: "#fff",
+    });
+    res.children.push(textLabel);
+    return res;
   }
 }
