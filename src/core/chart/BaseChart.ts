@@ -135,6 +135,14 @@ export abstract class BaseChart extends Ani {
     this.dataScales = dataScales;
   }
 
+  getComponent(sec: number) {
+    const res = new Component({
+      position: this.position,
+      alpha: this.alphaScale(sec - this.fadeTime[0] - this.freezeTime[0]),
+    });
+    return res;
+  }
+
   setMeta() {
     this.meta = d3.rollup(
       _.cloneDeep(recourse.data.get(this.metaName)),

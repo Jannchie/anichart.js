@@ -21,7 +21,7 @@ export class PieChart extends BaseChart implements PieChartOptions {
   }
 
   getComponent(sec: number) {
-    const res = new Component({ position: this.position });
+    const res = super.getComponent(sec);
     const remained = sec % this.keyDurationSec;
     const start = sec - remained;
     const end = start + this.keyDurationSec;
