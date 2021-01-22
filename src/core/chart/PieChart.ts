@@ -3,8 +3,16 @@ import * as d3 from "d3";
 import { Component } from "../component/Component";
 import { Line } from "../component/Line";
 import { colorPicker } from "../ColorPicker";
+import { FontWeight, Text } from "../component/Text";
 interface PieChartOptions extends BaseChartOptions {
   radius?: [number, number];
+  labelTextStyle?: {
+    font: string;
+    lineWidth: number;
+    fontSize: number;
+    fontWeight: FontWeight;
+    strokeStyle: string;
+  };
   cornerRadius?: number;
   padAngle?: number;
 }
@@ -13,6 +21,13 @@ export class PieChart extends BaseChart implements PieChartOptions {
   cornerRadius: number = 4;
   padAngle: number = 5;
   keyDurationSec = 0.25;
+  labelTextStyle = {
+    font: "Sarasa Mono SC",
+    lineWidth: 6,
+    fontSize: 24,
+    fontWeight: "bolder" as FontWeight,
+    strokeStyle: "#1e1e1e",
+  };
   constructor(options?: PieChartOptions) {
     super(options);
     if (options) {
@@ -41,12 +56,26 @@ export class PieChart extends BaseChart implements PieChartOptions {
         .outerRadius(this.radius[1])
         .cornerRadius(this.cornerRadius)
         .padAngle(d.padAngle)(null);
+      const centroid = arc.centroid(pieData as any);
+      const label = new Text({
+        text: d.data[this.idField],
+        fontSize: this.labelTextStyle.fontSize,
+        lineWidth: this.labelTextStyle.lineWidth,
+        font: this.labelTextStyle.font,
+        textAlign: "center",
+        textBaseline: "middle",
+        fillStyle: colorPicker.getColor(d.data[this.idField]),
+        fontWeight: this.labelTextStyle.fontWeight,
+        strokeStyle: this.labelTextStyle.strokeStyle,
+        position: { x: centroid[0], y: centroid[1] },
+      });
       const comp = new Line({
         fillStyle: colorPicker.getColor(d.data[this.idField]),
         strokeStyle: "#0000",
         path,
       });
       res.children.push(comp);
+      res.children.push(label);
     }
     return res;
   }
