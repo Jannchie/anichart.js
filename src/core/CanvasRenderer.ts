@@ -175,15 +175,15 @@ export class CanvasRenderer {
   }
   renderText(component: Text) {
     this.prerenderText(component);
-    if (component.fillStyle) {
-      this.ctx.fillText(
+    if (component.strokeStyle) {
+      this.ctx.strokeText(
         component.text,
         -component.center.x,
         -component.center.y
       );
     }
-    if (component.strokeStyle) {
-      this.ctx.strokeText(
+    if (component.fillStyle) {
+      this.ctx.fillText(
         component.text,
         -component.center.x,
         -component.center.y
