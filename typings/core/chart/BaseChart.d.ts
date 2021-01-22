@@ -78,6 +78,7 @@ export declare abstract class BaseChart extends Ani {
     setup(stage: Stage): void;
     private setData;
     private setDataScales;
+    getComponent(sec: number): Component;
     setMeta(): void;
     valueFormat: (cData: any) => string;
     labelFormat: KeyGenerate;
