@@ -5,9 +5,14 @@ export interface ProgressOptions {
         x: number;
         y: number;
     };
+    shape?: {
+        width: number;
+        height: number;
+    };
     aniTime?: [number, number];
+    color?: string;
 }
-export declare class Progress extends Ani {
+export declare class Progress extends Ani implements ProgressOptions {
     ani: Ani;
     shape: {
         width: number;
@@ -15,9 +20,8 @@ export declare class Progress extends Ani {
     };
     radius: number;
     padding: number;
-    color: string;
     lineWidth: number;
-    aniTime: number[];
+    aniTime: [number, number];
     position: {
         x: number;
         y: number;
@@ -26,6 +30,7 @@ export declare class Progress extends Ani {
         x: number;
         y: number;
     };
+    color: string;
     constructor(options?: ProgressOptions);
     getComponent(sec: number): Component;
 }
