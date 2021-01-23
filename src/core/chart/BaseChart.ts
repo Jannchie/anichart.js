@@ -216,36 +216,6 @@ export abstract class BaseChart extends Ani {
     return currentData;
   }
 
-  protected getXAxisComponent(
-    scale0: d3.ScaleLinear<number, number, never>,
-    scale1: d3.ScaleLinear<number, number, never>,
-    x = 20,
-    text = new Text({
-      font: "Sarasa Mono SC",
-      fillStyle: "#777",
-      fontSize: 32,
-      textAlign: "right",
-      textBaseline: "middle",
-    }),
-    count: number,
-    sec: number,
-    secRange: [number, number],
-    scale: d3.ScaleLinear<number, number, never>
-  ): Component {
-    return this.getAxisComponent(
-      this.xTickFormat,
-      scale0,
-      scale1,
-      x,
-      count,
-      text,
-      "x",
-      sec,
-      secRange,
-      scale
-    );
-  }
-
   protected getScalesBySec(sec: number) {
     const currentData = this.getCurrentData(sec);
     const valueRange = d3.extent(currentData, (d) => d[this.valueField]);
@@ -289,27 +259,32 @@ export abstract class BaseChart extends Ani {
     });
     const yAxisWidth = canvasHelper.measure(tickComp).width;
     const xAxisHeight = tickComp.fontSize;
-    const xAxis = this.getXAxisComponent(
+    const yAxis = this.getAxisComponent(
+      this.xTickFormat,
       tickScales[0].y,
       tickScales[1].y,
       yAxisWidth,
-      tickComp,
       5,
+      tickComp,
+      "y",
       sec,
       tickKeySec,
       scales.y
     );
-    const yAxis = this.getYAxisComponent(
+
+    const xAxis = this.getAxisComponent(
+      this.yTickFormat,
       tickScales[0].x,
       tickScales[1].x,
       xAxisHeight,
-      tickComp,
       5,
+      tickComp,
+      "x",
       sec,
       tickKeySec,
       scales.x
     );
-    return { xAxis, yAxis };
+    return { yAxis, xAxis };
   }
 
   protected getAxisComponent(
@@ -348,7 +323,7 @@ export abstract class BaseChart extends Ani {
     const res = new Component();
     res.children = ticks.map((tick) => {
       const t = new Text(text);
-      if (type === "x") {
+      if (type === "y") {
         t.position = { y: scale(tick.v), x: pos };
       } else {
         t.position = { x: scale(tick.v), y: pos };
@@ -364,34 +339,5 @@ export abstract class BaseChart extends Ani {
     const start = sec - remained;
     const end = start + this.tickKeyFrameDuration;
     return [start, end];
-  }
-  protected getYAxisComponent(
-    scale0: d3.ScaleLinear<number, number, never>,
-    scale1: d3.ScaleLinear<number, number, never>,
-    y = 20,
-    text = new Text({
-      font: "Sarasa Mono Slab SC",
-      fillStyle: "#777",
-      fontSize: 16,
-      textAlign: "center",
-      textBaseline: "bottom",
-    }),
-    count = 5,
-    sec: number,
-    secRange: [number, number],
-    scale: d3.ScaleLinear<number, number, never>
-  ): Component {
-    return this.getAxisComponent(
-      this.yTickFormat,
-      scale0,
-      scale1,
-      y,
-      count,
-      text,
-      "y",
-      sec,
-      secRange,
-      scale
-    );
   }
 }

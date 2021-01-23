@@ -5,7 +5,6 @@ import { Arc } from "../component/Arc";
 import { Component } from "../component/Component";
 import { Line } from "../component/Line";
 import { Rect } from "../component/Rect";
-import { Text } from "../component/Text";
 import { Stage } from "../Stage";
 import { BaseChart, BaseChartOptions } from "./BaseChart";
 
