@@ -30,6 +30,10 @@ export class LineChart extends BaseChart {
   }
 
   getComponent(sec: number) {
+    const res = new Component({
+      position: this.position,
+      alpha: this.alphaScale(sec - this.fadeTime[0] - this.freezeTime[0]),
+    });
     if (this.aniTime[0] > sec) return this.component;
     this.scales = this.getScalesBySec(sec);
     const { xAxis, yAxis } = this.getAxis(sec, this.scales);
@@ -72,10 +76,7 @@ export class LineChart extends BaseChart {
         y: this.margin.top + this.xAxisHeight + this.xAxisPadding,
       },
     });
-    const res = new Component({
-      position: this.position,
-      alpha: this.alphaScale(sec - this.fadeTime[0] - this.freezeTime[0]),
-    });
+
     const maxX = d3.max(this.scales.x.range());
     this.dataGroup.forEach((v: any[], k) => {
       const line = new Line();
