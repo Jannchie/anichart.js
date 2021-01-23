@@ -89,12 +89,12 @@ export class BarChart extends BaseChart {
       this.aniTime[0],
       this.swap / this.sampling
     );
-    const datas = range.map((t) =>
+    const data = range.map((t) =>
       this.getCurrentData(t).map((v) => v[this.idField])
     );
     this.historyIndex = this.ids.reduce((d, id) => {
       const indexList = [];
-      for (const dataList of datas) {
+      for (const dataList of data) {
         let index = dataList.indexOf(id);
         if (index === -1) index = this.itemCount;
         indexList.push(index);
@@ -147,7 +147,7 @@ export class BarChart extends BaseChart {
       }
       history.shift();
     }
-    const indexs = this.ids.reduce(
+    const indexes = this.ids.reduce(
       (map, id) =>
         map.set(
           id,
@@ -174,7 +174,7 @@ export class BarChart extends BaseChart {
       position: this.position,
     });
     currentData.forEach((data) => {
-      const barOptions = this.getBarOptions(data, scaleX, indexs, sec);
+      const barOptions = this.getBarOptions(data, scaleX, indexes);
       if (barOptions.alpha > 0) {
         res.children.push(this.getBarComponent(barOptions));
       }
@@ -211,8 +211,7 @@ export class BarChart extends BaseChart {
   private getBarOptions(
     data: any,
     scaleX: d3.ScaleLinear<number, number, never>,
-    indexs: Map<string, number>,
-    sec: number
+    indexes: Map<string, number>
   ): BarOptions {
     if (!Number.isNaN(data[this.valueField])) {
       this.lastValue.set(data[this.idField], data[this.valueField]);
@@ -220,7 +219,7 @@ export class BarChart extends BaseChart {
     data[this.valueField] = this.lastValue.get(data[this.idField]);
     const alpha = d3
       .scaleLinear([this.itemCount - 1, this.itemCount], [1, 0])
-      .clamp(true)(indexs.get(data[this.idField]));
+      .clamp(true)(indexes.get(data[this.idField]));
     let color: string;
     if (typeof this.colorField === "string") {
       color = data[this.idField];
@@ -237,7 +236,7 @@ export class BarChart extends BaseChart {
         x: this.margin.left + this.barPadding + this.labelPlaceholder,
         y:
           this.margin.top +
-          indexs.get(data[this.idField]) * (this.barHeight + this.barGap),
+          indexes.get(data[this.idField]) * (this.barHeight + this.barGap),
       },
       alpha,
       data,
