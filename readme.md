@@ -16,13 +16,17 @@
 
 ## 示例
 
-### 在线编辑
+![anichart-preview](/public/anichart-preview.png)
 
-<p align="center">
-    <a href="https://codesandbox.io/s/dreamy-microservice-e8em0?fontsize=14&hidenavigation=1&theme=dark&view=preview">
-        <img alt="Edit e8em0" src="https://codesandbox.io/static/img/play-codesandbox.svg">
-    </a>
-</p>
+### 在线编辑（v2.x）
+
+[![Edit anichart 2.x](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/anichart-2x-m3xbz?fontsize=14&hidenavigation=1&theme=dark)
+
+### 在线编辑（v1.x）
+
+<a href="https://codesandbox.io/s/dreamy-microservice-e8em0?fontsize=14&hidenavigation=1&theme=dark&view=preview">
+    <img alt="Edit e8em0" src="https://codesandbox.io/static/img/play-codesandbox.svg">
+</a>
 
 ### 效果展示
 
