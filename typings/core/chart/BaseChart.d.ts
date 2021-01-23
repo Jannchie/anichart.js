@@ -35,7 +35,12 @@ export interface BaseChartOptions {
 }
 export declare type KeyGenerate = ((id: string) => string) | ((id: string, meta: Map<string, any>) => string) | ((id: string, meta: Map<string, any>, data: Map<string, any>) => string);
 export declare abstract class BaseChart extends Ani {
+    yAxisWidth: number;
+    xAxisHeight: number;
+    yAxisPadding: number;
+    xAxisPadding: number;
     constructor(options?: BaseChartOptions);
+    tickKeyFrameDuration: number;
     dataScales: Map<string, any>;
     idField: string;
     colorField: string | KeyGenerate;
@@ -75,6 +80,10 @@ export declare abstract class BaseChart extends Ani {
     yTickFormat: (n: number | {
         valueOf(): number;
     }) => string;
+    valueMax: number;
+    valueMin: number;
+    historyMax: number;
+    historyMin: number;
     setup(stage: Stage): void;
     private setData;
     private setDataScales;
@@ -85,7 +94,19 @@ export declare abstract class BaseChart extends Ani {
     private setAlphaScale;
     private setDefaultAniTime;
     getCurrentData(sec: number, filter?: boolean): any[];
-    protected getXAxisComponent(scale: d3.ScaleLinear<number, number, never>, x?: number, text?: Text, count?: number): Component;
-    private getAxisComponent;
-    protected getYAxisComponent(scale: d3.ScaleLinear<number, number, never>, y?: number, text?: Text, count?: number): Component;
+    protected getScalesBySec(sec: number): {
+        x: d3.ScaleLinear<number, number, never>;
+        y: d3.ScaleLinear<number, number, never>;
+    };
+    protected getAxis(sec: number, scales: {
+        x: any;
+        y: any;
+    }): {
+        yAxis: Component;
+        xAxis: Component;
+    };
+    protected getAxisComponent(format: (v: number | {
+        valueOf(): number;
+    }) => string, scale0: d3.ScaleLinear<number, number, never>, scale1: d3.ScaleLinear<number, number, never>, pos: number, count: number, text: Text, type: "x" | "y", sec: number, secRange: [number, number], scale: d3.ScaleLinear<number, number, never>): Component;
+    protected tickKeySecRange(sec: number): [number, number];
 }

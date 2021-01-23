@@ -1,5 +1,6 @@
 import { Component } from "../component/Component";
 import { Ani } from "./Ani";
+export declare function easeInterpolate<T extends Component | number>(e: (i: number) => number): (a: T, b: T) => (t: number) => T;
 declare class CustomAniNeedFrame {
     private keyFrames;
     private keyTimes;
