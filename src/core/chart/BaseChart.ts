@@ -4,6 +4,8 @@ import { ContextExclusionPlugin } from "webpack";
 import { Ani } from "../ani/Ani";
 import { canvasHelper } from "../CanvasHelper";
 import { Component } from "../component/Component";
+import { Line } from "../component/Line";
+import { Rect } from "../component/Rect";
 import { Text } from "../component/Text";
 import { recourse } from "../Recourse";
 import { Stage } from "../Stage";
@@ -255,8 +257,6 @@ export abstract class BaseChart extends Ani {
       font: "Sarasa Mono SC",
       fillStyle: "#777",
       fontSize: 30,
-      textAlign: "right",
-      textBaseline: "middle",
     });
     const tickKeySec = this.tickKeySecRange(sec);
     const tickScales = tickKeySec.map((s) => {
@@ -324,14 +324,29 @@ export abstract class BaseChart extends Ani {
         ticks.push({ v: tickVal, a: alpha, init: 1 });
       }
     });
-    const res = new Component();
+    const res = new Component({
+      position: {
+        x: this.margin.left + this.yAxisWidth + this.yAxisPadding,
+        y: this.margin.top + this.xAxisHeight + this.xAxisPadding,
+      },
+    });
     res.children = ticks.map((tick) => {
       const t = new Text(text);
       if (type === "y") {
-        t.position = { y: scale(tick.v), x: pos };
+        t.position = { y: scale(tick.v), x: -this.yAxisPadding };
+        t.textAlign = "right";
+        t.textBaseline = "middle";
       } else {
-        t.position = { x: scale(tick.v), y: pos };
+        t.position = { x: scale(tick.v), y: -this.xAxisPadding };
+        t.textBaseline = "bottom";
+        t.textAlign = "center";
       }
+      // t.children.push(
+      //   new Rect({
+      //     shape: { width: 10, height: 1 },
+      //     fillStyle: "#Fff",
+      //   })
+      // );
       t.text = format(tick.v);
       t.alpha = tick.a;
       return t;
