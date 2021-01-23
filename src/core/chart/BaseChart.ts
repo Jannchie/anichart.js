@@ -133,8 +133,8 @@ export abstract class BaseChart extends Ani {
             break;
           default:
             // 数值转成数字
-            if (this.valueKeys.includes(k)) {
-              d[k] = +d[k];
+            if (this.valueKeys.includes(k) || this.valueField === k) {
+              d[k] = +d[k].replace(/,/g, "");
             }
         }
       });
@@ -164,11 +164,13 @@ export abstract class BaseChart extends Ani {
   }
 
   setMeta() {
-    this.meta = d3.rollup(
-      _.cloneDeep(recourse.data.get(this.metaName)),
-      (v) => v[0],
-      (d) => d[this.idField]
-    );
+    if (recourse.data.get(this.metaName)) {
+      this.meta = d3.rollup(
+        _.cloneDeep(recourse.data.get(this.metaName)),
+        (v) => v[0],
+        (d) => d[this.idField]
+      );
+    }
   }
   valueFormat = (cData: any) => {
     return d3.format(",.0f")(cData[this.valueField]);

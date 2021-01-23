@@ -12,11 +12,11 @@ interface LineChartOptions extends BaseChartOptions {
   pointerR?: number;
 }
 export class LineChart extends BaseChart {
-  pointerR: number = 10;
+  pointerR: number;
   constructor(options: LineChartOptions) {
     super(options);
     if (!options) return;
-    if (options.pointerR) this.pointerR = options.pointerR;
+    this.pointerR = options.pointerR ?? 10;
   }
   scales: {
     x: d3.ScaleLinear<number, number, never>;
