@@ -127,3 +127,4 @@ lib
 dist
 
 *.map
+!anichart-preview.png
