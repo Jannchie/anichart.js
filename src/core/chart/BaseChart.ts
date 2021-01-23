@@ -260,7 +260,7 @@ export abstract class BaseChart extends Ani {
     const yAxisWidth = canvasHelper.measure(tickComp).width;
     const xAxisHeight = tickComp.fontSize;
     const yAxis = this.getAxisComponent(
-      this.xTickFormat,
+      this.yTickFormat,
       tickScales[0].y,
       tickScales[1].y,
       yAxisWidth,
@@ -273,7 +273,7 @@ export abstract class BaseChart extends Ani {
     );
 
     const xAxis = this.getAxisComponent(
-      this.yTickFormat,
+      this.xTickFormat,
       tickScales[0].x,
       tickScales[1].x,
       xAxisHeight,

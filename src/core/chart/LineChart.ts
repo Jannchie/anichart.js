@@ -24,7 +24,7 @@ export class LineChart extends BaseChart {
   };
   setup(stage: Stage) {
     super.setup(stage);
-    this.yTickFormat = (n: number | { valueOf(): number }) => {
+    this.xTickFormat = (n: number | { valueOf(): number }) => {
       return d3.timeFormat("%Y-%m-%d")(this.secToDate(n));
     };
   }
@@ -42,7 +42,7 @@ export class LineChart extends BaseChart {
       .area()
       .defined((d: any) => !isNaN(d[this.valueField]))
       .x((d: any) => this.scales.x(this.secToDate.invert(d[this.dateField])))
-      .y0(this.scales.y(0))
+      .y0(this.shape.height)
       .y1((d: any) => this.scales.y(d[this.valueField]));
     const lineArea = new Rect({
       clip: true,
@@ -102,8 +102,9 @@ export class LineChart extends BaseChart {
     if (this.historyMin < valueRange[0]) {
       valueRange[0] = this.historyMin;
     }
-    valueRange[0] *= 0.8;
-    valueRange[1] *= 1.2;
+    const delta = (valueRange[1] - valueRange[0]) * 0.2;
+    valueRange[0] -= delta;
+    valueRange[1] += delta;
     const trueSec =
       sec < this.aniTime[0]
         ? this.aniTime[0]
