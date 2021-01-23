@@ -4,26 +4,29 @@ import { Rect } from "../component/Rect";
 import { Ani } from "./Ani";
 import { customAni, easeInterpolate } from "./AniCreator";
 import * as d3 from "d3";
-import { easePolyOut } from "d3";
 export interface ProgressOptions {
   position?: { x: number; y: number };
+  shape?: { width: number; height: number };
   aniTime?: [number, number];
+  color?: string;
 }
-export class Progress extends Ani {
+export class Progress extends Ani implements ProgressOptions {
   ani: Ani;
-  shape = { width: 200, height: 24 };
+  shape: { width: number; height: number };
   radius: number = 6;
   padding: number = 3;
-  color: string = "#FFF";
   lineWidth: number = 2;
-  aniTime = [0, 3];
-  position = { x: 0, y: 0 };
+  aniTime: [number, number];
+  position: { x: number; y: number };
   center = { x: 0, y: 0 };
+  color: string;
   constructor(options?: ProgressOptions) {
     super();
     if (options) {
-      if (options.position) this.position = options.position;
-      if (options.aniTime) this.aniTime = options.aniTime;
+      this.position = options.position ?? { x: 0, y: 0 };
+      this.aniTime = options.aniTime ?? [0, 3];
+      this.shape = options.shape ?? { width: 400, height: 18 };
+      this.color = options.color ?? "#FFF";
     }
     const border0 = new Rect({
       shape: {
