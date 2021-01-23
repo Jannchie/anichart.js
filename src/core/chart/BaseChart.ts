@@ -1,5 +1,6 @@
 import * as d3 from "d3";
 import * as _ from "lodash-es";
+import { ContextExclusionPlugin } from "webpack";
 import { Ani } from "../ani/Ani";
 import { canvasHelper } from "../CanvasHelper";
 import { Component } from "../component/Component";
@@ -40,6 +41,10 @@ export type KeyGenerate =
   | ((id: string, meta: Map<string, any>) => string)
   | ((id: string, meta: Map<string, any>, data: Map<string, any>) => string);
 export abstract class BaseChart extends Ani {
+  yAxisWidth: number;
+  xAxisHeight: number;
+  yAxisPadding: number = 4;
+  xAxisPadding: number = 4;
   constructor(options?: BaseChartOptions) {
     super();
     if (!options) return;
@@ -102,12 +107,12 @@ export abstract class BaseChart extends Ani {
     this.setDefaultAniTime(stage);
     this.setDataScales();
     this.setAlphaScale();
+    // 初始化历史最值
     this.historyMax = d3.min(this.data, (d) => d[this.valueField]);
     this.historyMin = d3.max(this.data, (d) => d[this.valueField]);
-
     // 用于计算坐标
-    this.valueMax = this.historyMax;
-    this.valueMin = this.historyMin;
+    this.valueMax = this.historyMin;
+    this.valueMin = this.historyMax;
   }
   private setData() {
     this.data = _.cloneDeep(recourse.data.get(this.dataName));
@@ -246,7 +251,7 @@ export abstract class BaseChart extends Ani {
 
   protected getAxis(sec: number, scales: { x: any; y: any }) {
     const tickComp = new Text({
-      text: `${this.valueMax}`,
+      text: `${this.yTickFormat(this.valueMax)}`,
       font: "Sarasa Mono SC",
       fillStyle: "#777",
       fontSize: 30,
@@ -257,13 +262,13 @@ export abstract class BaseChart extends Ani {
     const tickScales = tickKeySec.map((s) => {
       return this.getScalesBySec(s);
     });
-    const yAxisWidth = canvasHelper.measure(tickComp).width;
-    const xAxisHeight = tickComp.fontSize;
+    this.yAxisWidth = canvasHelper.measure(tickComp).width;
+    this.xAxisHeight = tickComp.fontSize;
     const yAxis = this.getAxisComponent(
       this.yTickFormat,
       tickScales[0].y,
       tickScales[1].y,
-      yAxisWidth,
+      this.margin.left + this.yAxisWidth,
       5,
       tickComp,
       "y",
@@ -271,12 +276,11 @@ export abstract class BaseChart extends Ani {
       tickKeySec,
       scales.y
     );
-
     const xAxis = this.getAxisComponent(
       this.xTickFormat,
       tickScales[0].x,
       tickScales[1].x,
-      xAxisHeight,
+      this.margin.top + this.xAxisHeight,
       5,
       tickComp,
       "x",

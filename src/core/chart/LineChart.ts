@@ -46,15 +46,31 @@ export class LineChart extends BaseChart {
       .y1((d: any) => this.scales.y(d[this.valueField]));
     const lineArea = new Rect({
       clip: true,
-      position: { x: this.margin.left, y: this.margin.top },
+      position: {
+        x: this.margin.left + this.yAxisWidth + this.xAxisPadding,
+        y: this.margin.top + this.xAxisHeight + this.yAxisPadding,
+      },
       shape: {
-        width: this.shape.width - this.margin.left - this.margin.right,
-        height: this.shape.height - this.margin.top - this.margin.bottom,
+        width:
+          this.shape.width -
+          this.margin.left -
+          this.margin.right -
+          this.yAxisWidth -
+          this.yAxisPadding,
+        height:
+          this.shape.height -
+          this.margin.top -
+          this.margin.bottom -
+          this.xAxisHeight -
+          this.xAxisPadding,
       },
       fillStyle: "#0000",
     });
     const points = new Component({
-      position: { x: this.margin.left, y: this.margin.top },
+      position: {
+        x: this.margin.left + this.yAxisWidth + this.yAxisPadding,
+        y: this.margin.top + this.xAxisHeight + this.xAxisPadding,
+      },
     });
     const res = new Component({
       position: this.position,
@@ -102,7 +118,7 @@ export class LineChart extends BaseChart {
     if (this.historyMin < valueRange[0]) {
       valueRange[0] = this.historyMin;
     }
-    const delta = (valueRange[1] - valueRange[0]) * 0.2;
+    const delta = (valueRange[1] - valueRange[0]) * 0.1;
     valueRange[0] -= delta;
     valueRange[1] += delta;
     const trueSec =
@@ -114,11 +130,21 @@ export class LineChart extends BaseChart {
     const scales = {
       x: d3.scaleLinear(
         [this.aniTime[0], trueSec],
-        [0, this.shape.width - this.margin.left - this.margin.right]
+        [
+          0,
+          this.shape.width -
+            this.margin.left -
+            this.margin.right -
+            this.yAxisWidth -
+            this.yAxisPadding,
+        ]
       ),
       y: d3.scaleLinear(valueRange, [
-        this.shape.height - this.margin.top - this.margin.bottom,
-        0,
+        this.shape.height -
+          this.margin.top -
+          this.margin.bottom -
+          this.xAxisHeight,
+        this.xAxisPadding,
       ]),
     };
     return scales;
