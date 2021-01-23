@@ -16,7 +16,7 @@
 
 ## 示例
 
-![anichart-preview](/public/anichart-preview.png)
+![anichart-preview](/public/image/anichart-preview.png)
 
 ### 在线编辑（v2.x）
 
