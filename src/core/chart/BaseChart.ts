@@ -133,8 +133,8 @@ export abstract class BaseChart extends Ani {
             break;
           default:
             // 数值转成数字
-            if (this.valueKeys.includes(k)) {
-              d[k] = +d[k];
+            if (this.valueKeys.includes(k) || this.valueField === k) {
+              d[k] = +d[k].replace(/,/g, "");
             }
         }
       });
