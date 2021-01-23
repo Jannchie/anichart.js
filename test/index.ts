@@ -46,7 +46,7 @@ ani.recourse.loadImage(
 );
 
 ani.recourse.loadData("./data/test.csv", "data");
-ani.recourse.loadData("./data/test-meta.csv", "meta");
+// ani.recourse.loadData("./data/test-meta.csv", "meta");
 
 const rectAni = ani.createAni(
   [

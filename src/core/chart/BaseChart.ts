@@ -164,11 +164,13 @@ export abstract class BaseChart extends Ani {
   }
 
   setMeta() {
-    this.meta = d3.rollup(
-      _.cloneDeep(recourse.data.get(this.metaName)),
-      (v) => v[0],
-      (d) => d[this.idField]
-    );
+    if (recourse.data.get(this.metaName)) {
+      this.meta = d3.rollup(
+        _.cloneDeep(recourse.data.get(this.metaName)),
+        (v) => v[0],
+        (d) => d[this.idField]
+      );
+    }
   }
   valueFormat = (cData: any) => {
     return d3.format(",.0f")(cData[this.valueField]);
