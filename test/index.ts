@@ -1,30 +1,18 @@
-import { customAni, createAni } from "../src/core/ani/AniCreator";
-import { ease } from "../src/core/ani/Ease";
-import { RectAni } from "../src/core/ani/RectAni";
-import { TextAni } from "../src/core/ani/TextAni";
-import { TextLinesAni } from "../src/core/ani/TextLinesAni";
-import { Rect } from "../src/core/component/Rect";
-import { Stage } from "../src/core/Stage";
-import { Image } from "../src/core/component/Image";
-import { recourse } from "../src/core/Recourse";
-import { BarChart } from "../src/core/chart/BarChart";
+import * as ani from "../src/index";
 import * as d3 from "d3";
-import { LineChart } from "../src/core/chart/LineChart";
-import { Progress } from "../src/core/ani/Progress";
-import { PieChart } from "../src/core/chart/PieChart";
-const stage = new Stage();
+const stage = new ani.Stage();
 stage.options.fps = 60;
 stage.options.sec = 12;
 stage.output = false;
 
-const bgAni = new RectAni();
+const bgAni = new ani.RectAni();
 bgAni.component.shape = {
   width: stage.canvas.width,
   height: stage.canvas.height,
 };
 bgAni.component.fillStyle = "#1e1e1e";
 
-const textLinesAni = new TextLinesAni();
+const textLinesAni = new ani.TextLinesAni();
 
 textLinesAni.component.fillStyle = "#eee";
 textLinesAni.component.textAlign = "center";
@@ -34,14 +22,14 @@ textLinesAni.component.position = {
   y: stage.canvas.height / 2,
 };
 
-const textAnichart = new TextAni();
+const textAnichart = new ani.TextAni();
 textAnichart.component.fontSize = 48;
 textAnichart.component.font = "Sarasa Mono Slab SC";
 textAnichart.component.text = "Anichart";
 textAnichart.component.fontWeight = "bolder";
 textAnichart.type = "blur";
 
-const textJannchieStudio = new TextAni();
+const textJannchieStudio = new ani.TextAni();
 textJannchieStudio.component.fillStyle = "#666";
 textJannchieStudio.component.fontSize = 24;
 textJannchieStudio.component.text = "Powered by Jannchie Studio";
@@ -51,38 +39,38 @@ textJannchieStudio.type = "blur";
 textLinesAni.children.push(textAnichart);
 textLinesAni.children.push(textJannchieStudio);
 
-recourse.loadImage("./data/ANI.png", "logo");
-recourse.loadImage(
+ani.recourse.loadImage("./data/ANI.png", "logo");
+ani.recourse.loadImage(
   "https://avatars3.githubusercontent.com/u/29743310?s=460&u=8e0d49b98c35738afadc04e70c7f3918d6ad8cdb&v=4",
   "jannchie"
 );
 
-recourse.loadData("./data/test.csv", "data");
-recourse.loadData("./data/test-meta.csv", "meta");
+ani.recourse.loadData("./data/test.csv", "data");
+ani.recourse.loadData("./data/test-meta.csv", "meta");
 
-const rectAni = createAni(
+const rectAni = ani.createAni(
   [
-    new Rect({
+    new ani.Rect({
       position: { x: 100, y: 0 },
       shape: { width: 100, height: 0 },
       fillStyle: "#d23",
     }),
-    new Rect({
+    new ani.Rect({
       shape: { width: 100, height: 200 },
       fillStyle: "#2a3",
       alpha: 1,
     }),
-    new Rect({
+    new ani.Rect({
       shape: { width: 100, height: 0 },
       fillStyle: "#569",
       alpha: 0,
     }),
   ],
   [0, 1, 2],
-  ease.easeElastic
+  ani.ease.easeElastic
 );
 
-const logoCenter = new Image({
+const logoCenter = new ani.Image({
   path: "./data/ANI.png",
   position: {
     x: stage.canvas.width / 2,
@@ -92,9 +80,9 @@ const logoCenter = new Image({
   center: { x: 128, y: 128 },
   shape: { width: 256, height: 256 },
 });
-const logoAni = createAni(
+const logoAni = ani.createAni(
   [
-    new Image({
+    new ani.Image({
       path: "./data/ANI.png",
       position: {
         x: 0,
@@ -102,7 +90,7 @@ const logoAni = createAni(
       },
       shape: { width: 128, height: 128 },
     }),
-    new Image({
+    new ani.Image({
       path: "./data/ANI.png",
       position: {
         x: stage.canvas.width - 128,
@@ -111,7 +99,7 @@ const logoAni = createAni(
       shape: { width: 128, height: 128 },
       alpha: 1.0,
     }),
-    new Image({
+    new ani.Image({
       path: "./data/ANI.png",
       position: {
         x: stage.canvas.width - 128,
@@ -122,10 +110,10 @@ const logoAni = createAni(
     }),
   ],
   [0, 1, 2],
-  ease.easeBounce
+  ani.ease.easeBounce
 );
 
-const barChart = new BarChart({
+const barChart = new ani.BarChart({
   shape: { width: stage.canvas.width, height: stage.canvas.height },
   labelFormat(id) {
     return id;
@@ -134,14 +122,15 @@ const barChart = new BarChart({
   aniTime: [4, 10],
 });
 
-const lineChart = new LineChart({
+const lineChart = new ani.LineChart({
   aniTime: [4, 10],
   shape: { width: stage.canvas.width, height: stage.canvas.height / 2 },
   position: { x: 0, y: stage.canvas.height / 2 },
 });
-const a = customAni(0)
+const a = ani
+  .customAni(0)
   .keyFrame(
-    new Rect({
+    new ani.Rect({
       position: { x: 300, y: 300 },
       center: { x: 150, y: 150 },
       shape: { width: 300, height: 300 },
@@ -151,7 +140,7 @@ const a = customAni(0)
   )
   .duration(1, d3.easeBounce)
   .keyFrame(
-    new Rect({
+    new ani.Rect({
       position: { x: 300, y: 300 },
       center: { x: 0, y: 0 },
       shape: { width: 0, height: 0 },
@@ -167,19 +156,34 @@ stage.addChild(textLinesAni);
 stage.addChild(rectAni);
 stage.addChild(logoAni);
 stage.addChild(barChart);
-stage.addChild(lineChart);
+// stage.addChild(lineChart);
 
-const progress = new Progress({
+const progress = new ani.Progress({
   position: { x: stage.canvas.width / 2, y: stage.canvas.height / 2 },
 });
 
-const pie = new PieChart({
+const pie = new ani.PieChart({
   aniTime: [4, 10],
   radius: [80, 120],
   position: { x: stage.canvas.width / 2, y: stage.canvas.height / 2 },
 });
 stage.addChild(pie);
 stage.addChild(progress);
+// // Bit Coin Chart
+// ani.recourse.loadData("./data/bitcoin.csv", "bitcoin");
+// stage.addChild(
+//   new ani.LineChart({
+//     shape: { width: stage.canvas.width, height: stage.canvas.height },
+//     aniTime: [0, 10],
+//     dataName: "bitcoin",
+//     valueField: "Price",
+//     dateField: "Date",
+//     pointerR: 0,
+//     valueFormat: (d) => {
+//       return d3.format(",.2f")(d.Price);
+//     },
+//   })
+// );
 stage.play();
 
 (window as any).stage = stage;
