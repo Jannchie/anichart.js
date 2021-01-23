@@ -2,27 +2,31 @@ import { Component } from "../component/Component";
 import { Text } from "../component/Text";
 import { Rect } from "../component/Rect";
 import { Ani } from "./Ani";
-import { customAni } from "./AniCreator";
+import { customAni, easeInterpolate } from "./AniCreator";
 import * as d3 from "d3";
 export interface ProgressOptions {
   position?: { x: number; y: number };
+  shape?: { width: number; height: number };
   aniTime?: [number, number];
+  color?: string;
 }
-export class Progress extends Ani {
+export class Progress extends Ani implements ProgressOptions {
   ani: Ani;
-  shape = { width: 200, height: 24 };
+  shape: { width: number; height: number };
   radius: number = 6;
   padding: number = 3;
-  color: string = "#FFF";
   lineWidth: number = 2;
-  aniTime = [0, 3];
-  position = { x: 0, y: 0 };
+  aniTime: [number, number];
+  position: { x: number; y: number };
   center = { x: 0, y: 0 };
+  color: string;
   constructor(options?: ProgressOptions) {
     super();
     if (options) {
-      if (options.position) this.position = options.position;
-      if (options.aniTime) this.aniTime = options.aniTime;
+      this.position = options.position ?? { x: 0, y: 0 };
+      this.aniTime = options.aniTime ?? [0, 3];
+      this.shape = options.shape ?? { width: 400, height: 18 };
+      this.color = options.color ?? "#FFF";
     }
     const border0 = new Rect({
       shape: {
@@ -120,6 +124,23 @@ export class Progress extends Ani {
       .keyFrame(objCopy);
   }
   getComponent(sec: number) {
-    return this.ani.getComponent(sec);
+    const val = d3
+      .scaleLinear(this.aniTime, [0, 100])
+      .clamp(true)
+      .interpolate(easeInterpolate(d3.easePolyOut.exponent(5)))(sec);
+
+    const label = d3.format("d")(val);
+    const res = this.ani.getComponent(sec);
+    const textLabel = new Text({
+      text: val === 100 ? `Finished.` : `Loading ${label} %`,
+      font: "Sarasa Mono SC",
+      fontSize: 24,
+      textAlign: "center",
+      textBaseline: "top",
+      position: { x: 0, y: this.shape.height },
+      fillStyle: "#fff",
+    });
+    res.children.push(textLabel);
+    return res;
   }
 }

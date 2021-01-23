@@ -1,7 +1,11 @@
 import * as d3 from "d3";
 import * as _ from "lodash-es";
+import { ContextExclusionPlugin } from "webpack";
 import { Ani } from "../ani/Ani";
+import { canvasHelper } from "../CanvasHelper";
 import { Component } from "../component/Component";
+import { Line } from "../component/Line";
+import { Rect } from "../component/Rect";
 import { Text } from "../component/Text";
 import { recourse } from "../Recourse";
 import { Stage } from "../Stage";
@@ -16,8 +20,8 @@ export interface BaseChartOptions {
   margin?: { left: number; top: number; bottom: number; right: number };
 
   idField?: string;
-  colorField?: string | KeyGener;
-  imageField?: string | KeyGener;
+  colorField?: string | KeyGenerate;
+  imageField?: string | KeyGenerate;
   dateField?: string;
   valueField?: string;
 
@@ -34,11 +38,15 @@ export interface BaseChartOptions {
   dataName?: string;
   metaName?: string;
 }
-export type KeyGener =
+export type KeyGenerate =
   | ((id: string) => string)
   | ((id: string, meta: Map<string, any>) => string)
   | ((id: string, meta: Map<string, any>, data: Map<string, any>) => string);
 export abstract class BaseChart extends Ani {
+  yAxisWidth: number;
+  xAxisHeight: number;
+  yAxisPadding: number = 4;
+  xAxisPadding: number = 4;
   constructor(options?: BaseChartOptions) {
     super();
     if (!options) return;
@@ -60,10 +68,11 @@ export abstract class BaseChart extends Ani {
     if (options.metaName) this.metaName = options.metaName;
     if (options.position) this.position = options.position;
   }
+  tickKeyFrameDuration: number = 1;
   dataScales: Map<string, any>;
   idField = "id";
-  colorField: string | KeyGener = "id";
-  imageField: string | KeyGener = "id";
+  colorField: string | KeyGenerate = "id";
+  imageField: string | KeyGenerate = "id";
   dateField = "date";
   valueField = "value";
   valueKeys = ["value"];
@@ -88,6 +97,11 @@ export abstract class BaseChart extends Ani {
   xTickFormat = d3.format(",d");
   yTickFormat = d3.format(",d");
 
+  valueMax: number;
+  valueMin: number;
+  historyMax: number;
+  historyMin: number;
+
   setup(stage: Stage) {
     super.setup(stage);
     this.setData();
@@ -95,6 +109,12 @@ export abstract class BaseChart extends Ani {
     this.setDefaultAniTime(stage);
     this.setDataScales();
     this.setAlphaScale();
+    // 初始化历史最值
+    this.historyMax = d3.min(this.data, (d) => d[this.valueField]);
+    this.historyMin = d3.max(this.data, (d) => d[this.valueField]);
+    // 用于计算坐标
+    this.valueMax = this.historyMin;
+    this.valueMin = this.historyMax;
   }
   private setData() {
     this.data = _.cloneDeep(recourse.data.get(this.dataName));
@@ -135,6 +155,14 @@ export abstract class BaseChart extends Ani {
     this.dataScales = dataScales;
   }
 
+  getComponent(sec: number) {
+    const res = new Component({
+      position: this.position,
+      alpha: this.alphaScale(sec - this.fadeTime[0] - this.freezeTime[0]),
+    });
+    return res;
+  }
+
   setMeta() {
     this.meta = d3.rollup(
       _.cloneDeep(recourse.data.get(this.metaName)),
@@ -146,7 +174,7 @@ export abstract class BaseChart extends Ani {
     return d3.format(",.0f")(cData[this.valueField]);
   };
 
-  labelFormat: KeyGener = (id: string, meta?: Map<string, any>) => {
+  labelFormat: KeyGenerate = (id: string, meta?: Map<string, any>) => {
     if (meta.get(id) && meta.get(id).name) {
       return meta.get(id).name;
     } else {
@@ -195,55 +223,140 @@ export abstract class BaseChart extends Ani {
     return currentData;
   }
 
-  protected getXAxisComponent(
-    scale: d3.ScaleLinear<number, number, never>,
-    x = 20,
-    text = new Text({
-      font: "Sarasa Mono Slab SC",
-      fillStyle: "#777",
-      fontSize: 16,
-      textAlign: "right",
-      textBaseline: "middle",
-    }),
-    count = 5
-  ): Component {
-    return this.getAxisComponent(this.xTickFormat, scale, x, count, text, "x");
+  protected getScalesBySec(sec: number) {
+    const currentData = this.getCurrentData(sec);
+    const valueRange = d3.extent(currentData, (d) => d[this.valueField]);
+    if (this.historyMax > valueRange[1]) {
+      valueRange[1] = this.historyMax;
+    }
+    if (this.historyMin < valueRange[0]) {
+      valueRange[0] = this.historyMin;
+    }
+    const trueSec =
+      sec < this.aniTime[0]
+        ? this.aniTime[0]
+        : sec > this.aniTime[1]
+        ? this.aniTime[1]
+        : sec;
+    const scales = {
+      x: d3.scaleLinear(
+        [this.aniTime[0], trueSec],
+        [0, this.shape.width - this.margin.left - this.margin.right]
+      ),
+      y: d3.scaleLinear(valueRange, [
+        this.shape.height - this.margin.top - this.margin.bottom,
+        0,
+      ]),
+    };
+    return scales;
   }
 
-  private getAxisComponent(
+  protected getAxis(sec: number, scales: { x: any; y: any }) {
+    const tickComp = new Text({
+      text: `${this.yTickFormat(this.valueMax)}`,
+      font: "Sarasa Mono SC",
+      fillStyle: "#777",
+      fontSize: 30,
+    });
+    const tickKeySec = this.tickKeySecRange(sec);
+    const tickScales = tickKeySec.map((s) => {
+      return this.getScalesBySec(s);
+    });
+    this.yAxisWidth = canvasHelper.measure(tickComp).width;
+    this.xAxisHeight = tickComp.fontSize;
+    const yAxis = this.getAxisComponent(
+      this.yTickFormat,
+      tickScales[0].y,
+      tickScales[1].y,
+      this.margin.left + this.yAxisWidth,
+      5,
+      tickComp,
+      "y",
+      sec,
+      tickKeySec,
+      scales.y
+    );
+    const xAxis = this.getAxisComponent(
+      this.xTickFormat,
+      tickScales[0].x,
+      tickScales[1].x,
+      this.margin.top + this.xAxisHeight,
+      5,
+      tickComp,
+      "x",
+      sec,
+      tickKeySec,
+      scales.x
+    );
+    return { yAxis, xAxis };
+  }
+
+  protected getAxisComponent(
     format: (v: number | { valueOf(): number }) => string,
-    scale: d3.ScaleLinear<number, number, never>,
+    scale0: d3.ScaleLinear<number, number, never>,
+    scale1: d3.ScaleLinear<number, number, never>,
     pos: number,
     count: number,
     text: Text,
-    type: "x" | "y"
+    type: "x" | "y",
+    sec: number,
+    secRange: [number, number],
+    scale: d3.ScaleLinear<number, number, never>
   ) {
-    const ticks = scale.ticks(count);
-    const res = new Component();
-    res.children = ticks.map((v) => {
-      const t = new Text(text);
-      if (type === "x") {
-        t.position = { y: scale(v), x: pos };
+    const alpha = (sec - secRange[0]) / (secRange[1] - secRange[0]);
+    const ticks0 = scale0.ticks(count);
+    const ticks1 = scale1.ticks(count);
+    const ticks: { v: number; a: number; init: number }[] = [
+      ...ticks0.map((t) => {
+        if (ticks1.find((d) => d === t)) {
+          return { v: t, a: 1, init: 0 };
+        } else {
+          return { v: t, a: 1 - alpha, init: 0 };
+        }
+      }),
+    ];
+
+    ticks1.forEach((tickVal) => {
+      const tick = ticks.find((d) => d.v === tickVal);
+      if (tick) {
+        tick.a = 1;
       } else {
-        t.position = { x: scale(v), y: pos };
+        ticks.push({ v: tickVal, a: alpha, init: 1 });
       }
-      t.text = format(v);
+    });
+    const res = new Component({
+      position: {
+        x: this.margin.left + this.yAxisWidth + this.yAxisPadding,
+        y: this.margin.top + this.xAxisHeight + this.xAxisPadding,
+      },
+    });
+    res.children = ticks.map((tick) => {
+      const t = new Text(text);
+      if (type === "y") {
+        t.position = { y: scale(tick.v), x: -this.yAxisPadding };
+        t.textAlign = "right";
+        t.textBaseline = "middle";
+      } else {
+        t.position = { x: scale(tick.v), y: -this.xAxisPadding };
+        t.textBaseline = "bottom";
+        t.textAlign = "center";
+      }
+      // t.children.push(
+      //   new Rect({
+      //     shape: { width: 10, height: 1 },
+      //     fillStyle: "#Fff",
+      //   })
+      // );
+      t.text = format(tick.v);
+      t.alpha = tick.a;
       return t;
     });
     return res;
   }
-  protected getYAxisComponent(
-    scale: d3.ScaleLinear<number, number, never>,
-    y = 20,
-    text = new Text({
-      font: "Sarasa Mono Slab SC",
-      fillStyle: "#777",
-      fontSize: 16,
-      textAlign: "center",
-      textBaseline: "bottom",
-    }),
-    count = 5
-  ): Component {
-    return this.getAxisComponent(this.yTickFormat, scale, y, count, text, "y");
+  protected tickKeySecRange(sec: number): [number, number] {
+    const remained = sec % this.tickKeyFrameDuration;
+    const start = sec - remained;
+    const end = start + this.tickKeyFrameDuration;
+    return [start, end];
   }
 }

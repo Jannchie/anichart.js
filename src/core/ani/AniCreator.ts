@@ -1,9 +1,11 @@
 import { Component } from "../component/Component";
 import * as d3 from "d3";
 import { Ani } from "./Ani";
-function easeInterpolate<T extends Component>(e: (i: number) => number) {
+export function easeInterpolate<T extends Component | number>(
+  e: (i: number) => number
+) {
   return (a: T, b: T) => {
-    const i = d3.interpolate(a, b);
+    const i = d3.interpolate(a, b as any);
     return (t: number): T => {
       return i(e(t));
     };

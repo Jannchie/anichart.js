@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import { canvasHelper } from "../CanvasHelper";
+import { CanvasHelper, canvasHelper } from "../CanvasHelper";
 import { colorPicker } from "../ColorPicker";
 import { Arc } from "../component/Arc";
 import { Component } from "../component/Component";
@@ -24,43 +24,19 @@ export class LineChart extends BaseChart {
   };
   setup(stage: Stage) {
     super.setup(stage);
-    this.yTickFormat = (n: number | { valueOf(): number }) => {
+    this.xTickFormat = (n: number | { valueOf(): number }) => {
       return d3.timeFormat("%Y-%m-%d")(this.secToDate(n));
     };
-    this.historyMax = d3.min(this.data, (d) => d[this.valueField]);
-    this.historyMin = d3.max(this.data, (d) => d[this.valueField]);
   }
 
-  historyMax: number;
-  historyMin: number;
   getComponent(sec: number) {
-    const currentData = this.getCurrentData(sec);
-    const valueRange = d3.extent(currentData, (d) => d[this.valueField]);
-    if (this.historyMax > valueRange[1]) {
-      valueRange[1] = this.historyMax;
-    }
-    if (this.historyMin < valueRange[0]) {
-      valueRange[0] = this.historyMin;
-    }
-    valueRange[0] *= 0.8;
-    valueRange[1] *= 1.2;
-    const temp =
-      sec < this.aniTime[0]
-        ? this.aniTime[0]
-        : sec > this.aniTime[1]
-        ? this.aniTime[1]
-        : sec;
-    if (this.aniTime[0] === temp) return new Component();
-    this.scales = {
-      x: d3.scaleLinear(
-        [this.aniTime[0], temp],
-        [0, this.shape.width - this.margin.left - this.margin.right]
-      ),
-      y: d3.scaleLinear(valueRange, [
-        this.shape.height - this.margin.top - this.margin.bottom,
-        0,
-      ]),
-    };
+    const res = new Component({
+      position: this.position,
+      alpha: this.alphaScale(sec - this.fadeTime[0] - this.freezeTime[0]),
+    });
+    if (this.aniTime[0] > sec) return this.component;
+    this.scales = this.getScalesBySec(sec);
+    const { xAxis, yAxis } = this.getAxis(sec, this.scales);
     const lineGen = d3
       .line()
       .defined((d: any) => !isNaN(d[this.valueField]))
@@ -70,24 +46,37 @@ export class LineChart extends BaseChart {
       .area()
       .defined((d: any) => !isNaN(d[this.valueField]))
       .x((d: any) => this.scales.x(this.secToDate.invert(d[this.dateField])))
-      .y0(this.scales.y(0))
+      .y0(this.shape.height)
       .y1((d: any) => this.scales.y(d[this.valueField]));
     const lineArea = new Rect({
       clip: true,
-      position: { x: this.margin.left, y: this.margin.top },
+      position: {
+        x: this.margin.left + this.yAxisWidth + this.xAxisPadding,
+        y: this.margin.top + this.xAxisHeight + this.yAxisPadding,
+      },
       shape: {
-        width: this.shape.width - this.margin.left - this.margin.right,
-        height: this.shape.height - this.margin.top - this.margin.bottom,
+        width:
+          this.shape.width -
+          this.margin.left -
+          this.margin.right -
+          this.yAxisWidth -
+          this.yAxisPadding,
+        height:
+          this.shape.height -
+          this.margin.top -
+          this.margin.bottom -
+          this.xAxisHeight -
+          this.xAxisPadding,
       },
       fillStyle: "#0000",
     });
     const points = new Component({
-      position: { x: this.margin.left, y: this.margin.top },
+      position: {
+        x: this.margin.left + this.yAxisWidth + this.yAxisPadding,
+        y: this.margin.top + this.xAxisHeight + this.xAxisPadding,
+      },
     });
-    const res = new Component({
-      position: this.position,
-      alpha: this.alphaScale(sec - this.fadeTime[0] - this.freezeTime[0]),
-    });
+
     const maxX = d3.max(this.scales.x.range());
     this.dataGroup.forEach((v: any[], k) => {
       const line = new Line();
@@ -116,11 +105,50 @@ export class LineChart extends BaseChart {
 
     res.children.push(lineArea);
     res.children.push(points);
-    const x = this.getXAxisComponent(this.scales.y);
-    const y = this.getYAxisComponent(this.scales.x);
-    res.children.push(x);
-    res.children.push(y);
+    res.children.push(xAxis);
+    res.children.push(yAxis);
     return res;
+  }
+
+  protected getScalesBySec(sec: number) {
+    const currentData = this.getCurrentData(sec);
+    const valueRange = d3.extent(currentData, (d) => d[this.valueField]);
+    if (this.historyMax > valueRange[1]) {
+      valueRange[1] = this.historyMax;
+    }
+    if (this.historyMin < valueRange[0]) {
+      valueRange[0] = this.historyMin;
+    }
+    const delta = (valueRange[1] - valueRange[0]) * 0.1;
+    valueRange[0] -= delta;
+    valueRange[1] += delta;
+    const trueSec =
+      sec < this.aniTime[0]
+        ? this.aniTime[0]
+        : sec > this.aniTime[1]
+        ? this.aniTime[1]
+        : sec;
+    const scales = {
+      x: d3.scaleLinear(
+        [this.aniTime[0], trueSec],
+        [
+          0,
+          this.shape.width -
+            this.margin.left -
+            this.margin.right -
+            this.yAxisWidth -
+            this.yAxisPadding,
+        ]
+      ),
+      y: d3.scaleLinear(valueRange, [
+        this.shape.height -
+          this.margin.top -
+          this.margin.bottom -
+          this.xAxisHeight,
+        this.xAxisPadding,
+      ]),
+    };
+    return scales;
   }
 
   private findY(area: Path2D, x: number) {
