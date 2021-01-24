@@ -172,6 +172,9 @@ export class CanvasRenderer {
     if (component.alpha !== undefined) {
       this.ctx.globalAlpha *= component.alpha;
     }
+    if (component.scale !== undefined) {
+      this.ctx.scale(component.scale.x, component.scale.y);
+    }
   }
   renderText(component: Text) {
     this.prerenderText(component);

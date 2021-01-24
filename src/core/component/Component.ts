@@ -13,6 +13,7 @@ export class Component {
   center?: { x: number; y: number } = { x: 0, y: 0 };
   position?: { x: number; y: number } = { x: 0, y: 0 };
   offset?: { x: number; y: number } = { x: 0, y: 0 };
+  scale?: { x: number; y: number };
   children?: Component[] = [];
   alpha?: number;
   filter?: string;
@@ -32,6 +33,7 @@ export class Component {
       if (component.alpha !== undefined) this.alpha = component.alpha;
       if (component.offset) this.offset = component.offset;
       if (component.children) this.children = component.children;
+      if (component.scale) this.scale = component.scale;
       if (component.filter) this.filter = component.filter;
       if (component.fillStyle) this.fillStyle = component.fillStyle;
       if (component.strokeStyle) this.strokeStyle = component.strokeStyle;
