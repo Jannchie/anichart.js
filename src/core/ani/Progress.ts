@@ -73,10 +73,16 @@ export class Progress extends Ani implements ProgressOptions {
       fillStyle: this.color,
     });
 
-    const start = new Component({ position: this.position });
+    const start = new Component({
+      position: this.position,
+      scale: { x: 2, y: 2 },
+    });
     start.children.push(border0);
     start.children.push(bar0);
-    const end = new Component({ position: this.position });
+    const end = new Component({
+      position: this.position,
+      scale: { x: 1, y: 1 },
+    });
     end.children.push(border1);
     end.children.push(bar1);
 
@@ -106,7 +112,11 @@ export class Progress extends Ani implements ProgressOptions {
       radius: this.radius,
       fillStyle: "#27C",
     });
-    const final = new Component({ position: this.position, alpha: 1 });
+    const final = new Component({
+      position: this.position,
+      alpha: 1,
+      scale: { x: 1.2, y: 1.2 },
+    });
     final.children.push(borderFinished);
     final.children.push(bar2);
 

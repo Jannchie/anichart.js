@@ -184,7 +184,68 @@ stage.addChild(progress);
 //     },
 //   })
 // );
+const comp1 = getTextWithBackground({
+  txt: "测试文字ABC123abc",
+});
+comp1.scale = { x: 3, y: 3 };
+(comp1.children[0] as any).shape.width = 15;
+(comp1.children[0] as any).children[0].position.x = 15;
+
+const comp2 = getTextWithBackground({
+  txt: "测试文字ABC123abc",
+});
+comp2.scale = { x: 1, y: 1 };
+
+const textAni = ani
+  .customAni(0)
+  .keyFrame(comp1)
+  .duration(1, ani.ease.easeExpOut)
+  .keyFrame(comp2);
+stage.addChild(textAni);
+
 stage.play();
 
 (window as any).stage = stage;
 (window as any).d3 = d3;
+
+function getTextWithBackground({
+  txt = "在此处输入文字！",
+  position = { x: 500, y: 500 },
+  center = { x: 0, y: 0 },
+  fontSize = 24,
+  fontWeight = "bold" as ani.FontWeight,
+  textAlign = "right" as ani.TextAlign,
+  textBaseline = "top" as ani.TextBaseline,
+  foregroundStyle = "#1e1e1e",
+  backgroundStyle = "#fff",
+  padding = { top: 5, bottom: 0, left: 5, right: 5 },
+}) {
+  const res = new ani.Component({
+    position,
+    center,
+  });
+  const text = new ani.Text({
+    text: txt,
+    position: { x: padding.left, y: padding.top },
+    fillStyle: foregroundStyle,
+    fontSize,
+    textBaseline,
+    fontWeight,
+    textAlign,
+  });
+  const width = ani.canvasHelper.measure(text).width;
+  const rect = new ani.Rect({
+    clip: true,
+    shape: {
+      width: width + text.position.x + padding.left + padding.right,
+      height: fontSize + padding.top + padding.bottom,
+    },
+    fillStyle: backgroundStyle,
+  });
+  if (textAlign === "right") {
+    text.position.x += width;
+  }
+  rect.children.push(text);
+  res.children.push(rect);
+  return res;
+}
