@@ -36,6 +36,6 @@ export class Text extends Component {
   fontVariant?: FontVariant;
   fontWeight?: FontWeight;
   fontStyle?: FontStyle;
-  fontSize?: number;
-  font?: string;
+  fontSize?: number = 24;
+  font?: string = "sans-serif";
 }
