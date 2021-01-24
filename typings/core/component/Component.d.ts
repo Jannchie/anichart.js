@@ -24,6 +24,10 @@ export declare class Component {
         x: number;
         y: number;
     };
+    scale?: {
+        x: number;
+        y: number;
+    };
     children?: Component[];
     alpha?: number;
     filter?: string;
