@@ -1,11 +1,8 @@
 import * as d3 from "d3";
 import * as _ from "lodash-es";
-import { ContextExclusionPlugin } from "webpack";
 import { Ani } from "../ani/Ani";
 import { canvasHelper } from "../CanvasHelper";
 import { Component } from "../component/Component";
-import { Line } from "../component/Line";
-import { Rect } from "../component/Rect";
 import { Text } from "../component/Text";
 import { recourse } from "../Recourse";
 import { Stage } from "../Stage";
