@@ -19,9 +19,9 @@ export class CanvasRenderer {
     this.ctx = this.canvas.getContext("2d");
   }
   render(component: Component) {
+    if (!component) return;
     this.ctx.save();
     // render itself
-
     // render base component props
     this.renderBase(component);
     // render special component props

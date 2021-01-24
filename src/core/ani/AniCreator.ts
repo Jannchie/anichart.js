@@ -50,6 +50,9 @@ class CustomAni extends Ani {
       rIdx = this.keyFrames.length - 1;
     }
     const lIdx = rIdx - 1;
+    if (lIdx < 0) {
+      return null;
+    }
     const eIdx = lIdx >= this.eases.length ? this.eases.length - 1 : lIdx;
     const scale = d3
       .scaleLinear(

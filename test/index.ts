@@ -197,7 +197,7 @@ const comp2 = getTextWithBackground({
 comp2.scale = { x: 1, y: 1 };
 
 const textAni = ani
-  .customAni(0)
+  .customAni(3)
   .keyFrame(comp1)
   .duration(1, ani.ease.easeExpOut)
   .keyFrame(comp2);
