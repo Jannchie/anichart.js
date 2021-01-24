@@ -15,6 +15,8 @@ export type FontWeight =
   | 900;
 export type FontVariant = "normal" | "small-caps";
 export type FontStyle = "normal" | "italic" | "oblique";
+export type TextBaseline = CanvasTextBaseline;
+export type TextAlign = CanvasTextAlign;
 export class Text extends Component {
   readonly type? = "Text";
   constructor(text?: Text) {
@@ -31,8 +33,8 @@ export class Text extends Component {
     }
   }
   text?: string = "";
-  textAlign?: CanvasTextAlign;
-  textBaseline?: CanvasTextBaseline;
+  textAlign?: TextAlign;
+  textBaseline?: TextBaseline;
   fontVariant?: FontVariant;
   fontWeight?: FontWeight;
   fontStyle?: FontStyle;
