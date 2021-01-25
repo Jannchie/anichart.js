@@ -17,6 +17,7 @@ export function getTextWithBackground({
   textBaseline = "top" as TextBaseline,
   foregroundStyle = "#1e1e1e",
   backgroundStyle = "#fff",
+  font = "sans-serif",
   padding = { top: 5, bottom: 0, left: 5, right: 5 },
 }) {
   const res = new Component({
@@ -26,6 +27,7 @@ export function getTextWithBackground({
     text: txt,
     position: { x: padding.left, y: padding.top },
     fillStyle: foregroundStyle,
+    font,
     fontSize,
     textBaseline,
     fontWeight,
