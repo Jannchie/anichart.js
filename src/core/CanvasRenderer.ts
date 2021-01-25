@@ -24,6 +24,7 @@ export class CanvasRenderer {
     // render itself
     // render base component props
     this.renderBase(component);
+
     // render special component props
     if (this.ctx.globalAlpha >= 0) {
       switch (component.type) {
@@ -53,8 +54,8 @@ export class CanvasRenderer {
   renderArc(arc: Arc) {
     this.ctx.beginPath();
     this.ctx.arc(
-      -arc.center.x,
-      -arc.center.y,
+      0,
+      0,
       arc.radius,
       arc.startAngle,
       arc.endAngle,
@@ -76,8 +77,8 @@ export class CanvasRenderer {
   renderClipRect(component: Rect) {
     this.ctx.beginPath();
     this.radiusArea(
-      -component.center.x,
-      -component.center.y,
+      0,
+      0,
       component.shape.width,
       component.shape.height,
       component.radius
@@ -98,21 +99,15 @@ export class CanvasRenderer {
         image.slicePosition.y,
         image.sliceShape.width,
         image.sliceShape.height,
-        -image.center.x,
-        -image.center.y,
+        0,
+        0,
         image.shape.width,
         image.shape.height
       );
     } else if (image.shape) {
-      this.ctx.drawImage(
-        src,
-        -image.center.x,
-        -image.center.y,
-        image.shape.width,
-        image.shape.height
-      );
+      this.ctx.drawImage(src, 0, 0, image.shape.width, image.shape.height);
     } else {
-      this.ctx.drawImage(src, -image.center.x, -image.center.y);
+      this.ctx.drawImage(src, 0, 0);
     }
   }
   renderRect(component: Rect) {
@@ -120,16 +115,11 @@ export class CanvasRenderer {
       this.renderClipRect(component);
     }
     if (!component.radius || component.radius <= 0) {
-      this.ctx.fillRect(
-        -component.center.x,
-        -component.center.y,
-        component.shape.width,
-        component.shape.height
-      );
+      this.ctx.fillRect(0, 0, component.shape.width, component.shape.height);
     } else {
       this.fillRadiusRect(
-        -component.center.x,
-        -component.center.y,
+        0,
+        0,
         component.shape.width,
         component.shape.height,
         component.radius
@@ -138,15 +128,15 @@ export class CanvasRenderer {
     if (component.strokeStyle) {
       if (!component.radius || component.radius <= 0) {
         this.ctx.strokeRect(
-          -component.center.x,
-          -component.center.y,
+          0,
+          0,
           component.shape.width,
           component.shape.height
         );
       } else {
         this.strokeRadiusRect(
-          -component.center.x,
-          -component.center.y,
+          0,
+          0,
           component.shape.width,
           component.shape.height,
           component.radius
@@ -156,7 +146,11 @@ export class CanvasRenderer {
   }
 
   renderBase(component: Component) {
-    this.ctx.translate(component.position.x, component.position.y);
+    this.ctx.translate(
+      component.position.x - component.center.x,
+      component.position.y - component.center.y
+    );
+
     if (component.filter) {
       this.ctx.filter = component.filter;
     }
@@ -179,18 +173,10 @@ export class CanvasRenderer {
   renderText(component: Text) {
     this.prerenderText(component);
     if (component.strokeStyle) {
-      this.ctx.strokeText(
-        component.text,
-        -component.center.x,
-        -component.center.y
-      );
+      this.ctx.strokeText(component.text, 0, 0);
     }
     if (component.fillStyle) {
-      this.ctx.fillText(
-        component.text,
-        -component.center.x,
-        -component.center.y
-      );
+      this.ctx.fillText(component.text, 0, 0);
     }
   }
   prerenderText(component: Text) {

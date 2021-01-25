@@ -126,7 +126,7 @@ export class Progress extends Ani implements ProgressOptions {
       .keyFrame(start)
       .duration(this.aniTime[1], d3.easePolyOut.exponent(5))
       .keyFrame(end)
-      .duration(0.25)
+      .duration(0.25, d3.easeExpOut)
       .keyFrame(final)
       .duration(0.5)
       .keyFrame(final)
