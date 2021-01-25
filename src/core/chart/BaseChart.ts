@@ -174,7 +174,7 @@ export abstract class BaseChart extends Ani {
   };
 
   labelFormat: KeyGenerate = (id: string, meta?: Map<string, any>) => {
-    if (meta.get(id) && meta.get(id).name) {
+    if (meta && meta.get(id) && meta.get(id).name) {
       return meta.get(id).name;
     } else {
       return id;
@@ -204,11 +204,12 @@ export abstract class BaseChart extends Ani {
     }
   }
   getCurrentData(sec: number, filter = true) {
-    const currentData = [...this.dataScales.values()].map((scale) => {
+    let currentData = [...this.dataScales.values()];
+    currentData = currentData.map((scale) => {
       return scale(sec);
     });
     if (filter) {
-      currentData.filter((d) => d !== undefined);
+      currentData = currentData.filter((d) => d !== undefined);
     }
     currentData.sort((a, b) => {
       if (Number.isNaN(b[this.valueField])) {
