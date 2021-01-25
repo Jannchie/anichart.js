@@ -3,7 +3,13 @@ import { Stage } from "../Stage";
 
 export class Ani {
   stage?: Stage;
-  component?: Component = new Component();
+  component?: Component;
+  children?: (Ani | Component)[];
+  constructor(ani?: Ani) {
+    this.stage = ani?.stage;
+    this.component = ani?.component ?? new Component();
+    this.children = ani?.children ?? [];
+  }
   getComponent(sec: number) {
     return this.component;
   }
@@ -13,5 +19,4 @@ export class Ani {
       child.setup(stage);
     });
   }
-  children?: (Ani | Component)[] = [];
 }
