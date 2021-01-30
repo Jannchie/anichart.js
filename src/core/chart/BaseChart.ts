@@ -1,5 +1,6 @@
 import * as d3 from "d3";
 import * as _ from "lodash-es";
+import moment from "moment";
 import { Ani } from "../ani/Ani";
 import { canvasHelper } from "../CanvasHelper";
 import { Component } from "../component/Component";
@@ -130,10 +131,7 @@ export abstract class BaseChart extends Ani {
         switch (k) {
           case this.dateField:
             // 日期字符串转成日期
-            d[k] = new Date(
-              new Date().getTimezoneOffset() * 60 * 1000 +
-                new Date(d[this.dateField]).getTime()
-            );
+            d[k] = moment(d[this.dateField]).toDate();
             break;
           case this.idField:
             // ID保持不变

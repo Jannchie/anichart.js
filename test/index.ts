@@ -119,6 +119,7 @@ const barChart = new ani.BarChart({
     return id;
     // return meta.get(id).name;
   },
+  dateFormat: "%Y-%m-%d %H:%M:%S",
   aniTime: [4, 10],
 });
 
@@ -155,8 +156,8 @@ stage.addChild(logoCenter);
 stage.addChild(textLinesAni);
 stage.addChild(rectAni);
 stage.addChild(logoAni);
-// stage.addChild(barChart);
-// stage.addChild(lineChart);
+stage.addChild(barChart);
+stage.addChild(lineChart);
 
 const progress = new ani.Progress({
   position: { x: stage.canvas.width / 2, y: stage.canvas.height / 2 },
@@ -213,14 +214,14 @@ const img = ani.showImage({
   path: "./data/ANI.png",
 });
 
-ani.recourse.loadData("./data/weibo-data.csv", "weibo");
-stage.addChild(
-  new ani.BarChart({
-    dataName: "weibo",
-    maxInterval: (1000 * 86400) / 24,
-    dateFormat: "%Y-%m-%d %H:%M:%S",
-  })
-);
+// ani.recourse.loadData("./data/weibo-data.csv", "weibo");
+// stage.addChild(
+//   new ani.BarChart({
+//     dataName: "weibo",
+//     maxInterval: (1000 * 86400) / 24,
+//     dateFormat: "%Y-%m-%d %H:%M:%S",
+//   })
+// );
 
 stage.addChild(img);
 stage.play();
