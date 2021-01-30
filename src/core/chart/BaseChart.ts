@@ -157,6 +157,9 @@ export abstract class BaseChart extends Ani {
     const dataScales = new Map();
     g.forEach((dataList, k) => {
       // 如果设置了 maxInterval 则需要插入 NaN
+      dataList.sort(
+        (a, b) => a[this.dateField].getTime() - b[this.dateField].getTime()
+      );
       this.insertNaN(dataList, dateExtent);
       const dateList = dataList.map((d) => d[this.dateField]);
       const secList = dateList.map((d) => this.secToDate.invert(d));

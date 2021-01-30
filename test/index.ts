@@ -2,7 +2,7 @@ import * as ani from "../src/index";
 import * as d3 from "d3";
 const stage = new ani.Stage();
 stage.options.fps = 60;
-stage.options.sec = 20;
+stage.options.sec = 60 * 4;
 stage.output = false;
 
 const bgAni = new ani.RectAni();
