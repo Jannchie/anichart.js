@@ -74,7 +74,7 @@ export abstract class BaseChart extends Ani {
   valueField = "value";
   valueKeys = ["value"];
   imageKey = "image";
-  shape = { width: 400, height: 300 };
+  shape: { width: number; height: number };
   position = { x: 0, y: 0 };
   margin = { left: 20, top: 20, right: 20, bottom: 20 };
   aniTime: [number, number];
@@ -112,6 +112,13 @@ export abstract class BaseChart extends Ani {
     // 用于计算坐标
     this.valueMax = this.historyMin;
     this.valueMin = this.historyMax;
+
+    if (!this.shape) {
+      this.shape = {
+        width: this.stage.canvas.width,
+        height: this.stage.canvas.height,
+      };
+    }
   }
   private setData() {
     this.data = _.cloneDeep(recourse.data.get(this.dataName));
