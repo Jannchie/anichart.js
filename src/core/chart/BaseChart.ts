@@ -34,6 +34,7 @@ export interface BaseChartOptions {
 
   dataName?: string;
   metaName?: string;
+  maxInterval?: number;
 }
 export type KeyGenerate =
   | ((id: string) => string)
@@ -44,6 +45,7 @@ export abstract class BaseChart extends Ani {
   xAxisHeight: number;
   yAxisPadding: number = 4;
   xAxisPadding: number = 4;
+  maxInterval: number;
   constructor(options?: BaseChartOptions) {
     super();
     if (!options) return;
@@ -64,6 +66,7 @@ export abstract class BaseChart extends Ani {
     if (options.dataName) this.dataName = options.dataName;
     if (options.metaName) this.metaName = options.metaName;
     if (options.position) this.position = options.position;
+    this.maxInterval = options.maxInterval ?? Number.MAX_VALUE;
   }
   tickKeyFrameDuration: number = 1;
   dataScales: Map<string, any>;
@@ -146,17 +149,68 @@ export abstract class BaseChart extends Ani {
     this.dataGroup = d3.group(this.data, (d) => d[this.idField]);
   }
   private setDataScales() {
+    // 整体日期范围
     const dateExtent = d3.extent(this.data, (d) => d[this.dateField]);
+    // 播放进度到日期的映射
     this.secToDate = d3.scaleLinear(this.aniTime, dateExtent).clamp(true);
     const g = d3.group(this.data, (d) => d[this.idField]);
     const dataScales = new Map();
     g.forEach((dataList, k) => {
+      // 如果设置了 maxInterval 则需要插入 NaN
+      this.insertNaN(dataList, dateExtent);
       const dateList = dataList.map((d) => d[this.dateField]);
       const secList = dateList.map((d) => this.secToDate.invert(d));
+
+      // 线性插值
       const dataScale = d3.scaleLinear(secList, dataList).clamp(true);
       dataScales.set(k, dataScale);
     });
     this.dataScales = dataScales;
+  }
+
+  private insertNaN(
+    dataList: any[],
+    dateExtent: [undefined, undefined] | [any, any]
+  ) {
+    if (this.maxInterval !== Number.MAX_VALUE) {
+      // 如果间隔时间大于一定值，则插入一个 NaN
+      // 在后面插入NaN
+      const last = dataList[dataList.length - 1];
+      if (
+        dateExtent[1].getTime() - last[this.dateField].getTime() >
+        this.maxInterval
+      ) {
+        const obj = Object.assign({}, last);
+        obj[this.valueField] = NaN;
+        obj[this.dateField] = new Date(obj[this.dateField].getTime() + 1);
+        // console.log(obj);
+        dataList.push(obj);
+      }
+      // 在前面插入NaN
+      const first = dataList[0];
+      if (
+        first[this.dateField].getTime() - dateExtent[0].getTime() >
+        this.maxInterval
+      ) {
+        const obj = Object.assign({}, first);
+        obj[this.valueField] = NaN;
+        obj[this.dateField] = new Date(obj[this.dateField].getTime() - 1);
+        // console.log(obj);
+        dataList.unshift(obj);
+      }
+      for (let i = 0; i < dataList.length - 1; i++) {
+        const prev = dataList[i];
+        const next = dataList[i + 1];
+        if (next[this.dateField] - prev[this.dateField] > this.maxInterval) {
+          const obj = Object.assign({}, prev);
+          obj[this.valueField] = NaN;
+          obj[this.dateField] = new Date(obj[this.dateField].getTime() + 1);
+          // console.log(obj);
+          dataList.splice(i + 1, 0, obj);
+          i++;
+        }
+      }
+    }
   }
 
   getComponent(sec: number) {

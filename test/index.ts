@@ -2,7 +2,7 @@ import * as ani from "../src/index";
 import * as d3 from "d3";
 const stage = new ani.Stage();
 stage.options.fps = 60;
-stage.options.sec = 12;
+stage.options.sec = 20;
 stage.output = false;
 
 const bgAni = new ani.RectAni();
@@ -155,8 +155,8 @@ stage.addChild(logoCenter);
 stage.addChild(textLinesAni);
 stage.addChild(rectAni);
 stage.addChild(logoAni);
-stage.addChild(barChart);
-stage.addChild(lineChart);
+// stage.addChild(barChart);
+// stage.addChild(lineChart);
 
 const progress = new ani.Progress({
   position: { x: stage.canvas.width / 2, y: stage.canvas.height / 2 },
@@ -214,7 +214,13 @@ const img = ani.showImage({
 });
 
 ani.recourse.loadData("./data/weibo-data.csv", "weibo");
-stage.addChild(new ani.BarChart({ dataName: "weibo" }));
+stage.addChild(
+  new ani.BarChart({
+    dataName: "weibo",
+    maxInterval: (1000 * 86400) / 24,
+    dateFormat: "%Y-%m-%d %H:%M:%S",
+  })
+);
 
 stage.addChild(img);
 stage.play();
