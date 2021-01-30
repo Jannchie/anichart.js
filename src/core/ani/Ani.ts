@@ -14,8 +14,8 @@ export class Ani {
     return this.component;
   }
   setup(stage: Stage) {
+    this.stage = stage;
     this.children.forEach((child: Component | Ani) => {
-      this.stage = stage;
       child.setup(stage);
     });
   }
