@@ -155,8 +155,8 @@ stage.addChild(logoCenter);
 stage.addChild(textLinesAni);
 stage.addChild(rectAni);
 stage.addChild(logoAni);
-stage.addChild(barChart);
-stage.addChild(lineChart);
+// stage.addChild(barChart);
+// stage.addChild(lineChart);
 
 const progress = new ani.Progress({
   position: { x: stage.canvas.width / 2, y: stage.canvas.height / 2 },
@@ -169,7 +169,21 @@ const pie = new ani.PieChart({
 });
 stage.addChild(pie);
 stage.addChild(progress);
-
+// // Bit Coin Chart
+// ani.recourse.loadData("./data/bitcoin.csv", "bitcoin");
+// stage.addChild(
+//   new ani.LineChart({
+//     shape: { width: stage.canvas.width, height: stage.canvas.height },
+//     aniTime: [0, 10],
+//     dataName: "bitcoin",
+//     valueField: "Price",
+//     dateField: "Date",
+//     pointerR: 0,
+//     valueFormat: (d) => {
+//       return d3.format(",.2f")(d.Price);
+//     },
+//   })
+// );
 const comp1 = ani.getTextWithBackground({
   txt: "测试文字ABC123abc",
   position: { x: stage.canvas.width / 2, y: stage.canvas.height / 2 },
@@ -198,6 +212,15 @@ stage.addChild(b);
 const img = ani.showImage({
   path: "./data/ANI.png",
 });
+
+ani.recourse.loadData("./data/weibo-data.csv", "weibo");
+stage.addChild(
+  new ani.BarChart({
+    dataName: "weibo",
+    maxInterval: (1000 * 86400) / 24,
+    dateFormat: "%Y-%m-%d %H:%M:%S",
+  })
+);
 
 stage.addChild(img);
 stage.play();
