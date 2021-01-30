@@ -128,3 +128,5 @@ dist
 
 *.map
 !anichart-preview.png
+
+.idea

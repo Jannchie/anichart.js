@@ -206,11 +206,17 @@ const textAni: ani.Ani = ani
 
 const b = ani.addFadeWrapper(
   ani.addScaleWrapper(textAni, ani.customInOut([3, 3.9, 4, 5], [5, 3])),
-  ani.customInOut([3, 3.2, 5, 6], [0, 1])
+  ani.customInOut([3, 3.2, 5.8, 6], [0, 1])
 );
 stage.addChild(b);
+const img = ani.showImage({
+  path: "./data/ANI.png",
+});
 
+ani.recourse.loadData("./data/weibo-data.csv", "weibo");
+stage.addChild(new ani.BarChart({ dataName: "weibo" }));
+
+stage.addChild(img);
 stage.play();
-
 (window as any).stage = stage;
 (window as any).d3 = d3;

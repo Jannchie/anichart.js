@@ -211,7 +211,7 @@ export abstract class BaseChart extends Ani {
     if (filter) {
       currentData = currentData.filter((d) => d !== undefined);
     }
-    currentData.sort((a, b) => {
+    currentData = currentData.sort((a, b) => {
       if (Number.isNaN(b[this.valueField])) {
         return -1;
       } else if (Number.isNaN(a[this.valueField])) {
