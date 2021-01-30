@@ -32,6 +32,7 @@ export interface BaseChartOptions {
     dateFormat?: string;
     dataName?: string;
     metaName?: string;
+    maxInterval?: number;
 }
 export declare type KeyGenerate = ((id: string) => string) | ((id: string, meta: Map<string, any>) => string) | ((id: string, meta: Map<string, any>, data: Map<string, any>) => string);
 export declare abstract class BaseChart extends Ani {
@@ -39,6 +40,7 @@ export declare abstract class BaseChart extends Ani {
     xAxisHeight: number;
     yAxisPadding: number;
     xAxisPadding: number;
+    maxInterval: number;
     constructor(options?: BaseChartOptions);
     tickKeyFrameDuration: number;
     dataScales: Map<string, any>;
@@ -87,6 +89,7 @@ export declare abstract class BaseChart extends Ani {
     setup(stage: Stage): void;
     private setData;
     private setDataScales;
+    private insertNaN;
     getComponent(sec: number): Component;
     setMeta(): void;
     valueFormat: (cData: any) => string;
