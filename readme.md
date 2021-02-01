@@ -116,39 +116,31 @@ Cake47,2020-01-09,3,生活,other
 Cake47,2020-01-11,4,生活,other
 ```
 
-### 创建对象
-
-```js
-let a = new anichart.Bar();
-```
-
 ### 载入数据
 
 ```js
-// 回调语法
-b.loadCsv("./data.csv").then(() => {
-  b.initCanvas();
-  b.readyToDraw();
-});
+// 默认情况下，需要通过内置的recourse对象载入数据
+// 第一个参数是数据的路径，第二个参数是数据的名称
+anichart.recourse.loadData("path/to/data.csv", "data")
 ```
 
-```js
-// 你也可以使用 async 语法
-await a.loadCsv(pathData);
-a.initCanvas();
-a.readyToDraw();
+### 创建对象
 
+```js
+// 创建一个舞台
+let stage = new anichart.Stage();
+// 创建一个图表，默认情况下会载入名称为data的数据
+let chart = new anichart.BarChart();
+// 挂载图表
+stage.addChild(chart);
 ```
 
 ### 播放动画
 
-默认情况下，在浏览器内会有一个类似进度条的组件用于控制播放。
-
-你也可以使用代码控制播放。
+可以使用代码控制播放。
 
 ```js
-// 代码控制
-a.play();
+stage.play();
 ```
 
 ### 导出视频
@@ -157,7 +149,7 @@ a.play();
 
 ```js
 // 配置导出视频
-a.output = true;
+stage.output = true;
 ```
 
 ### 测试
