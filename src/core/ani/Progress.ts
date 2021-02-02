@@ -142,7 +142,7 @@ export class Progress extends Ani implements ProgressOptions {
     const label = d3.format("d")(val);
     const res = this.ani.getComponent(sec);
     const textLabel = new Text({
-      text: val === 100 ? `Finished.` : `Loading ${label} %`,
+      text: val === 100 ? `` : `Loading ${label} %`,
       font: "Sarasa Mono SC",
       fontSize: 24,
       textAlign: "center",

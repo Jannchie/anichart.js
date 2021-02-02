@@ -1,4 +1,5 @@
 const path = require("path");
+const webpack = require("webpack");
 module.exports = {
   entry: "./src/index.ts",
   output: {
@@ -28,4 +29,7 @@ module.exports = {
       },
     ],
   },
+  plugins: [
+    new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /en|zh-cn/),
+  ],
 };
