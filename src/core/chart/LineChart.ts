@@ -5,6 +5,7 @@ import { Arc } from "../component/Arc";
 import { Component } from "../component/Component";
 import { Path } from "../component/Path";
 import { Rect } from "../component/Rect";
+import { Text } from "../component/Text";
 import { Stage } from "../Stage";
 import { BaseChart, BaseChartOptions } from "./BaseChart";
 
@@ -13,6 +14,9 @@ interface LineChartOptions extends BaseChartOptions {
 }
 export class LineChart extends BaseChart {
   pointerR: number;
+  labelPlaceholder: number = 0;
+  labelSize: number = 32;
+  labelPadding: number = 4;
   constructor(options: LineChartOptions) {
     super(options);
     if (!options) return;
@@ -27,6 +31,15 @@ export class LineChart extends BaseChart {
     this.xTickFormat = (n: number | { valueOf(): number }) => {
       return d3.timeFormat("%Y-%m-%d")(this.secToDate(n));
     };
+    // Calculate label placeholder
+    const textModel = new Text({
+      fontSize: this.labelSize,
+    });
+    const labelMaxWidth = d3.max(this.data, (d) => {
+      textModel.text = this.labelFormat(d[this.idField], this.meta, d);
+      return canvasHelper.measure(textModel).width;
+    });
+    this.labelPlaceholder = labelMaxWidth;
   }
 
   getComponent(sec: number) {
@@ -60,7 +73,10 @@ export class LineChart extends BaseChart {
           this.margin.left -
           this.margin.right -
           this.yAxisWidth -
-          this.yAxisPadding,
+          this.yAxisPadding -
+          this.labelPlaceholder -
+          this.labelPadding -
+          this.pointerR,
         height:
           this.shape.height -
           this.margin.top -
@@ -77,6 +93,12 @@ export class LineChart extends BaseChart {
       },
     });
 
+    const labels = new Component({
+      position: {
+        x: this.margin.left + this.yAxisWidth + this.yAxisPadding,
+        y: this.margin.top + this.xAxisHeight + this.xAxisPadding,
+      },
+    });
     const maxX = d3.max(this.scales.x.range());
     this.dataGroup.forEach((v: any[], k) => {
       const line = new Path();
@@ -101,15 +123,24 @@ export class LineChart extends BaseChart {
         this.historyMin = maxValue;
       }
       points.children.push(point);
+      const data = new Map();
+      data.set(this.valueField, maxValue);
+      const label = new Text({
+        text: this.labelFormat(k, this.meta, data),
+        fontSize: this.labelSize,
+        textBaseline: "middle",
+        position: { x: maxX + this.labelPadding + this.pointerR, y: currentY },
+        fillStyle: color,
+      });
+      labels.children.push(label);
     });
-
     res.children.push(lineArea);
     res.children.push(points);
     res.children.push(xAxis);
     res.children.push(yAxis);
+    res.children.push(labels);
     return res;
   }
-
   protected getScalesBySec(sec: number) {
     const currentData = this.getCurrentData(sec);
     const valueRange = d3.extent(currentData, (d) => d[this.valueField]);
@@ -137,7 +168,10 @@ export class LineChart extends BaseChart {
             this.margin.left -
             this.margin.right -
             this.yAxisWidth -
-            this.yAxisPadding,
+            this.yAxisPadding -
+            this.labelPlaceholder -
+            this.labelPadding -
+            this.pointerR,
         ]
       ),
       y: d3.scaleLinear(valueRange, [
