@@ -45,8 +45,11 @@ ani.recourse.loadImage(
   "jannchie"
 );
 
-ani.recourse.loadData("./data/test.csv", "data");
+ani.recourse.loadCSV("./data/test.csv", "data");
 // ani.recourse.loadData("./data/test-meta.csv", "meta");
+
+const map = new ani.MapChart();
+stage.addChild(map);
 
 const rectAni = ani.createAni(
   [
@@ -222,7 +225,7 @@ const img = ani.showImage({
 //     dateFormat: "%Y-%m-%d %H:%M:%S",
 //   })
 // );
-
+ani.recourse.loadJSON(`./utils/china-map/china.json`, "map");
 stage.addChild(img);
 stage.play();
 (window as any).stage = stage;
