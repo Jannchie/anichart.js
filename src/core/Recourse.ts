@@ -1,6 +1,5 @@
 import { imageLoader } from "./ImageLoader";
-import { csv } from "d3";
-import { csvParse, DSVRowArray } from "d3-dsv";
+import { csv, json } from "d3";
 export class Recourse {
   setup() {
     const promises = [] as Promise<any>[];
@@ -9,7 +8,7 @@ export class Recourse {
       promises.push(promise);
     }
     for (const [key, promise] of this.dataPromise) {
-      promise.then((data: DSVRowArray<string>) => this.data.set(key, data));
+      promise.then((data: any) => this.data.set(key, data));
       promises.push(promise);
     }
     return Promise.all(promises);
@@ -17,8 +16,8 @@ export class Recourse {
   private imagesPromise: Map<string, Promise<CanvasImageSource>> = new Map();
   images: Map<string, CanvasImageSource> = new Map();
 
-  private dataPromise: Map<string, Promise<DSVRowArray<string>>> = new Map();
-  data: Map<string, DSVRowArray<string>> = new Map();
+  private dataPromise: Map<string, Promise<any>> = new Map();
+  data: Map<string, any> = new Map();
 
   loadImage(path: string, name?: string) {
     const src = imageLoader.load(path);
@@ -28,11 +27,17 @@ export class Recourse {
     this.imagesPromise.set(path, src);
   }
 
-  loadData(path: string | any, name: string) {
+  loadCSV(path: string | any, name: string) {
     if (typeof path !== "string") {
       path = path.default;
     }
     this.dataPromise.set(name, csv(path));
+  }
+  loadJSON(path: string | any, name: string) {
+    if (typeof path !== "string") {
+      path = path.default;
+    }
+    this.dataPromise.set(name, json(path));
   }
 }
 export const recourse = new Recourse();

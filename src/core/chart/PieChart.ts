@@ -1,7 +1,6 @@
 import { BaseChartOptions, BaseChart } from "./BaseChart";
 import * as d3 from "d3";
-import { Component } from "../component/Component";
-import { Line } from "../component/Line";
+import { Path } from "../component/Path";
 import { colorPicker } from "../ColorPicker";
 import { FontWeight, Text } from "../component/Text";
 interface PieChartOptions extends BaseChartOptions {
@@ -69,7 +68,7 @@ export class PieChart extends BaseChart implements PieChartOptions {
         strokeStyle: this.labelTextStyle.strokeStyle,
         position: { x: centroid[0], y: centroid[1] },
       });
-      const comp = new Line({
+      const comp = new Path({
         fillStyle: colorPicker.getColor(d.data[this.idField]),
         strokeStyle: "#0000",
         path,

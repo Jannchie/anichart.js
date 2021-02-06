@@ -3,7 +3,7 @@ import { Rect } from "./component/Rect";
 import { Text } from "./component/Text";
 import { Image } from "./component/Image";
 import { recourse } from "./Recourse";
-import { Line } from "./component/Line";
+import { Path } from "./component/Path";
 import { Arc } from "./component/Arc";
 export class CanvasRenderer {
   canvas: HTMLCanvasElement;
@@ -41,7 +41,7 @@ export class CanvasRenderer {
           this.renderArc(component as Arc);
           break;
         case "Line":
-          this.renderLine(component as Line);
+          this.renderLine(component as Path);
           break;
       }
       // render children components
@@ -64,7 +64,7 @@ export class CanvasRenderer {
     if (arc.strokeStyle) this.ctx.stroke();
     if (arc.fillStyle) this.ctx.fill();
   }
-  renderLine(line: Line) {
+  renderLine(line: Path) {
     let path: Path2D;
     if (typeof line.path === "string") {
       path = new Path2D(line.path);

@@ -1,9 +1,9 @@
 import * as d3 from "d3";
-import { CanvasHelper, canvasHelper } from "../CanvasHelper";
+import { canvasHelper } from "../CanvasHelper";
 import { colorPicker } from "../ColorPicker";
 import { Arc } from "../component/Arc";
 import { Component } from "../component/Component";
-import { Line } from "../component/Line";
+import { Path } from "../component/Path";
 import { Rect } from "../component/Rect";
 import { Stage } from "../Stage";
 import { BaseChart, BaseChartOptions } from "./BaseChart";
@@ -79,7 +79,7 @@ export class LineChart extends BaseChart {
 
     const maxX = d3.max(this.scales.x.range());
     this.dataGroup.forEach((v: any[], k) => {
-      const line = new Line();
+      const line = new Path();
       const color = colorPicker.getColor(k);
       line.strokeStyle = color;
       line.path = new Path2D(lineGen.curve(d3.curveMonotoneX)(v));
