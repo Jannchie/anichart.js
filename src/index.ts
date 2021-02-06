@@ -40,3 +40,5 @@ export * from "./core/custom/ShowImage";
 
 export * from "./core/wrapper/Scale";
 export * from "./core/wrapper/Fade";
+
+export * from "./core/Constant";

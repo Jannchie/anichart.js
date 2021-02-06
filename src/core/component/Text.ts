@@ -1,3 +1,4 @@
+import { font } from "../..";
 import { Component } from "./Component";
 export type FontWeight =
   | "normal"
@@ -39,5 +40,5 @@ export class Text extends Component {
   fontWeight?: FontWeight;
   fontStyle?: FontStyle;
   fontSize?: number = 24;
-  font?: string = "sans-serif";
+  font?: string = font;
 }

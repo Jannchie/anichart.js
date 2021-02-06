@@ -48,9 +48,6 @@ ani.recourse.loadImage(
 ani.recourse.loadCSV("./data/test.csv", "data");
 // ani.recourse.loadData("./data/test-meta.csv", "meta");
 
-const map = new ani.MapChart();
-stage.addChild(map);
-
 const rectAni = ani.createAni(
   [
     new ani.Rect({
@@ -154,6 +151,10 @@ const a = ani
   );
 
 stage.addChild(bgAni);
+
+const map = new ani.MapChart();
+stage.addChild(map);
+
 stage.addChild(a);
 stage.addChild(logoCenter);
 stage.addChild(textLinesAni);

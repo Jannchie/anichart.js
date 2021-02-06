@@ -10,6 +10,7 @@ import { canvasHelper } from "../CanvasHelper";
 import { Stage } from "../Stage";
 import { BaseChart, BaseChartOptions, KeyGenerate } from "./BaseChart";
 import { recourse } from "../Recourse";
+import { font } from "../..";
 
 interface BarChartOptions extends BaseChartOptions {
   itemCount?: number;
@@ -183,7 +184,7 @@ export class BarChart extends BaseChart {
     if (this.showDateLabel) {
       const dateLabel = new Text({
         text: d3.timeFormat(this.dateFormat)(this.secToDate(sec)),
-        font: "Sarasa Mono SC",
+        font,
         fontSize: this.dateLabelSize,
         fillStyle: "#777",
         textAlign: "right",
@@ -275,7 +276,7 @@ export class BarChart extends BaseChart {
         y: options.shape.height,
       },
       fontSize: options.shape.height * 0.8,
-      font: "Sarasa Mono SC",
+      font,
       fillStyle: options.color,
     });
     const imagePlaceholder =
@@ -291,7 +292,7 @@ export class BarChart extends BaseChart {
         y: options.shape.height,
       },
       fontSize: options.shape.height * 0.8,
-      font: "Sarasa Mono SC",
+      font,
       fontWeight: "bolder",
       fillStyle: "#1e1e1e",
     });
@@ -326,7 +327,7 @@ export class BarChart extends BaseChart {
       textAlign: "right",
       textBaseline: "bottom",
       fontSize,
-      font: "Sarasa Mono SC",
+      font,
       position: { x: 0 - this.barPadding, y: fontSize / 0.8 },
       fillStyle: color,
     };

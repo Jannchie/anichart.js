@@ -47,7 +47,7 @@ export class LineChart extends BaseChart {
       position: this.position,
       alpha: this.alphaScale(sec - this.fadeTime[0] - this.freezeTime[0]),
     });
-    if (this.aniTime[0] > sec) return this.component;
+    if (this.aniTime[0] > sec) return null;
     this.scales = this.getScalesBySec(sec);
     const { xAxis, yAxis } = this.getAxis(sec, this.scales);
     const lineGen = d3
