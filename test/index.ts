@@ -21,7 +21,6 @@ textLinesAni.component.position = {
   x: stage.canvas.width / 2,
   y: stage.canvas.height / 2,
 };
-
 const textAnichart = new ani.TextAni();
 textAnichart.component.fontSize = 48;
 textAnichart.component.font = "Sarasa Mono Slab SC";
@@ -174,58 +173,10 @@ const pie = new ani.PieChart({
 });
 stage.addChild(pie);
 stage.addChild(progress);
-// // Bit Coin Chart
-// ani.recourse.loadData("./data/bitcoin.csv", "bitcoin");
-// stage.addChild(
-//   new ani.LineChart({
-//     shape: { width: stage.canvas.width, height: stage.canvas.height },
-//     aniTime: [0, 10],
-//     dataName: "bitcoin",
-//     valueField: "Price",
-//     dateField: "Date",
-//     pointerR: 0,
-//     valueFormat: (d) => {
-//       return d3.format(",.2f")(d.Price);
-//     },
-//   })
-// );
-const comp1 = ani.getTextWithBackground({
-  txt: "测试文字ABC123abc",
-  position: { x: stage.canvas.width / 2, y: stage.canvas.height / 2 },
-});
-// comp1.scale = { x: 3, y: 3 };
-(comp1.children[0] as any).shape.width = 15;
-(comp1.children[0] as any).children[0].position.x = 15;
-
-const comp2 = ani.getTextWithBackground({
-  txt: "测试文字ABC123abc",
-  position: { x: stage.canvas.width / 2, y: stage.canvas.height / 2 },
-});
-// comp2.scale = { x: 1, y: 1 };
-
-const textAni: ani.Ani = ani
-  .customAni(3.5)
-  .keyFrame(comp1)
-  .duration(1, ani.ease.easeExpOut)
-  .keyFrame(comp2);
-
-const b = ani.addFadeWrapper(
-  ani.addScaleWrapper(textAni, ani.customInOut([3, 3.9, 4, 5], [5, 3])),
-  ani.customInOut([3, 3.2, 5.8, 6], [0, 1])
-);
-stage.addChild(b);
 const img = ani.showImage({
   path: "./data/ANI.png",
 });
 
-// ani.recourse.loadData("./data/weibo-data.csv", "weibo");
-// stage.addChild(
-//   new ani.BarChart({
-//     dataName: "weibo",
-//     maxInterval: (1000 * 86400) / 24,
-//     dateFormat: "%Y-%m-%d %H:%M:%S",
-//   })
-// );
 ani.recourse.loadJSON(`./utils/china-map/china.json`, "map");
 stage.addChild(img);
 stage.play();

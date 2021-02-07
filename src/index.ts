@@ -34,6 +34,8 @@ export * from "./core/ani/Progress";
 export * from "./core/ani/RectAni";
 export * from "./core/ani/TextAni";
 export * from "./core/ani/TextLinesAni";
+export * from "./core/ani/GridAni";
+export * from "./core/ani/TitleAni";
 
 export * from "./core/custom/TextWithBackGround";
 export * from "./core/custom/ShowImage";
