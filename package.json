@@ -6,10 +6,9 @@
   "author": "jannchie <jannchie@gmail.com>",
   "license": "MIT",
   "private": false,
-  "main": "dist/anichart.js",
+  "main": "lib/index.js",
   "unpkg": "dist/anichart.js",
   "jsdelivr": "dist/anichart.js",
-  "types": "typings/index.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/Jannchie/anichart.js.git"
