@@ -114,12 +114,22 @@ export class MapChart extends BaseChart {
   }
 
   getComponent(sec: number) {
-    this.updateScale();
+    this.updateScale(sec);
     this.updateProject(sec);
     this.updatePath(sec);
     return this.wrapper;
   }
-  updateScale() {
+  updateScale(sec: number) {
+    [this.currentMax, this.currentMin] = d3.extent(
+      this.getCurrentData(sec),
+      (d) => d[this.valueField]
+    );
+    if (this.currentMax > this.historyMax) {
+      this.historyMax = this.currentMax;
+    }
+    if (this.historyMin > this.currentMin) {
+      this.historyMin = this.currentMax;
+    }
     if (typeof this.visualRange === "string") {
       switch (this.visualRange) {
         case "total":
@@ -129,7 +139,7 @@ export class MapChart extends BaseChart {
           break;
         case "history":
           this.scale = d3
-            .scaleLinear([this.historyMax, this.historyMin], [0, 1])
+            .scaleLinear([this.historyMin, this.historyMax], [0, 1])
             .clamp(true);
         default:
           this.scale = d3
