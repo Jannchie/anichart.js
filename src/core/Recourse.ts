@@ -20,24 +20,29 @@ export class Recourse {
   data: Map<string, any> = new Map();
 
   loadImage(path: string, name?: string) {
-    const src = imageLoader.load(path);
+    const promise = imageLoader.load(path);
     if (name) {
-      this.imagesPromise.set(name, src);
+      this.imagesPromise.set(name, promise);
     }
-    this.imagesPromise.set(path, src);
+    this.imagesPromise.set(path, promise);
+    return promise;
   }
 
   loadCSV(path: string | any, name: string) {
     if (typeof path !== "string") {
       path = path.default;
     }
-    this.dataPromise.set(name, csv(path));
+    const promise = csv(path);
+    this.dataPromise.set(name, promise);
+    return promise;
   }
   loadJSON(path: string | any, name: string) {
     if (typeof path !== "string") {
       path = path.default;
     }
-    this.dataPromise.set(name, json(path));
+    const promise = json(path);
+    this.dataPromise.set(name, promise);
+    return promise;
   }
 }
 export const recourse = new Recourse();
