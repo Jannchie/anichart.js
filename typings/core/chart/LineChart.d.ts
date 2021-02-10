@@ -10,6 +10,7 @@ export declare class LineChart extends BaseChart {
     labelPlaceholder: number;
     labelSize: number;
     labelPadding: number;
+    topN: number;
     constructor(options: LineChartOptions);
     scales: {
         x: d3.ScaleLinear<number, number, never>;
