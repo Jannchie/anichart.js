@@ -25,6 +25,9 @@ export class Component {
       child.setup();
     });
   };
+  addChild? = function (comp: Component) {
+    this.children.push(comp);
+  };
   constructor(component?: Component) {
     if (component) {
       if (component.center) this.center = component.center;

@@ -3,7 +3,7 @@ import { canvasHelper } from "../CanvasHelper";
 import { colorPicker } from "../ColorPicker";
 import { Arc } from "../component/Arc";
 import { Component } from "../component/Component";
-import { Line } from "../component/Line";
+import { Path } from "../component/Path";
 import { Rect } from "../component/Rect";
 import { Text } from "../component/Text";
 import { Stage } from "../Stage";
@@ -47,7 +47,7 @@ export class LineChart extends BaseChart {
       position: this.position,
       alpha: this.alphaScale(sec - this.fadeTime[0] - this.freezeTime[0]),
     });
-    if (this.aniTime[0] > sec) return this.component;
+    if (this.aniTime[0] > sec) return null;
     this.scales = this.getScalesBySec(sec);
     const { xAxis, yAxis } = this.getAxis(sec, this.scales);
     const lineGen = d3
@@ -101,7 +101,7 @@ export class LineChart extends BaseChart {
     });
     const maxX = d3.max(this.scales.x.range());
     this.dataGroup.forEach((v: any[], k) => {
-      const line = new Line();
+      const line = new Path();
       const color = colorPicker.getColor(k);
       line.strokeStyle = color;
       line.path = new Path2D(lineGen.curve(d3.curveMonotoneX)(v));

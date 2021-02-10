@@ -4,6 +4,7 @@ import { Rect } from "../component/Rect";
 import { Ani } from "./Ani";
 import { customAni, easeInterpolate } from "./AniCreator";
 import * as d3 from "d3";
+import { font } from "../Constant";
 export interface ProgressOptions {
   position?: { x: number; y: number };
   shape?: { width: number; height: number };
@@ -143,7 +144,7 @@ export class Progress extends Ani implements ProgressOptions {
     const res = this.ani.getComponent(sec);
     const textLabel = new Text({
       text: val === 100 ? `` : `Loading ${label} %`,
-      font: "Sarasa Mono SC",
+      font,
       fontSize: 24,
       textAlign: "center",
       textBaseline: "top",

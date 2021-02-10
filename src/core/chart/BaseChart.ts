@@ -5,6 +5,7 @@ import { Ani } from "../ani/Ani";
 import { canvasHelper } from "../CanvasHelper";
 import { Component } from "../component/Component";
 import { Text } from "../component/Text";
+import { font } from "../Constant";
 import { recourse } from "../Recourse";
 import { Stage } from "../Stage";
 export interface BaseChartOptions {
@@ -316,7 +317,7 @@ export abstract class BaseChart extends Ani {
   protected getAxis(sec: number, scales: { x: any; y: any }) {
     const tickComp = new Text({
       text: `${this.yTickFormat(this.valueMax)}`,
-      font: "Sarasa Mono SC",
+      font,
       fillStyle: "#777",
       fontSize: 30,
     });
