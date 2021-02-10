@@ -1,7 +1,7 @@
 import * as ani from "../src/index";
 import * as d3 from "d3";
 const stage = new ani.Stage();
-stage.options.fps = 60;
+stage.options.fps = 30;
 stage.options.sec = 60 * 4;
 stage.output = false;
 
@@ -151,14 +151,15 @@ const a = ani
 
 stage.addChild(bgAni);
 
-const map = new ani.MapChart();
-stage.addChild(map);
-
 stage.addChild(a);
 stage.addChild(logoCenter);
 stage.addChild(textLinesAni);
 stage.addChild(rectAni);
 stage.addChild(logoAni);
+
+const map = new ani.MapChart();
+stage.addChild(map);
+
 stage.addChild(barChart);
 stage.addChild(lineChart);
 
@@ -177,7 +178,10 @@ const img = ani.showImage({
   path: "./data/ANI.png",
 });
 
-ani.recourse.loadJSON(`./utils/china-map/china.json`, "map");
+ani.recourse.loadJSON(
+  `https://raw.githubusercontent.com/Jannchie/geoJson-map-data/main/world.json`,
+  "map"
+);
 stage.addChild(img);
 stage.play();
 (window as any).stage = stage;

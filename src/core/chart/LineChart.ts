@@ -17,6 +17,7 @@ export class LineChart extends BaseChart {
   labelPlaceholder: number = 0;
   labelSize: number = 32;
   labelPadding: number = 4;
+  topN: number = 5;
   constructor(options: LineChartOptions) {
     super(options);
     if (!options) return;

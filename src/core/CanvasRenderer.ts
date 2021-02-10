@@ -65,6 +65,9 @@ export class CanvasRenderer {
     if (arc.fillStyle) this.ctx.fill();
   }
   renderLine(line: Path) {
+    if (!line.path) {
+      return;
+    }
     let path: Path2D;
     if (typeof line.path === "string") {
       path = new Path2D(line.path);
