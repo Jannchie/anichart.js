@@ -30,6 +30,7 @@ export declare class Stage {
     render(sec: number): void;
     loadRecourse(): Promise<any[]>;
     play(): void;
+    private doPlay;
     setup(): void;
     private preRender;
     private setupChildren;
