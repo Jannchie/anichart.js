@@ -11,7 +11,7 @@ export class Recourse {
       promise.then((data: any) => this.data.set(key, data));
       promises.push(promise);
     }
-    return Promise.all(promises);
+    return Promise.all(promises.map((p) => p.catch((e) => e)));
   }
   private imagesPromise: Map<string, Promise<CanvasImageSource>> = new Map();
   images: Map<string, CanvasImageSource> = new Map();
