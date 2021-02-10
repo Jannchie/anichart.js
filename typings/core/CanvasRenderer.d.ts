@@ -2,7 +2,7 @@ import { Component } from "./component/Component";
 import { Rect } from "./component/Rect";
 import { Text } from "./component/Text";
 import { Image } from "./component/Image";
-import { Line } from "./component/Line";
+import { Path } from "./component/Path";
 import { Arc } from "./component/Arc";
 export declare class CanvasRenderer {
     canvas: HTMLCanvasElement;
@@ -12,7 +12,7 @@ export declare class CanvasRenderer {
     setCanvas(canvas: HTMLCanvasElement): void;
     render(component: Component): void;
     renderArc(arc: Arc): void;
-    renderLine(line: Line): void;
+    renderLine(line: Path): void;
     renderClipRect(component: Rect): void;
     renderImage(image: Image): void;
     renderRect(component: Rect): void;

@@ -3,7 +3,7 @@
     "outDir": "lib",
     "declarationDir": "typings",
     "noImplicitAny": false,
-    "module": "es6",
+    "module": "ES6",
     "target": "es5",
     "declarationMap": false,
     "declaration": true,

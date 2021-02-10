@@ -1,25 +1,19 @@
 {
-    "compilerOptions": {
-        "outDir": "lib",
-        "noImplicitAny": false,
-        "module": "es6",
-        "target": "es5",
-        "declarationMap": false,
-        "declaration": false,
-        "inlineSourceMap": true,
-        "typeRoots": [
-            "./src/**/*",
-            "./node_modules/@types"
-        ],
-        "moduleResolution": "Node",
-        "allowUmdGlobalAccess": true,
-        "esModuleInterop": true,
-        "allowJs": true,
-        "downlevelIteration": true
-    },
-    "compileOnSave": true,
-    "include": [
-        "./src/**/*",
-        "@types",
-    ],
+  "compilerOptions": {
+    "outDir": "lib",
+    "noImplicitAny": false,
+    "module": "es6",
+    "target": "es5",
+    "declarationMap": false,
+    "declaration": false,
+    "inlineSourceMap": true,
+    "typeRoots": ["./src/**/*", "./node_modules/@types"],
+    "moduleResolution": "Node",
+    "allowUmdGlobalAccess": true,
+    "esModuleInterop": true,
+    "allowJs": true,
+    "downlevelIteration": true
+  },
+  "compileOnSave": true,
+  "include": ["./src/**/*", "@types"]
 }

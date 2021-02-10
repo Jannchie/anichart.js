@@ -35,5 +35,6 @@ export declare class Component {
     strokeStyle?: string | CanvasGradient | CanvasPattern;
     lineWidth?: number;
     setup?: () => void;
+    addChild?: (comp: Component) => void;
     constructor(component?: Component);
 }

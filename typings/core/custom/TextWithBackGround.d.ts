@@ -1,5 +1,5 @@
 import { FontWeight, Component } from "../..";
-export declare function getTextWithBackground({ txt, position, fontSize, fontWeight, textAlign, textBaseline, foregroundStyle, backgroundStyle, font, padding, }: {
+export declare function getTextWithBackground({ txt, position, fontSize, fontWeight, textAlign, textBaseline, foregroundStyle, backgroundStyle, padding, }: {
     txt?: string;
     position?: {
         x: number;
@@ -11,7 +11,6 @@ export declare function getTextWithBackground({ txt, position, fontSize, fontWei
     textBaseline?: CanvasTextBaseline;
     foregroundStyle?: string;
     backgroundStyle?: string;
-    font?: string;
     padding?: {
         top: number;
         bottom: number;
