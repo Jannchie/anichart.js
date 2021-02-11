@@ -68,67 +68,66 @@ export class Stage {
   }
 
   play(): void {
-    this.loadRecourse().then(() => {
-      this.setup();
-      if (this.interval) {
-        this.interval.stop();
-        this.interval = null;
-        return;
-      }
-      if (this.output) {
-        ffmpeg.load().then(() => {
-          const partCount =
-            Math.floor(this.options.sec / this.outputOptions.splitSec) + 1;
-          let part = 0;
-          const parts: number[] = [];
-          while (part++ < partCount) {
-            parts.push(part);
-          }
-          async
-            .eachSeries(parts, (p, callback) => {
-              const frames: number[] = [];
-              const picNameList: string[] = [];
-              while (
-                this.cFrame < this.totalFrames &&
-                this.cFrame < p * this.outputOptions.splitSec * this.options.fps
-              ) {
-                this.cFrame++;
-                frames.push(this.cFrame);
-              }
-              async
-                .eachLimit(frames, this.outputConcurrency, (f, cb) => {
-                  this.render(f / this.options.fps);
-                  const no =
-                    f -
-                    (p - 1) * this.outputOptions.splitSec * this.options.fps;
-                  picNameList.push(`output-${no}.png`);
-                  addFrameToFFmpeg(this.canvas, no).then(() => cb());
-                })
-                .then(() => {
-                  outputMP4(this.options.fps).then(() => {
-                    removePNG(picNameList);
-                    callback();
-                  });
-                });
-            })
-            // tslint:disable-next-line:no-console
-            .then(() => console.log("finished!"));
-        });
-      } else {
-        this.interval = d3.interval((elapsed) => {
-          if (this.output || this.mode === "output") {
-            this.cFrame++;
-          } else {
-            this.cFrame = Math.floor((elapsed / 1000) * this.options.fps);
-          }
-          this.render(this.cFrame / this.options.fps);
-          if (this.cFrame >= this.totalFrames) {
-            this.interval.stop();
-          }
-        }, (1 / this.options.fps) * 1000);
-      }
-    });
+    this.loadRecourse().then(() => this.doPlay());
   }
+  private doPlay() {
+    this.setup();
+    if (this.interval) {
+      this.interval.stop();
+      this.interval = null;
+    } else if (this.output) {
+      ffmpeg.load().then(() => {
+        const partCount =
+          Math.floor(this.options.sec / this.outputOptions.splitSec) + 1;
+        let part = 0;
+        const parts: number[] = [];
+        while (part++ < partCount) {
+          parts.push(part);
+        }
+        async
+          .eachSeries(parts, (p, callback) => {
+            const frames: number[] = [];
+            const picNameList: string[] = [];
+            while (
+              this.cFrame < this.totalFrames &&
+              this.cFrame < p * this.outputOptions.splitSec * this.options.fps
+            ) {
+              this.cFrame++;
+              frames.push(this.cFrame);
+            }
+            async
+              .eachLimit(frames, this.outputConcurrency, (f, cb) => {
+                this.render(f / this.options.fps);
+                const no =
+                  f - (p - 1) * this.outputOptions.splitSec * this.options.fps;
+                picNameList.push(`output-${no}.png`);
+                addFrameToFFmpeg(this.canvas, no).then(() => cb());
+              })
+              .then(() => {
+                outputMP4(this.options.fps).then(() => {
+                  removePNG(picNameList);
+                  callback();
+                });
+              });
+          })
+          // tslint:disable-next-line:no-console
+          .then(() => console.log("finished!"));
+      });
+    } else {
+      this.interval = d3.interval((elapsed) => {
+        if (this.output || this.mode === "output") {
+          this.cFrame++;
+        } else {
+          this.cFrame = Math.floor((elapsed / 1000) * this.options.fps);
+        }
+        this.render(this.cFrame / this.options.fps);
+        if (this.cFrame >= this.totalFrames) {
+          this.interval.stop();
+        }
+      }, (1 / this.options.fps) * 1000);
+    }
+  }
+
   setup() {
     this.setupChildren(this.aniRoot);
   }

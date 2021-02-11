@@ -8,6 +8,10 @@ export class ImageLoader {
         image.onload = () => {
           resolve(image);
         };
+        image.onerror = () => {
+          // if error, still accept the result but not load this image
+          resolve(null);
+        };
         image.src = url;
         image.crossOrigin = "anonymous";
       });

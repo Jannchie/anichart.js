@@ -65,6 +65,9 @@ export class CanvasRenderer {
     if (arc.fillStyle) this.ctx.fill();
   }
   renderLine(line: Path) {
+    if (!line.path) {
+      return;
+    }
     let path: Path2D;
     if (typeof line.path === "string") {
       path = new Path2D(line.path);
@@ -146,11 +149,26 @@ export class CanvasRenderer {
   }
 
   renderBase(component: Component) {
+    let position: { x: number; y: number };
+    if (!component.position) {
+      if (component.type === "Text") {
+        position = {
+          x: this.canvas.width / 2,
+          y: this.canvas.height / 2,
+        };
+      } else {
+        position = {
+          x: 0,
+          y: 0,
+        };
+      }
+    } else {
+      position = component.position;
+    }
     this.ctx.translate(
-      component.position.x - component.center.x,
-      component.position.y - component.center.y
+      position.x - component.center.x,
+      position.y - component.center.y
     );
-
     if (component.filter) {
       this.ctx.filter = component.filter;
     }
@@ -168,6 +186,10 @@ export class CanvasRenderer {
     }
     if (component.scale !== undefined) {
       this.ctx.scale(component.scale.x, component.scale.y);
+    }
+    if (component.shadow?.enable) {
+      this.ctx.shadowBlur = component.shadow?.blur ?? 10;
+      this.ctx.shadowColor = component.shadow?.color ?? "#000";
     }
   }
   renderText(component: Text) {

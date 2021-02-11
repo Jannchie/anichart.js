@@ -2,8 +2,8 @@ import * as d3 from "d3";
 import { Ani } from "../ani/Ani";
 import { Image } from "../component/Image";
 import { customInOut } from "../util/Ease";
-import { addFadeWrapper } from "../wrapper/Fade";
-import { addScaleWrapper } from "../wrapper/Scale";
+import { getFadeWrapped } from "../wrapper/Fade";
+import { getScaleWrapped } from "../wrapper/Scale";
 
 export function showImage({
   path = "",
@@ -21,7 +21,7 @@ export function showImage({
   if (!center) img.center = { x: shape.width / 2, y: shape.height / 2 };
   let wrapped: Ani;
   if (animation === "scale") {
-    wrapped = addScaleWrapper(
+    wrapped = getScaleWrapped(
       img,
       customInOut(
         [
@@ -35,7 +35,7 @@ export function showImage({
       )
     );
   } else {
-    wrapped = addFadeWrapper(
+    wrapped = getFadeWrapped(
       img,
       customInOut([
         time,

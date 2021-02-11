@@ -19,4 +19,9 @@ declare class CustomAni extends Ani {
 }
 export declare function customAni(startSec?: number): CustomAniNeedFrame;
 export declare function createAni<T extends Component>(keyFrames: T[], keyTimes?: number[], ease?: (n: number) => number): Ani;
+export declare function getFadeAni(obj: Component | Ani, options?: {
+    startSec?: number;
+    durationSec?: number;
+    fadeSec?: number;
+}): Ani;
 export {};

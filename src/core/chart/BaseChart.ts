@@ -98,9 +98,10 @@ export abstract class BaseChart extends Ani {
 
   xTickFormat = d3.format(",d");
   yTickFormat = d3.format(",d");
-
-  valueMax: number;
-  valueMin: number;
+  totallyMax: number;
+  totallyMin: number;
+  currentMax: number;
+  currentMin: number;
   historyMax: number;
   historyMin: number;
 
@@ -111,12 +112,15 @@ export abstract class BaseChart extends Ani {
     this.setDefaultAniTime(stage);
     this.setDataScales();
     this.setAlphaScale();
+    // 初始化整体最值
+    this.totallyMax = d3.max(this.data, (d) => d[this.valueField]);
+    this.totallyMin = d3.min(this.data, (d) => d[this.valueField]);
     // 初始化历史最值
-    this.historyMax = d3.min(this.data, (d) => d[this.valueField]);
-    this.historyMin = d3.max(this.data, (d) => d[this.valueField]);
+    this.historyMax = this.totallyMin;
+    this.historyMin = this.totallyMin;
     // 用于计算坐标
-    this.valueMax = this.historyMin;
-    this.valueMin = this.historyMax;
+    this.currentMax = this.historyMin;
+    this.currentMin = this.historyMax;
 
     if (!this.shape) {
       this.shape = {
@@ -316,7 +320,7 @@ export abstract class BaseChart extends Ani {
 
   protected getAxis(sec: number, scales: { x: any; y: any }) {
     const tickComp = new Text({
-      text: `${this.yTickFormat(this.valueMax)}`,
+      text: `${this.yTickFormat(this.currentMax)}`,
       font,
       fillStyle: "#777",
       fontSize: 30,

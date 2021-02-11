@@ -270,7 +270,7 @@ export class BarChart extends BaseChart {
     const valueLabel = new Text({
       textBaseline: "bottom",
       text: `${this.valueFormat(options.data)}`,
-      // textAlign: "left",
+      textAlign: "left",
       position: {
         x: options.shape.width + this.barPadding,
         y: options.shape.height,

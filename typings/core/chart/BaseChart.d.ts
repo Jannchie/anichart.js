@@ -82,8 +82,10 @@ export declare abstract class BaseChart extends Ani {
     yTickFormat: (n: number | {
         valueOf(): number;
     }) => string;
-    valueMax: number;
-    valueMin: number;
+    totallyMax: number;
+    totallyMin: number;
+    currentMax: number;
+    currentMin: number;
     historyMax: number;
     historyMin: number;
     setup(stage: Stage): void;

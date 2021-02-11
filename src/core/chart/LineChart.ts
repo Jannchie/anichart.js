@@ -8,7 +8,7 @@ import { Rect } from "../component/Rect";
 import { Text } from "../component/Text";
 import { Stage } from "../Stage";
 import { BaseChart, BaseChartOptions } from "./BaseChart";
-
+import { font } from "../..";
 interface LineChartOptions extends BaseChartOptions {
   pointerR?: number;
 }
@@ -17,6 +17,7 @@ export class LineChart extends BaseChart {
   labelPlaceholder: number = 0;
   labelSize: number = 32;
   labelPadding: number = 4;
+  topN: number = 5;
   constructor(options: LineChartOptions) {
     super(options);
     if (!options) return;
@@ -34,6 +35,7 @@ export class LineChart extends BaseChart {
     // Calculate label placeholder
     const textModel = new Text({
       fontSize: this.labelSize,
+      font,
     });
     const labelMaxWidth = d3.max(this.data, (d) => {
       textModel.text = this.labelFormat(d[this.idField], this.meta, d);
@@ -128,6 +130,8 @@ export class LineChart extends BaseChart {
       const label = new Text({
         text: this.labelFormat(k, this.meta, data),
         fontSize: this.labelSize,
+        font,
+        textAlign: "left",
         textBaseline: "middle",
         position: { x: maxX + this.labelPadding + this.pointerR, y: currentY },
         fillStyle: color,
