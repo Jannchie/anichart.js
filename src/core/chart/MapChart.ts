@@ -2,6 +2,7 @@ import * as d3 from "d3";
 import { BaseChart, BaseChartOptions, Component, Path, Stage } from "../..";
 import { recourse } from "../Recourse";
 interface MapChartOptions extends BaseChartOptions {
+  showGraticule: boolean;
   margin?: { top: number; left: number; right: number; bottom: number };
   projectionType?: "orthographic" | "natural" | "mercator" | "equirectangular";
   mapIdField: string;
@@ -25,6 +26,9 @@ export class MapChart extends BaseChart {
   defaultFill: string;
   projectionType: "orthographic" | "natural" | "mercator" | "equirectangular";
   scale: d3.ScaleLinear<number, number, never>;
+  showGraticule: boolean;
+  graticulePath: string;
+  graticulePathComp: Path;
   constructor(options?: MapChartOptions) {
     super(options);
     this.margin = options?.margin ?? {
@@ -40,12 +44,13 @@ export class MapChart extends BaseChart {
     this.defaultFill = options?.defaultFill ?? "#FFF1";
     this.projectionType = options?.projectionType;
     this.visualRange = options?.visualRange ?? "current";
+    this.showGraticule = options?.showGraticule ?? false;
   }
   margin: { top: number; left: number; right: number; bottom: number };
   setup(stage: Stage) {
     super.setup(stage);
     const map = recourse.data.get("map");
-    let projection;
+    let projection: d3.GeoProjection;
     switch (this.projectionType) {
       case "orthographic":
         projection = d3.geoOrthographic();
@@ -102,6 +107,7 @@ export class MapChart extends BaseChart {
   private initComps() {
     this.wrapper = new Component();
     this.pathComponentMap = new Map<string, Path>();
+
     this.pathMap.forEach((p, mapId) => {
       const path = new Path({
         path: p,
@@ -111,6 +117,16 @@ export class MapChart extends BaseChart {
       this.wrapper.children.push(path);
       this.pathComponentMap.set(mapId, path);
     });
+    if (this.showGraticule) {
+      const stroke = d3.color(this.strokeStyle);
+      stroke.opacity = 0.25;
+      this.graticulePathComp = new Path({
+        path: this.graticulePath,
+        strokeStyle: stroke.toString(),
+        fillStyle: "#0000",
+      });
+      this.wrapper.children.push(this.graticulePathComp);
+    }
   }
 
   getComponent(sec: number) {
@@ -152,6 +168,10 @@ export class MapChart extends BaseChart {
     }
   }
   updatePath(sec: number) {
+    if (this.showGraticule) {
+      const graticulePath = this.geoGener(d3.geoGraticule10());
+      this.graticulePathComp.path = graticulePath;
+    }
     for (const feature of this.map.features) {
       const mapId = feature.properties[this.mapIdField];
       const path = this.geoGener(feature);
