@@ -120,7 +120,7 @@ export class MapChart extends BaseChart {
     return this.wrapper;
   }
   updateScale(sec: number) {
-    [this.currentMax, this.currentMin] = d3.extent(
+    [this.currentMin, this.currentMax] = d3.extent(
       this.getCurrentData(sec),
       (d) => d[this.valueField]
     );

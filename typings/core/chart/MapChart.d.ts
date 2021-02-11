@@ -43,7 +43,7 @@ export declare class MapChart extends BaseChart {
     private updatePathMap;
     private initComps;
     getComponent(sec: number): Component;
-    updateScale(): void;
+    updateScale(sec: number): void;
     updatePath(sec: number): void;
     updateProject(sec: number): void;
 }
