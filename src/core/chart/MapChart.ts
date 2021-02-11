@@ -1,7 +1,17 @@
 import * as d3 from "d3";
-import { BaseChart, BaseChartOptions, Component, Path, Stage } from "../..";
+import {
+  BaseChart,
+  BaseChartOptions,
+  Component,
+  Path,
+  ShadowOptions,
+  Stage,
+} from "../..";
 import { recourse } from "../Recourse";
 interface MapChartOptions extends BaseChartOptions {
+  pathShadowBlur: number;
+  pathShadowColor: string;
+  useShadow: boolean;
   showGraticule: boolean;
   margin?: { top: number; left: number; right: number; bottom: number };
   projectionType?: "orthographic" | "natural" | "mercator" | "equirectangular";
@@ -29,6 +39,11 @@ export class MapChart extends BaseChart {
   showGraticule: boolean;
   graticulePath: string;
   graticulePathComp: Path;
+
+  pathShadowBlur: number;
+  pathShadowColor: string;
+  useShadow: boolean;
+
   constructor(options?: MapChartOptions) {
     super(options);
     this.margin = options?.margin ?? {
@@ -44,6 +59,9 @@ export class MapChart extends BaseChart {
     this.defaultFill = options?.defaultFill ?? "#FFF1";
     this.projectionType = options?.projectionType;
     this.visualRange = options?.visualRange ?? "current";
+    this.useShadow = options?.useShadow ?? false;
+    this.pathShadowColor = options?.pathShadowColor ?? "#FFF";
+    this.pathShadowBlur = options?.pathShadowBlur ?? 100;
     this.showGraticule = options?.showGraticule ?? false;
   }
   margin: { top: number; left: number; right: number; bottom: number };
@@ -181,10 +199,18 @@ export class MapChart extends BaseChart {
     for (const [id, data] of this.dataScales) {
       const mapId = this.getMapId(id);
       const currentValue = data(sec)[this.valueField];
-      const color = this.visualMap(this.scale(currentValue));
+      const rate = this.scale(currentValue);
+      const color = this.visualMap(rate);
       const comp = this.pathComponentMap.get(mapId);
       if (comp) {
         comp.fillStyle = color;
+        if (this.useShadow) {
+          comp.shadow = {
+            enable: true,
+            blur: this.pathShadowBlur * rate,
+            color: this.pathShadowColor,
+          } as ShadowOptions;
+        }
       }
     }
   }

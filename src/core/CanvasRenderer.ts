@@ -187,6 +187,10 @@ export class CanvasRenderer {
     if (component.scale !== undefined) {
       this.ctx.scale(component.scale.x, component.scale.y);
     }
+    if (component.shadow?.enable) {
+      this.ctx.shadowBlur = component.shadow?.blur ?? 10;
+      this.ctx.shadowColor = component.shadow?.color ?? "#000";
+    }
   }
   renderText(component: Text) {
     this.prerenderText(component);
