@@ -1,6 +1,7 @@
 import * as d3 from "d3";
 import { BaseChart, BaseChartOptions, Component, Path, Stage } from "../..";
 interface MapChartOptions extends BaseChartOptions {
+    showGraticule: boolean;
     margin?: {
         top: number;
         left: number;
@@ -29,6 +30,9 @@ export declare class MapChart extends BaseChart {
     defaultFill: string;
     projectionType: "orthographic" | "natural" | "mercator" | "equirectangular";
     scale: d3.ScaleLinear<number, number, never>;
+    showGraticule: boolean;
+    graticulePath: string;
+    graticulePathComp: Path;
     constructor(options?: MapChartOptions);
     margin: {
         top: number;

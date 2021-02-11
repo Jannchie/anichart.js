@@ -149,11 +149,26 @@ export class CanvasRenderer {
   }
 
   renderBase(component: Component) {
+    let position: { x: number; y: number };
+    if (!component.position) {
+      if (component.type === "Text") {
+        position = {
+          x: this.canvas.width / 2,
+          y: this.canvas.height / 2,
+        };
+      } else {
+        position = {
+          x: 0,
+          y: 0,
+        };
+      }
+    } else {
+      position = component.position;
+    }
     this.ctx.translate(
-      component.position.x - component.center.x,
-      component.position.y - component.center.y
+      position.x - component.center.x,
+      position.y - component.center.y
     );
-
     if (component.filter) {
       this.ctx.filter = component.filter;
     }

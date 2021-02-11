@@ -1,6 +1,7 @@
 import { Component } from "../component/Component";
 import * as d3 from "d3";
 import { Ani } from "./Ani";
+import { getFadeWrapped } from "../..";
 export function easeInterpolate<T extends Component | number>(
   e: (i: number) => number
 ) {
@@ -91,4 +92,25 @@ export function createAni<T extends Component>(
       return scale(i);
     },
   };
+}
+
+export function getFadeAni(
+  obj: Component | Ani,
+  options?: { startSec?: number; durationSec?: number; fadeSec?: number }
+) {
+  const startSec = options?.startSec ?? 0;
+  const durationSec = options?.durationSec ?? 3;
+  const fadeSec = options?.fadeSec ?? 1;
+  const alphaScale = d3
+    .scaleLinear(
+      [
+        startSec,
+        startSec + fadeSec,
+        startSec + durationSec - fadeSec,
+        startSec + durationSec,
+      ],
+      [0, 1, 1, 0]
+    )
+    .clamp(true);
+  return getFadeWrapped(obj, alphaScale);
 }

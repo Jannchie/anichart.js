@@ -23,14 +23,14 @@ export class Text extends Component {
   constructor(text?: Text) {
     super(text);
     if (text) {
-      if (text.text) this.text = text.text;
-      if (text.textAlign) this.textAlign = text.textAlign;
-      if (text.textBaseline) this.textBaseline = text.textBaseline;
-      if (text.fontVariant) this.fontVariant = text.fontVariant;
-      if (text.fontWeight) this.fontWeight = text.fontWeight;
-      if (text.font) this.font = text.font;
-      if (text.fontStyle) this.fontStyle = text.fontStyle;
-      if (text.fontSize) this.fontSize = text.fontSize;
+      this.text = text.text;
+      this.textAlign = text.textAlign ?? "center";
+      this.textBaseline = text.textBaseline ?? "middle";
+      this.fontVariant = text.fontVariant;
+      this.fontWeight = text.fontWeight;
+      this.font = text.font;
+      this.fontStyle = text.fontStyle;
+      this.fontSize = text.fontSize;
     }
   }
   text?: string = "";

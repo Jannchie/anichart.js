@@ -1,6 +1,6 @@
 import { Ani, Component } from "../..";
 
-export function addFadeWrapper(
+export function getFadeWrapped(
   child: Component | Ani,
   alpha: (sec: number) => number
 ) {

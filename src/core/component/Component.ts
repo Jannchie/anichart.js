@@ -11,7 +11,7 @@ export class Component {
   type? = "Component";
   shadow? = { enable: false } as ShadowOptions;
   center?: { x: number; y: number } = { x: 0, y: 0 };
-  position?: { x: number; y: number } = { x: 0, y: 0 };
+  position?: { x: number; y: number };
   offset?: { x: number; y: number } = { x: 0, y: 0 };
   scale?: { x: number; y: number };
   children?: Component[] = [];

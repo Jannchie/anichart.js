@@ -27,8 +27,8 @@ export function getTitleAniStyle1({
     .keyFrame(comp1)
     .duration(1, ani.ease.easeExpOut)
     .keyFrame(comp2);
-  const res = ani.addFadeWrapper(
-    ani.addScaleWrapper(textAni, ani.customInOut([3, 3.9, 4, 5], [2, 1])),
+  const res = ani.getFadeWrapped(
+    ani.getScaleWrapped(textAni, ani.customInOut([3, 3.9, 4, 5], [2, 1])),
     ani.customInOut([3, 3.2, 5.8, 6], [0, 1])
   );
   return res;

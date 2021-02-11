@@ -1,6 +1,6 @@
 import { Ani } from "../ani/Ani";
 import { Component } from "../component/Component";
-export function addScaleWrapper(
+export function getScaleWrapped(
   child: Ani | Component,
   scale:
     | ((sec: number) => { x: number; y: number })
