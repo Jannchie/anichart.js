@@ -60,7 +60,7 @@ export class MapChart extends BaseChart {
     this.projectionType = options?.projectionType;
     this.visualRange = options?.visualRange ?? "current";
     this.useShadow = options?.useShadow ?? false;
-    this.pathShadowColor = options?.pathShadowColor ?? "#FFF";
+    this.pathShadowColor = options?.pathShadowColor;
     this.pathShadowBlur = options?.pathShadowBlur ?? 100;
     this.showGraticule = options?.showGraticule ?? false;
   }
@@ -207,8 +207,8 @@ export class MapChart extends BaseChart {
         if (this.useShadow) {
           comp.shadow = {
             enable: true,
-            blur: this.pathShadowBlur * rate,
-            color: this.pathShadowColor,
+            blur: this.pathShadowBlur * rate + 1,
+            color: this.pathShadowColor ?? color,
           } as ShadowOptions;
         }
       }
