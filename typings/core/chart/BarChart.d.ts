@@ -21,7 +21,7 @@ export declare class BarChart extends BaseChart {
     dateLabelSize: number;
     showDateLabel: boolean;
     get sampling(): number;
-    barInfoFormat: (id: any, data?: Map<string, any>, meta?: Map<string, any>) => string;
+    barInfoFormat: (id: any, data?: Map<string, any> | undefined, meta?: Map<string, any> | undefined) => string;
     historyIndex: Map<any, any>;
     ids: string[];
     setup(stage: Stage): void;

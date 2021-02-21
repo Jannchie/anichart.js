@@ -37,7 +37,7 @@ export declare class MapChart extends BaseChart {
     graticulePath: string;
     graticulePathComp: Path;
     pathShadowBlur: number;
-    pathShadowColor: string;
+    pathShadowColor: string | undefined;
     useShadow: boolean;
     constructor(options?: MapChartOptions);
     margin: {

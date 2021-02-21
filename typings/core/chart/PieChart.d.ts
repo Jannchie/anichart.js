@@ -25,7 +25,7 @@ export declare class PieChart extends BaseChart implements PieChartOptions {
         strokeStyle: string;
     };
     constructor(options?: PieChartOptions);
-    getComponent(sec: number): import("../..").Component;
-    private getPieComponent;
+    getComponent(sec: number): import("../..").Component | null;
+    private getPieData;
 }
 export {};

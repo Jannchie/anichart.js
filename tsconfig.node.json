@@ -13,5 +13,6 @@
     "esModuleInterop": true,
     "allowJs": true
   },
-  "compileOnSave": true
+  "compileOnSave": true,
+  "include": ["src/**/*"]
 }

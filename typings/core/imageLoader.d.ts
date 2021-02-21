@@ -1,4 +1,4 @@
-declare type LoadImageFunc = (url: string) => Promise<CanvasImageSource>;
+declare type LoadImageFunc = (url: string) => Promise<CanvasImageSource | null>;
 export declare class ImageLoader {
     load: LoadImageFunc;
     constructor();
