@@ -11,11 +11,11 @@ export class ItemChart extends BaseChart {
   setup(stage: Stage) {
     super.setup(stage);
   }
-  getComponent(sec: number) {
+  getComponent(sec: number): Component {
     const components = this.data.map((item) => {
       const id = item[this.idField];
       const value = item[this.valueField];
-      return {};
+      return new Component();
     });
     const res = new Component();
     res.children = components;

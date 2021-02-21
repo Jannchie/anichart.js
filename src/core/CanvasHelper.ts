@@ -2,23 +2,33 @@ import { canvasRenderer, CanvasRenderer } from "./CanvasRenderer";
 import { Component } from "./component/Component";
 import { Text } from "./component/Text";
 export class CanvasHelper {
-  isPointInPath(area: Path2D, x: number, d: number): any {
-    return this.renderer.canvas.getContext("2d").isPointInPath(area, x, d);
+  isPointInPath(area: Path2D | string, x: number, d: number): any {
+    if (typeof area == "string") {
+      area = new Path2D(area);
+    }
+    return this.renderer.canvas.getContext("2d")?.isPointInPath(area, x, d);
   }
   renderer: CanvasRenderer = canvasRenderer;
   constructor() {
-    this.renderer.canvas = document.querySelector("canvas");
+    var canvas = document.querySelector("canvas");
+    if (canvas) {
+      this.renderer.canvas = canvas;
+    }
   }
+
   measure<T extends Component>(c: T) {
     this.renderer.ctx.save();
     if (c.type === "Text") {
-      return this.measureText(c as Text);
+      return this.measureText((c as unknown) as Text);
     }
     this.renderer.ctx.restore();
+    return { width: 0 } as TextMetrics;
   }
   private measureText(c: Text) {
     this.renderer.prerenderText(c);
-    const res = this.renderer.canvas.getContext("2d").measureText(c.text);
+    const res = this.renderer.canvas
+      .getContext("2d")!
+      .measureText(c.text ?? "");
     this.renderer.ctx.restore();
     return res;
   }

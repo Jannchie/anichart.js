@@ -44,7 +44,7 @@ class CustomAni extends Ani {
     this.keyFrames = keyFrames;
     this.eases = eases;
   }
-  getComponent(sec: number): Component {
+  getComponent(sec: number): Component | null {
     // [0, 3, 6]
     let rIdx = d3.bisectLeft(this.keyTimes, sec);
     if (rIdx >= this.keyFrames.length) {
@@ -85,6 +85,8 @@ export function createAni<T extends Component>(
     .interpolate(easeInterpolate(ease))
     .clamp(true);
   return {
+    stage: undefined,
+    children: [],
     setup() {
       return;
     },

@@ -1,17 +1,24 @@
-import { Component } from "./Component";
+import { BaseCompOptions, Component } from "./Component";
+
+export interface ArcOptions extends BaseCompOptions {
+  radius?: number;
+  startAngle?: number;
+  endAngle?: number;
+  anticlockwise?: boolean;
+}
 
 export class Arc extends Component {
-  readonly type? = "Arc";
-  radius? = 10;
-  startAngle? = 0;
-  endAngle? = 2 * Math.PI;
-  anticlockwise? = false;
-  constructor(options?: Arc) {
+  readonly type = "Arc";
+  radius: number;
+  startAngle: number;
+  endAngle: number;
+  anticlockwise: boolean;
+  constructor(options?: ArcOptions) {
     super(options);
     if (!options) return;
-    if (options.radius !== undefined) this.radius = options.radius;
-    if (options.startAngle) this.startAngle = options.startAngle;
-    if (options.endAngle) this.endAngle = options.endAngle;
-    if (options.anticlockwise) this.anticlockwise = options.anticlockwise;
+    this.radius = options.radius ?? 10;
+    this.startAngle = options.startAngle ?? 0;
+    this.endAngle = options.endAngle ?? 2 * Math.PI;
+    this.anticlockwise = options.anticlockwise ?? false;
   }
 }

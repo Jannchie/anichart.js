@@ -4,7 +4,10 @@ export class Recourse {
   setup() {
     const promises = [] as Promise<any>[];
     for (const [key, promise] of this.imagesPromise) {
-      promise.then((src: CanvasImageSource) => this.images.set(key, src));
+      promise.then((src: CanvasImageSource | null) => {
+        if (src) return this.images.set(key, src);
+        else return this.images;
+      });
       promises.push(promise);
     }
     for (const [key, promise] of this.dataPromise) {
@@ -13,7 +16,10 @@ export class Recourse {
     }
     return Promise.all(promises);
   }
-  private imagesPromise: Map<string, Promise<CanvasImageSource>> = new Map();
+  private imagesPromise: Map<
+    string,
+    Promise<CanvasImageSource | null>
+  > = new Map();
   images: Map<string, CanvasImageSource> = new Map();
 
   private dataPromise: Map<string, Promise<any>> = new Map();

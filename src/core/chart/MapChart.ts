@@ -41,7 +41,7 @@ export class MapChart extends BaseChart {
   graticulePathComp: Path;
 
   pathShadowBlur: number;
-  pathShadowColor: string;
+  pathShadowColor: string | undefined;
   useShadow: boolean;
 
   constructor(options?: MapChartOptions) {
@@ -57,7 +57,7 @@ export class MapChart extends BaseChart {
     this.mapIdField = options?.mapIdField ?? "alpha3Code";
     this.strokeStyle = options?.strokeStyle ?? "#FFF";
     this.defaultFill = options?.defaultFill ?? "#FFF1";
-    this.projectionType = options?.projectionType;
+    this.projectionType = options?.projectionType ?? "natural";
     this.visualRange = options?.visualRange ?? "current";
     this.useShadow = options?.useShadow ?? false;
     this.pathShadowColor = options?.pathShadowColor;
@@ -67,37 +67,39 @@ export class MapChart extends BaseChart {
   margin: { top: number; left: number; right: number; bottom: number };
   setup(stage: Stage) {
     super.setup(stage);
-    const map = recourse.data.get("map");
-    let projection: d3.GeoProjection;
-    switch (this.projectionType) {
-      case "orthographic":
-        projection = d3.geoOrthographic();
-        break;
-      case "natural":
-        projection = d3.geoNaturalEarth1();
-        break;
-      case "mercator":
-        projection = d3.geoMercator();
-        break;
-      case "equirectangular":
-        projection = d3.geoEquirectangular();
-      default:
-        projection = d3.geoNaturalEarth1();
-    }
-    projection.fitExtent(
-      [
-        [this.margin.left, this.margin.top],
+    if (stage) {
+      const map = recourse.data.get("map");
+      let projection: d3.GeoProjection;
+      switch (this.projectionType) {
+        case "orthographic":
+          projection = d3.geoOrthographic();
+          break;
+        case "natural":
+          projection = d3.geoNaturalEarth1();
+          break;
+        case "mercator":
+          projection = d3.geoMercator();
+          break;
+        case "equirectangular":
+          projection = d3.geoEquirectangular();
+        default:
+          projection = d3.geoNaturalEarth1();
+      }
+      projection.fitExtent(
         [
-          this.stage.canvas.width - this.margin.right,
-          this.stage.canvas.height - this.margin.bottom,
+          [this.margin.left, this.margin.top],
+          [
+            stage.canvas.width - this.margin.right,
+            stage.canvas.height - this.margin.bottom,
+          ],
         ],
-      ],
-      map
-    );
+        map
+      );
 
-    this.projection = projection;
-    this.map = map;
-    this.init(projection, map);
+      this.projection = projection;
+      this.map = map;
+      this.init(projection, map);
+    }
   }
   wrapper: Component;
   private init(projection: d3.GeoProjection, map: any) {
@@ -119,7 +121,7 @@ export class MapChart extends BaseChart {
     for (const feature of map.features) {
       const mapId = feature.properties[this.mapIdField];
       const path = geoGener(feature);
-      this.pathMap.set(mapId, path);
+      if (path) this.pathMap.set(mapId, path);
     }
   }
   private initComps() {
@@ -132,18 +134,20 @@ export class MapChart extends BaseChart {
         fillStyle: this.defaultFill,
         strokeStyle: this.strokeStyle,
       });
-      this.wrapper.children.push(path);
+      this.wrapper?.children?.push(path);
       this.pathComponentMap.set(mapId, path);
     });
     if (this.showGraticule) {
       const stroke = d3.color(this.strokeStyle);
-      stroke.opacity = 0.25;
+      if (stroke) {
+        stroke.opacity = 0.25;
+      }
       this.graticulePathComp = new Path({
         path: this.graticulePath,
-        strokeStyle: stroke.toString(),
+        strokeStyle: stroke?.toString(),
         fillStyle: "#0000",
       });
-      this.wrapper.children.push(this.graticulePathComp);
+      this.wrapper?.children?.push(this.graticulePathComp);
     }
   }
 
@@ -188,13 +192,15 @@ export class MapChart extends BaseChart {
   updatePath(sec: number) {
     if (this.showGraticule) {
       const graticulePath = this.geoGener(d3.geoGraticule10());
-      this.graticulePathComp.path = graticulePath;
+      if (graticulePath) {
+        this.graticulePathComp.path = graticulePath;
+      }
     }
     for (const feature of this.map.features) {
       const mapId = feature.properties[this.mapIdField];
       const path = this.geoGener(feature);
       const comp = this.pathComponentMap.get(mapId);
-      comp.path = path;
+      if (comp && path) comp.path = path;
     }
     for (const [id, data] of this.dataScales) {
       const mapId = this.getMapId(id);

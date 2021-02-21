@@ -4,7 +4,7 @@ import moment from "moment";
 import { Ani } from "../ani/Ani";
 import { canvasHelper } from "../CanvasHelper";
 import { Component } from "../component/Component";
-import { Text } from "../component/Text";
+import { Text, TextOptions } from "../component/Text";
 import { font } from "../Constant";
 import { recourse } from "../Recourse";
 import { Stage } from "../Stage";
@@ -40,8 +40,12 @@ export interface BaseChartOptions {
 }
 export type KeyGenerate =
   | ((id: string) => string)
-  | ((id: string, meta: Map<string, any>) => string)
-  | ((id: string, meta: Map<string, any>, data: Map<string, any>) => string);
+  | ((id: string, meta: Map<string, any> | undefined) => string)
+  | ((
+      id: string,
+      meta: Map<string, any> | undefined,
+      data: Map<string, any> | undefined
+    ) => string);
 export abstract class BaseChart extends Ani {
   yAxisWidth: number;
   xAxisHeight: number;
@@ -124,8 +128,8 @@ export abstract class BaseChart extends Ani {
 
     if (!this.shape) {
       this.shape = {
-        width: this.stage.canvas.width,
-        height: this.stage.canvas.height,
+        width: stage.canvas.width,
+        height: stage.canvas.height,
       };
     }
   }
@@ -219,7 +223,7 @@ export abstract class BaseChart extends Ani {
     }
   }
 
-  getComponent(sec: number) {
+  getComponent(sec: number): Component | null {
     const res = new Component({
       position: this.position,
       alpha: this.alphaScale(sec - this.fadeTime[0] - this.freezeTime[0]),
@@ -232,7 +236,7 @@ export abstract class BaseChart extends Ani {
       this.meta = d3.rollup(
         _.cloneDeep(recourse.data.get(this.metaName)),
         (v) => v[0],
-        (d) => d[this.idField]
+        (d) => (d as any)[this.idField]
       );
     }
   }
@@ -292,12 +296,16 @@ export abstract class BaseChart extends Ani {
 
   protected getScalesBySec(sec: number) {
     const currentData = this.getCurrentData(sec);
-    const valueRange = d3.extent(currentData, (d) => d[this.valueField]);
-    if (this.historyMax > valueRange[1]) {
-      valueRange[1] = this.historyMax;
+    let [minValue, maxValue] = d3.extent(
+      currentData,
+      (d) => d[this.valueField]
+    );
+
+    if (this.historyMax > maxValue) {
+      maxValue = this.historyMax;
     }
-    if (this.historyMin < valueRange[0]) {
-      valueRange[0] = this.historyMin;
+    if (this.historyMin < minValue) {
+      minValue = this.historyMin;
     }
     const trueSec =
       sec < this.aniTime[0]
@@ -310,27 +318,28 @@ export abstract class BaseChart extends Ani {
         [this.aniTime[0], trueSec],
         [0, this.shape.width - this.margin.left - this.margin.right]
       ),
-      y: d3.scaleLinear(valueRange, [
-        this.shape.height - this.margin.top - this.margin.bottom,
-        0,
-      ]),
+      y: d3.scaleLinear(
+        [minValue, maxValue],
+        [this.shape.height - this.margin.top - this.margin.bottom, 0]
+      ),
     };
     return scales;
   }
 
   protected getAxis(sec: number, scales: { x: any; y: any }) {
-    const tickComp = new Text({
+    const size = 30;
+    const tickComp = {
       text: `${this.yTickFormat(this.currentMax)}`,
       font,
       fillStyle: "#777",
-      fontSize: 30,
-    });
+      fontSize: size,
+    } as TextOptions;
     const tickKeySec = this.tickKeySecRange(sec);
     const tickScales = tickKeySec.map((s) => {
       return this.getScalesBySec(s);
     });
-    this.yAxisWidth = canvasHelper.measure(tickComp).width;
-    this.xAxisHeight = tickComp.fontSize;
+    this.yAxisWidth = canvasHelper.measure(new Text(tickComp))?.width ?? 0;
+    this.xAxisHeight = size;
     const yAxis = this.getAxisComponent(
       this.yTickFormat,
       tickScales[0].y,
@@ -364,7 +373,7 @@ export abstract class BaseChart extends Ani {
     scale1: d3.ScaleLinear<number, number, never>,
     pos: number,
     count: number,
-    text: Text,
+    text: TextOptions,
     type: "x" | "y",
     sec: number,
     secRange: [number, number],

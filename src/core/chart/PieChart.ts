@@ -40,8 +40,8 @@ export class PieChart extends BaseChart implements PieChartOptions {
     const remained = sec % this.keyDurationSec;
     const start = sec - remained;
     const end = start + this.keyDurationSec;
-    const comp0 = this.getPieComponent(start);
-    const comp1 = this.getPieComponent(end);
+    const comp0 = this.getPieData(start);
+    const comp1 = this.getPieData(end);
     const pieData = d3.scaleLinear(
       [start, end],
       [comp0, comp1]
@@ -55,7 +55,12 @@ export class PieChart extends BaseChart implements PieChartOptions {
         .innerRadius(this.radius[0])
         .outerRadius(this.radius[1])
         .cornerRadius(this.cornerRadius)
-        .padAngle(d.padAngle)(null);
+        .padAngle(d.padAngle)({
+        innerRadius: 0,
+        outerRadius: 0,
+        startAngle: 0,
+        endAngle: 0,
+      });
       const centroid = arc.centroid(pieData as any);
       const label = new Text({
         text: d.data[this.idField],
@@ -72,15 +77,15 @@ export class PieChart extends BaseChart implements PieChartOptions {
       const comp = new Path({
         fillStyle: colorPicker.getColor(d.data[this.idField]),
         strokeStyle: "#0000",
-        path,
+        path: path,
       });
-      res.children.push(comp);
-      res.children.push(label);
+      res?.children.push(comp);
+      res?.children.push(label);
     }
     return res;
   }
 
-  private getPieComponent(sec: number) {
+  private getPieData(sec: number) {
     const pieGen = d3
       .pie()
       .padAngle((Math.PI / 180) * this.padAngle)

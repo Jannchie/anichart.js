@@ -1,6 +1,7 @@
 import { Component } from "../component/Component";
 import { Text } from "../component/Text";
 import { Ani } from "./Ani";
+import { fontSize as defaultFontSize } from "../Constant";
 
 export class TextLinesAni extends Ani {
   component: Text = new Text();
@@ -9,11 +10,12 @@ export class TextLinesAni extends Ani {
     this.component.text = "";
     this.component.children = [];
     let basePosY = 0;
-    this.children.forEach((textAni) => {
-      let comp: Component;
+    this.children?.forEach((textAni) => {
+      let comp: Component | null;
 
       if (textAni instanceof Ani) {
         comp = textAni.getComponent(sec);
+        if (!comp) return;
       } else {
         comp = textAni;
       }
@@ -34,10 +36,10 @@ export class TextLinesAni extends Ani {
       if (comp instanceof Text) {
         const fontSize = comp.fontSize
           ? comp.fontSize
-          : this.component.fontSize;
+          : this.component.fontSize ?? defaultFontSize;
         basePosY += comp.position.y + this.lineSpacing + fontSize;
       }
-      this.component.children.push(comp);
+      this.component?.children?.push(comp);
     });
     return this.component;
   }

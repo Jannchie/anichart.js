@@ -1,8 +1,7 @@
-import { Ani } from "../ani/Ani";
 import { Component } from "../component/Component";
 import { Image } from "../component/Image";
 import { Rect } from "../component/Rect";
-import { Text } from "../component/Text";
+import { Text, TextOptions } from "../component/Text";
 import * as d3 from "d3";
 import * as _ from "lodash-es";
 import { colorPicker } from "../ColorPicker";
@@ -94,7 +93,7 @@ export class BarChart extends BaseChart {
       this.getCurrentData(t).map((v) => v[this.idField])
     );
     this.historyIndex = this.ids.reduce((d, id) => {
-      const indexList = [];
+      const indexList: number[] = [];
       for (const dataList of data) {
         let index = dataList.indexOf(id);
         if (index === -1) index = this.itemCount;
@@ -107,31 +106,33 @@ export class BarChart extends BaseChart {
 
   private get maxValueLabelWidth() {
     const d = [...this.data.values()];
-    const maxWidth = d3.max(d, (item) => {
-      const text = new Text(
-        this.getLabelTextOptions(
-          this.valueFormat(item),
-          "#FFF",
-          this.barHeight * 0.8
-        )
-      );
-      const result = canvasHelper.measure(text);
-      return result.width;
-    });
+    const maxWidth =
+      d3.max(d, (item) => {
+        const text = new Text(
+          this.getLabelTextOptions(
+            this.valueFormat(item),
+            "#FFF",
+            this.barHeight * 0.8
+          )
+        );
+        const result = canvasHelper.measure(text);
+        return result.width;
+      }) ?? 0;
     return maxWidth;
   }
   private get maxLabelWidth() {
-    const maxWidth = d3.max(this.ids, (id) => {
-      const text = new Text(
-        this.getLabelTextOptions(
-          this.labelFormat(id, this.meta, this.dataGroup),
-          "#FFF",
-          this.barHeight * 0.8
-        )
-      );
-      const result = canvasHelper.measure(text);
-      return result.width;
-    });
+    const maxWidth =
+      d3.max(this.ids, (id) => {
+        const text = new Text(
+          this.getLabelTextOptions(
+            this.labelFormat(id, this.meta, this.dataGroup),
+            "#FFF",
+            this.barHeight * 0.8
+          )
+        );
+        const result = canvasHelper.measure(text);
+        return result.width;
+      }) ?? 0;
     return maxWidth;
   }
 
@@ -220,7 +221,7 @@ export class BarChart extends BaseChart {
     data[this.valueField] = this.lastValue.get(data[this.idField]);
     const alpha = d3
       .scaleLinear([this.itemCount - 1, this.itemCount], [1, 0])
-      .clamp(true)(indexes.get(data[this.idField]));
+      .clamp(true)(indexes.get(data[this.idField])!);
     let color: string;
     if (typeof this.colorField === "string") {
       color = data[this.idField];
@@ -237,7 +238,7 @@ export class BarChart extends BaseChart {
         x: this.margin.left + this.barPadding + this.labelPlaceholder,
         y:
           this.margin.top +
-          indexes.get(data[this.idField]) * (this.barHeight + this.barGap),
+          indexes.get(data[this.idField])! * (this.barHeight + this.barGap),
       },
       alpha,
       data,
@@ -298,7 +299,7 @@ export class BarChart extends BaseChart {
     });
     if (options.image && recourse.images.get(options.image)) {
       const img = new Image({
-        path: options.image,
+        src: options.image,
         position: {
           x: options.shape.width - options.shape.height,
           y: 0,
@@ -321,7 +322,7 @@ export class BarChart extends BaseChart {
     text: string,
     color = "#fff",
     fontSize: number = 16
-  ): Text {
+  ): TextOptions {
     return {
       text: `${text}`,
       textAlign: "right",

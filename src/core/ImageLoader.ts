@@ -1,4 +1,4 @@
-type LoadImageFunc = (url: string) => Promise<CanvasImageSource>;
+type LoadImageFunc = (url: string) => Promise<CanvasImageSource | null>;
 export class ImageLoader {
   load: LoadImageFunc;
   constructor() {

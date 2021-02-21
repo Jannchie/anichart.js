@@ -21,7 +21,7 @@ export class GridAni extends Ani {
       this.row = options.row ?? 3;
       this.position = options.position ?? { x: 0, y: 0 };
       this.items = options.items ?? [];
-      this.shape = options.shape;
+      this.shape = options.shape ?? { width: 0, height: 0 };
     }
   }
   wrapper: Component;
@@ -42,7 +42,7 @@ export class GridAni extends Ani {
       const col = index % this.col;
       const row = Math.floor(index / this.col);
       item.position = { x: width * col + width / 2, y: height * row };
-      this.wrapper.addChild(item);
+      this.wrapper.addChild?.(item);
     });
   }
   getComponent(sec: number) {

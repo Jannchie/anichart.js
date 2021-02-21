@@ -33,7 +33,7 @@ export function getTextWithBackground({
     fontWeight,
     textAlign,
   });
-  const width = canvasHelper.measure(text).width;
+  const width = canvasHelper.measure(text)?.width;
   const rect = new Rect({
     clip: true,
     shape: {

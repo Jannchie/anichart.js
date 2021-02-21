@@ -15,7 +15,7 @@ export class Stage {
     fileName: "output",
     splitSec: 60,
   };
-  interval: d3.Timer;
+  interval: d3.Timer | null;
   output: boolean;
   outputConcurrency = 128;
   mode = "output";
@@ -122,7 +122,7 @@ export class Stage {
         }
         this.render(this.cFrame / this.options.fps);
         if (this.cFrame >= this.totalFrames) {
-          this.interval.stop();
+          this.interval!.stop();
         }
       }, (1 / this.options.fps) * 1000);
     }

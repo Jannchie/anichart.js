@@ -16,7 +16,7 @@ export class CanvasRenderer {
   }
   setCanvas(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
-    this.ctx = this.canvas.getContext("2d");
+    this.ctx = this.canvas.getContext("2d")!;
   }
   render(component: Component) {
     if (!component) return;
@@ -46,7 +46,7 @@ export class CanvasRenderer {
       }
       // render children components
       component.children.forEach((child) => {
-        this.render(child);
+        if (child) this.render(child);
       });
     }
     this.ctx.restore();
@@ -91,7 +91,7 @@ export class CanvasRenderer {
   }
 
   renderImage(image: Image) {
-    const src = recourse.images.get(image.path);
+    const src = recourse.images.get(image.src);
     if (!src) {
       return;
     }

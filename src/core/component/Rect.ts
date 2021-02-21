@@ -1,15 +1,20 @@
-import { Component } from "./Component";
+import { BaseCompOptions, Component } from "./Component";
+export interface RectOptions extends BaseCompOptions {
+  shape?: { width: number; height: number };
+  radius?: number;
+  clip?: boolean;
+}
 export class Rect extends Component {
-  readonly type? = "Rect";
-  shape?: { width: number; height: number } = { width: 10, height: 10 };
-  radius?: number = 0;
-  clip?: boolean = false;
-  constructor(rect?: Rect) {
+  readonly type = "Rect";
+  shape: { width: number; height: number };
+  radius: number;
+  clip: boolean;
+  constructor(rect?: RectOptions) {
     super(rect);
     if (rect) {
-      if (rect.shape) this.shape = rect.shape;
-      if (rect.radius) this.radius = rect.radius;
-      if (rect.clip) this.clip = rect.clip;
+      this.shape = rect.shape ?? { width: 20, height: 20 };
+      this.radius = rect.radius ?? 0;
+      this.clip = rect.clip ?? false;
     }
   }
 }
