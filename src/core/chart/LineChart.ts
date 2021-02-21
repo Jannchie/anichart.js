@@ -37,10 +37,11 @@ export class LineChart extends BaseChart {
       fontSize: this.labelSize,
       font,
     });
-    const labelMaxWidth = d3.max(this.data, (d) => {
-      textModel.text = this.labelFormat(d[this.idField], this.meta, d);
-      return canvasHelper.measure(textModel).width;
-    });
+    const labelMaxWidth =
+      d3.max(this.data, (d) => {
+        textModel.text = this.labelFormat(d[this.idField], this.meta, d);
+        return canvasHelper.measure(textModel)?.width ?? 0;
+      }) ?? 0;
     this.labelPlaceholder = labelMaxWidth;
   }
 
@@ -102,15 +103,21 @@ export class LineChart extends BaseChart {
       },
     });
     const maxX = d3.max(this.scales.x.range());
+    // 找不到最大值说明啥数据都没有，直接返回
+    if (!maxX) return res;
     this.dataGroup.forEach((v: any[], k) => {
       const line = new Path();
       const color = colorPicker.getColor(k);
       line.strokeStyle = color;
-      line.path = new Path2D(lineGen.curve(d3.curveMonotoneX)(v));
+      line.path = lineGen.curve(d3.curveMonotoneX)(v);
       line.lineWidth = 3;
       lineArea.children.push(line);
 
-      const areaPath = new Path2D(areaGen.curve(d3.curveMonotoneX)(v));
+      const areaPath = areaGen.curve(d3.curveMonotoneX)(v);
+
+      // 如果画不出Path直接返回
+      if (!areaPath) return;
+
       const currentY = this.findY(areaPath, maxX);
       const point = new Arc({
         fillStyle: color,
@@ -118,6 +125,7 @@ export class LineChart extends BaseChart {
         alpha: currentY !== undefined ? 1 : 0,
         position: { x: maxX, y: currentY },
       });
+
       const maxValue = this.scales.y.invert(currentY);
       if (maxValue > this.historyMax) {
         this.historyMax = maxValue;
@@ -147,7 +155,13 @@ export class LineChart extends BaseChart {
   }
   protected getScalesBySec(sec: number) {
     const currentData = this.getCurrentData(sec);
-    const valueRange = d3.extent(currentData, (d) => d[this.valueField]);
+    let valueRange = d3.extent(
+      currentData,
+      (d) => d[this.valueField] as number
+    );
+    if (valueRange[0] == undefined) {
+      valueRange = [0, 0];
+    }
     if (this.historyMax > valueRange[1]) {
       valueRange[1] = this.historyMax;
     }
@@ -189,7 +203,7 @@ export class LineChart extends BaseChart {
     return scales;
   }
 
-  private findY(area: Path2D, x: number) {
+  private findY(area: Path2D | string, x: number) {
     const l = 0;
     const r = this.shape.height;
     // 9w => 4k

@@ -7,13 +7,12 @@
     "declarationMap": false,
     "declaration": false,
     "inlineSourceMap": true,
-    "typeRoots": ["./src/**/*", "./node_modules/@types"],
     "moduleResolution": "Node",
     "allowUmdGlobalAccess": true,
     "esModuleInterop": true,
     "allowJs": true,
-    "downlevelIteration": true
+    "downlevelIteration": true,
+    "strictNullChecks": true
   },
-  "compileOnSave": true,
-  "include": ["./src/**/*", "@types"]
+  "compileOnSave": true
 }

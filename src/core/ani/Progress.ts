@@ -141,7 +141,7 @@ export class Progress extends Ani implements ProgressOptions {
       .interpolate(easeInterpolate(d3.easePolyOut.exponent(5)))(sec);
 
     const label = d3.format("d")(val);
-    const res = this.ani.getComponent(sec);
+    const res = this.ani.getComponent(sec)!;
     const textLabel = new Text({
       text: val === 100 ? `` : `Loading ${label} %`,
       font,

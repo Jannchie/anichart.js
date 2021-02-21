@@ -6,7 +6,7 @@ import { getFadeWrapped } from "../wrapper/Fade";
 import { getScaleWrapped } from "../wrapper/Scale";
 
 export function showImage({
-  path = "",
+  src = "",
   position = { x: 250, y: 250 },
   shape = { width: 500, height: 500 },
   time = 0,
@@ -17,7 +17,7 @@ export function showImage({
   ease = d3.easeElasticOut,
 }) {
   const ani = new Ani();
-  const img = new Image({ path, position, shape });
+  const img = new Image({ src, position, shape });
   if (!center) img.center = { x: shape.width / 2, y: shape.height / 2 };
   let wrapped: Ani;
   if (animation === "scale") {

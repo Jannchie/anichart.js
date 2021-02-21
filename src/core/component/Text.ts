@@ -1,5 +1,5 @@
-import { font } from "../..";
-import { Component } from "./Component";
+import { fontSize, font } from "./../Constant";
+import { BaseCompOptions, Component } from "./Component";
 export type FontWeight =
   | "normal"
   | "bold"
@@ -18,27 +18,37 @@ export type FontVariant = "normal" | "small-caps";
 export type FontStyle = "normal" | "italic" | "oblique";
 export type TextBaseline = CanvasTextBaseline;
 export type TextAlign = CanvasTextAlign;
-export class Text extends Component {
-  readonly type? = "Text";
-  constructor(text?: Text) {
-    super(text);
-    if (text) {
-      this.text = text.text;
-      this.textAlign = text.textAlign ?? "center";
-      this.textBaseline = text.textBaseline ?? "middle";
-      this.fontVariant = text.fontVariant;
-      this.fontWeight = text.fontWeight;
-      this.font = text.font;
-      this.fontStyle = text.fontStyle;
-      this.fontSize = text.fontSize;
-    }
-  }
-  text?: string = "";
+export interface TextOptions extends BaseCompOptions {
+  text?: string;
   textAlign?: TextAlign;
   textBaseline?: TextBaseline;
   fontVariant?: FontVariant;
   fontWeight?: FontWeight;
   fontStyle?: FontStyle;
-  fontSize?: number = 24;
-  font?: string = font;
+  fontSize?: number;
+  font?: string;
+}
+export class Text extends Component {
+  readonly type = "Text";
+  constructor(options?: TextOptions) {
+    super(options);
+    if (options) {
+      this.text = options.text ?? "";
+      this.textAlign = options.textAlign ?? "center";
+      this.textBaseline = options.textBaseline ?? "middle";
+      this.fontVariant = options.fontVariant ?? "normal";
+      this.fontWeight = options.fontWeight ?? "normal";
+      this.font = options.font ?? font;
+      this.fontStyle = options.fontStyle ?? "normal";
+      this.fontSize = options.fontSize ?? fontSize;
+    }
+  }
+  text: string = "";
+  textAlign: TextAlign;
+  textBaseline: TextBaseline;
+  fontVariant: FontVariant;
+  fontWeight: FontWeight;
+  fontStyle: FontStyle;
+  fontSize: number = 24;
+  font: string = font;
 }

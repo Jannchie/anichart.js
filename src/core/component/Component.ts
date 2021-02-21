@@ -6,41 +6,54 @@ export interface ShadowOptions {
   fillColor?: string | CanvasGradient | CanvasPattern;
   strokeColor?: string | CanvasGradient | CanvasPattern;
 }
-
-export class Component {
-  type? = "Component";
-  shadow? = { enable: false } as ShadowOptions;
-  center?: { x: number; y: number } = { x: 0, y: 0 };
+export interface BaseCompOptions {
+  shadow?: ShadowOptions;
+  center?: { x: number; y: number };
   position?: { x: number; y: number };
-  offset?: { x: number; y: number } = { x: 0, y: 0 };
+  offset?: { x: number; y: number };
   scale?: { x: number; y: number };
-  children?: Component[] = [];
+  children?: Component[];
   alpha?: number;
   filter?: string;
   fillStyle?: string | CanvasGradient | CanvasPattern;
   strokeStyle?: string | CanvasGradient | CanvasPattern;
   lineWidth?: number;
-  setup? = function () {
+}
+
+export class Component {
+  type = "Component";
+  shadow = { enable: false } as ShadowOptions;
+  center: { x: number; y: number } = { x: 0, y: 0 };
+  position: { x: number; y: number };
+  offset: { x: number; y: number } = { x: 0, y: 0 };
+  scale: { x: number; y: number };
+  children: (Component | null)[] = [];
+  alpha: number;
+  filter: string;
+  fillStyle: string | CanvasGradient | CanvasPattern;
+  strokeStyle: string | CanvasGradient | CanvasPattern;
+  lineWidth: number;
+  setup() {
     this.children.forEach((child: Component) => {
       child.setup();
     });
-  };
-  addChild? = function (comp: Component) {
+  }
+  addChild(comp: Component | null) {
     this.children.push(comp);
-  };
-  constructor(component?: Component) {
-    if (component) {
-      if (component.center) this.center = component.center;
-      if (component.shadow) this.shadow = component.shadow;
-      if (component.position) this.position = component.position;
-      if (component.alpha !== undefined) this.alpha = component.alpha;
-      if (component.offset) this.offset = component.offset;
-      if (component.children) this.children = component.children;
-      if (component.scale) this.scale = component.scale;
-      if (component.filter) this.filter = component.filter;
-      if (component.fillStyle) this.fillStyle = component.fillStyle;
-      if (component.strokeStyle) this.strokeStyle = component.strokeStyle;
-      if (component.lineWidth) this.lineWidth = component.lineWidth;
+  }
+  constructor(options?: BaseCompOptions) {
+    if (options) {
+      if (options.center) this.center = options.center;
+      if (options.shadow) this.shadow = options.shadow;
+      if (options.position) this.position = options.position;
+      if (options.alpha !== undefined) this.alpha = options.alpha;
+      if (options.offset) this.offset = options.offset;
+      if (options.children) this.children = options.children;
+      if (options.scale) this.scale = options.scale;
+      if (options.filter) this.filter = options.filter;
+      if (options.fillStyle) this.fillStyle = options.fillStyle;
+      if (options.strokeStyle) this.strokeStyle = options.strokeStyle;
+      if (options.lineWidth) this.lineWidth = options.lineWidth;
     }
   }
 }

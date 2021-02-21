@@ -1,6 +1,9 @@
 import * as d3 from "d3";
 import { BaseChart, BaseChartOptions, Component, Path, Stage } from "../..";
 interface MapChartOptions extends BaseChartOptions {
+    pathShadowBlur: number;
+    pathShadowColor: string;
+    useShadow: boolean;
     showGraticule: boolean;
     margin?: {
         top: number;
@@ -33,6 +36,9 @@ export declare class MapChart extends BaseChart {
     showGraticule: boolean;
     graticulePath: string;
     graticulePathComp: Path;
+    pathShadowBlur: number;
+    pathShadowColor: string;
+    useShadow: boolean;
     constructor(options?: MapChartOptions);
     margin: {
         top: number;

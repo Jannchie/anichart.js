@@ -70,7 +70,7 @@ const rectAni = ani.createAni(
 );
 
 const logoCenter = new ani.Image({
-  path: "./data/ANI.png",
+  src: "./data/ANI.png",
   position: {
     x: stage.canvas.width / 2,
     y: stage.canvas.height / 2,
@@ -82,7 +82,7 @@ const logoCenter = new ani.Image({
 const logoAni = ani.createAni(
   [
     new ani.Image({
-      path: "./data/ANI.png",
+      src: "./data/ANI.png",
       position: {
         x: 0,
         y: stage.canvas.height - 108,
@@ -90,7 +90,7 @@ const logoAni = ani.createAni(
       shape: { width: 128, height: 128 },
     }),
     new ani.Image({
-      path: "./data/ANI.png",
+      src: "./data/ANI.png",
       position: {
         x: stage.canvas.width - 128,
         y: stage.canvas.height - 108,
@@ -99,7 +99,7 @@ const logoAni = ani.createAni(
       alpha: 1.0,
     }),
     new ani.Image({
-      path: "./data/ANI.png",
+      src: "./data/ANI.png",
       position: {
         x: stage.canvas.width - 128,
         y: stage.canvas.height - 108,
@@ -175,7 +175,7 @@ const pie = new ani.PieChart({
 stage.addChild(pie);
 stage.addChild(progress);
 const img = ani.showImage({
-  path: "./data/ANI.png",
+  src: "./data/ANI.png",
 });
 
 ani.recourse.loadJSON(
