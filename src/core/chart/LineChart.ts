@@ -105,7 +105,7 @@ export class LineChart extends BaseChart {
     const maxX = d3.max(this.scales.x.range());
     // 找不到最大值说明啥数据都没有，直接返回
     if (!maxX) return res;
-    this.dataGroup.forEach((v: any[], k) => {
+    this.dataGroupByID.forEach((v: any[], k) => {
       const line = new Path();
       const color = colorPicker.getColor(k);
       line.strokeStyle = color;

@@ -1,5 +1,8 @@
 import * as d3 from "d3";
-import { BaseChart, BaseChartOptions, Component, Path, Stage } from "../..";
+import { Component } from "../component/Component";
+import { Path } from "../component/Path";
+import { Stage } from "../Stage";
+import { BaseChart, BaseChartOptions } from "./BaseChart";
 interface MapChartOptions extends BaseChartOptions {
     pathShadowBlur: number;
     pathShadowColor: string;

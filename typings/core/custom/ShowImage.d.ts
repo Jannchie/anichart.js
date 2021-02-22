@@ -13,7 +13,7 @@ export declare function showImage({ src, position, shape, time, freezeTime, cent
     time?: number | undefined;
     freezeTime?: number | undefined;
     center?: null | undefined;
-    animation?: "fade" | "scale" | undefined;
+    animation?: "scale" | "fade" | undefined;
     animationTime?: number | undefined;
     ease?: d3.ElasticEasingFactory | undefined;
 }): Ani;

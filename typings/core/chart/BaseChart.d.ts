@@ -41,6 +41,7 @@ export declare abstract class BaseChart extends Ani {
     yAxisPadding: number;
     xAxisPadding: number;
     maxInterval: number;
+    dataGroupByDate: Map<any, any[]>;
     constructor(options?: BaseChartOptions);
     tickKeyFrameDuration: number;
     dataScales: Map<string, any>;
@@ -69,7 +70,7 @@ export declare abstract class BaseChart extends Ani {
     freezeTime: [number, number];
     fadeTime: [number, number];
     data: any[];
-    dataGroup: Map<string, any>;
+    dataGroupByID: Map<string, any>;
     meta: Map<string, any>;
     dataName: string;
     metaName: string;

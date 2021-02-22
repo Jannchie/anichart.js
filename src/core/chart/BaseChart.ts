@@ -52,6 +52,7 @@ export abstract class BaseChart extends Ani {
   yAxisPadding: number = 4;
   xAxisPadding: number = 4;
   maxInterval: number;
+  dataGroupByDate: Map<any, any[]>;
   constructor(options?: BaseChartOptions) {
     super();
     if (!options) return;
@@ -90,12 +91,11 @@ export abstract class BaseChart extends Ani {
   freezeTime: [number, number] = [2, 2];
   fadeTime: [number, number] = [0.5, 0];
   data: any[];
-  dataGroup: Map<string, any>;
+  dataGroupByID: Map<string, any>;
   meta: Map<string, any>;
 
   dataName = "data";
   metaName = "meta";
-
   alphaScale: d3.ScaleLinear<number, number, never>;
   secToDate: d3.ScaleLinear<any, any, never>;
   dateFormat = "%Y-%m-%d";
@@ -153,7 +153,8 @@ export abstract class BaseChart extends Ani {
         }
       });
     });
-    this.dataGroup = d3.group(this.data, (d) => d[this.idField]);
+    this.dataGroupByID = d3.group(this.data, (d) => d[this.idField]);
+    this.dataGroupByDate = d3.group(this.data, (d) => d[this.dateField]);
   }
   private setDataScales() {
     // 整体日期范围

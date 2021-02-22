@@ -23,8 +23,9 @@ export declare class BarChart extends BaseChart {
     get sampling(): number;
     barInfoFormat: (id: any, data?: Map<string, any> | undefined, meta?: Map<string, any> | undefined) => string;
     historyIndex: Map<any, any>;
-    ids: string[];
+    IDList: string[];
     setup(stage: Stage): void;
+    private setShowingIDList;
     private setHistoryIndex;
     private get maxValueLabelWidth();
     private get maxLabelWidth();

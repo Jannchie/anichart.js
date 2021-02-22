@@ -74,13 +74,32 @@ export class BarChart extends BaseChart {
   };
 
   historyIndex: Map<any, any>;
-  ids: string[];
+  IDList: string[];
   setup(stage: Stage) {
     super.setup(stage);
-    this.ids = [...this.dataScales.keys()];
+    // 获得曾出现过的Label集合
+    this.setShowingIDList();
     this.labelPlaceholder = this.maxLabelWidth;
     this.valuePlaceholder = this.maxValueLabelWidth;
     this.setHistoryIndex();
+  }
+
+  private setShowingIDList() {
+    const idSet = new Set<string>();
+    this.dataGroupByDate.forEach((_, dt) => {
+      [...this.dataScales.entries()]
+        .map((entry) => {
+          const [id, scale] = entry;
+          return [id, scale(dt)];
+        })
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, this.itemCount)
+        .forEach((item) => {
+          let id = item[0];
+          idSet.add(id);
+        });
+    });
+    this.IDList = [...idSet.values()];
   }
 
   private setHistoryIndex() {
@@ -92,7 +111,7 @@ export class BarChart extends BaseChart {
     const data = range.map((t) =>
       this.getCurrentData(t).map((v) => v[this.idField])
     );
-    this.historyIndex = this.ids.reduce((d, id) => {
+    this.historyIndex = this.IDList.reduce((d, id) => {
       const indexList: number[] = [];
       for (const dataList of data) {
         let index = dataList.indexOf(id);
@@ -122,10 +141,10 @@ export class BarChart extends BaseChart {
   }
   private get maxLabelWidth() {
     const maxWidth =
-      d3.max(this.ids, (id) => {
+      d3.max(this.IDList, (id) => {
         const text = new Text(
           this.getLabelTextOptions(
-            this.labelFormat(id, this.meta, this.dataGroup),
+            this.labelFormat(id, this.meta, this.dataGroupByID),
             "#FFF",
             this.barHeight * 0.8
           )
@@ -140,7 +159,7 @@ export class BarChart extends BaseChart {
     const currentData = this.getCurrentData(sec);
     currentData.forEach((d, i) => {
       const index = Number.isNaN(d[this.valueField]) ? this.itemCount : i;
-      this.historyIndex.get(d[this.idField]).push(index);
+      this.historyIndex.get(d[this.idField])?.push(index);
     });
     for (const history of this.historyIndex.values()) {
       const len = history.length;
@@ -149,7 +168,7 @@ export class BarChart extends BaseChart {
       }
       history.shift();
     }
-    const indexes = this.ids.reduce(
+    const indexes = this.IDList.reduce(
       (map, id) =>
         map.set(
           id,
@@ -226,12 +245,16 @@ export class BarChart extends BaseChart {
     if (typeof this.colorField === "string") {
       color = data[this.idField];
     } else {
-      color = this.colorField(data[this.idField], this.meta, this.dataGroup);
+      color = this.colorField(
+        data[this.idField],
+        this.meta,
+        this.dataGroupByID
+      );
     }
     const image =
       typeof this.imageField === "string"
         ? data[this.imageField]
-        : this.imageField(data[this.idField], this.meta, this.dataGroup);
+        : this.imageField(data[this.idField], this.meta, this.dataGroupByID);
     return {
       id: data[this.idField],
       pos: {
@@ -263,7 +286,7 @@ export class BarChart extends BaseChart {
     });
     const label = new Text(
       this.getLabelTextOptions(
-        this.labelFormat(options.id, this.meta, this.dataGroup),
+        this.labelFormat(options.id, this.meta, this.dataGroupByID),
         options.color,
         options.shape.height * 0.8
       )
