@@ -5,16 +5,16 @@ import { recourse } from "../Recourse";
 import { Stage } from "../Stage";
 import { BaseChart, BaseChartOptions } from "./BaseChart";
 interface MapChartOptions extends BaseChartOptions {
-  pathShadowBlur: number;
-  pathShadowColor: string;
-  useShadow: boolean;
-  showGraticule: boolean;
+  pathShadowBlur?: number;
+  pathShadowColor?: string;
+  useShadow?: boolean;
+  showGraticule?: boolean;
   margin?: { top: number; left: number; right: number; bottom: number };
   projectionType?: "orthographic" | "natural" | "mercator" | "equirectangular";
-  mapIdField: string;
+  mapIdField?: string;
   visualMap?: (t: number) => string;
   getMapId?: (id: string) => string;
-  visualRange: "total" | "current" | "history" | [number, number];
+  visualRange?: "total" | "current" | "history" | [number, number];
   strokeStyle?: string;
   defaultFill?: string;
 }
@@ -42,23 +42,24 @@ export class MapChart extends BaseChart {
 
   constructor(options?: MapChartOptions) {
     super(options);
+    if (!options) return;
     this.margin = options?.margin ?? {
       top: 20,
       left: 20,
       right: 20,
       bottom: 20,
     };
-    this.visualMap = options?.visualMap ?? d3.interpolateInferno;
-    this.getMapId = options?.getMapId ?? ((id) => id);
-    this.mapIdField = options?.mapIdField ?? "alpha3Code";
-    this.strokeStyle = options?.strokeStyle ?? "#FFF";
-    this.defaultFill = options?.defaultFill ?? "#FFF1";
-    this.projectionType = options?.projectionType ?? "natural";
-    this.visualRange = options?.visualRange ?? "current";
-    this.useShadow = options?.useShadow ?? false;
-    this.pathShadowColor = options?.pathShadowColor;
-    this.pathShadowBlur = options?.pathShadowBlur ?? 100;
-    this.showGraticule = options?.showGraticule ?? false;
+    this.visualMap = options.visualMap ?? d3.interpolateInferno;
+    this.getMapId = options.getMapId ?? ((id) => id);
+    this.mapIdField = options.mapIdField ?? "alpha3Code";
+    this.strokeStyle = options.strokeStyle ?? "#FFF";
+    this.defaultFill = options.defaultFill ?? "#FFF1";
+    this.projectionType = options.projectionType ?? "natural";
+    this.visualRange = options.visualRange ?? "current";
+    this.useShadow = options.useShadow ?? false;
+    this.pathShadowColor = options.pathShadowColor;
+    this.pathShadowBlur = options.pathShadowBlur ?? 100;
+    this.showGraticule = options.showGraticule ?? false;
   }
   margin: { top: number; left: number; right: number; bottom: number };
   setup(stage: Stage) {
