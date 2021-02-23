@@ -1,7 +1,6 @@
 {
   "name": "anichart",
-  "sideEffects": false,
-  "version": "2.0.0",
+  "version": "2.0.1-1",
   "description": "Data visualization animation library",
   "author": "jannchie <jannchie@gmail.com>",
   "license": "MIT",
@@ -13,6 +12,9 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/Jannchie/anichart.js.git"
+  },
+  "engines": {
+    "node": ">=12.16.1"
   },
   "files": [
     "dist/**/*",
