@@ -1,4 +1,5 @@
-import { Ani, Component } from "../..";
+import { Ani } from "../ani/Ani";
+import { Component } from "../component/Component";
 
 export function getFadeWrapped(
   child: Component | Ani,

@@ -1,4 +1,4 @@
-import * as d3 from "d3";
+import { easeElasticOut } from "d3";
 import { Ani } from "../ani/Ani";
 import { Image } from "../component/Image";
 import { customInOut } from "../util/Ease";
@@ -14,7 +14,7 @@ export function showImage({
   center = null,
   animation = "scale" as "scale" | "fade",
   animationTime = 0.5,
-  ease = d3.easeElasticOut,
+  ease = easeElasticOut,
 }) {
   const ani = new Ani();
   const img = new Image({ src, position, shape });

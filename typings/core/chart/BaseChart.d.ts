@@ -1,4 +1,4 @@
-import * as d3 from "d3";
+import { ScaleLinear } from "d3";
 import { Ani } from "../ani/Ani";
 import { Component } from "../component/Component";
 import { TextOptions } from "../component/Text";
@@ -74,8 +74,8 @@ export declare abstract class BaseChart extends Ani {
     meta: Map<string, any>;
     dataName: string;
     metaName: string;
-    alphaScale: d3.ScaleLinear<number, number, never>;
-    secToDate: d3.ScaleLinear<any, any, never>;
+    alphaScale: ScaleLinear<number, number, never>;
+    secToDate: ScaleLinear<any, any, never>;
     dateFormat: string;
     xTickFormat: (n: number | {
         valueOf(): number;
@@ -101,8 +101,8 @@ export declare abstract class BaseChart extends Ani {
     private setDefaultAniTime;
     getCurrentData(sec: number, filter?: boolean): any[];
     protected getScalesBySec(sec: number): {
-        x: d3.ScaleLinear<number, number, never>;
-        y: d3.ScaleLinear<number, number, never>;
+        x: ScaleLinear<number, number, never>;
+        y: ScaleLinear<number, number, never>;
     };
     protected getAxis(sec: number, scales: {
         x: any;
@@ -113,6 +113,6 @@ export declare abstract class BaseChart extends Ani {
     };
     protected getAxisComponent(format: (v: number | {
         valueOf(): number;
-    }) => string, scale0: d3.ScaleLinear<number, number, never>, scale1: d3.ScaleLinear<number, number, never>, pos: number, count: number, text: TextOptions, type: "x" | "y", sec: number, secRange: [number, number], scale: d3.ScaleLinear<number, number, never>): Component;
+    }) => string, scale0: ScaleLinear<number, number, never>, scale1: ScaleLinear<number, number, never>, pos: number, count: number, text: TextOptions, type: "x" | "y", sec: number, secRange: [number, number], scale: ScaleLinear<number, number, never>): Component;
     protected tickKeySecRange(sec: number): [number, number];
 }

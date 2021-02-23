@@ -3,8 +3,8 @@ import { Text } from "../component/Text";
 import { Rect } from "../component/Rect";
 import { Ani } from "./Ani";
 import { customAni, easeInterpolate } from "./AniCreator";
-import * as d3 from "d3";
 import { font } from "../Constant";
+import { easeExpOut, easePolyOut, format, scaleLinear } from "d3";
 export interface ProgressOptions {
   position?: { x: number; y: number };
   shape?: { width: number; height: number };
@@ -125,9 +125,9 @@ export class Progress extends Ani implements ProgressOptions {
     objCopy.alpha = 0;
     this.ani = customAni(this.aniTime[0])
       .keyFrame(start)
-      .duration(this.aniTime[1], d3.easePolyOut.exponent(5))
+      .duration(this.aniTime[1], easePolyOut.exponent(5))
       .keyFrame(end)
-      .duration(0.25, d3.easeExpOut)
+      .duration(0.25, easeExpOut)
       .keyFrame(final)
       .duration(0.5)
       .keyFrame(final)
@@ -135,12 +135,11 @@ export class Progress extends Ani implements ProgressOptions {
       .keyFrame(objCopy);
   }
   getComponent(sec: number) {
-    const val = d3
-      .scaleLinear(this.aniTime, [0, 100])
+    const val = scaleLinear(this.aniTime, [0, 100])
       .clamp(true)
-      .interpolate(easeInterpolate(d3.easePolyOut.exponent(5)))(sec);
+      .interpolate(easeInterpolate(easePolyOut.exponent(5)))(sec);
 
-    const label = d3.format("d")(val);
+    const label = format("d")(val);
     const res = this.ani.getComponent(sec)!;
     const textLabel = new Text({
       text: val === 100 ? `` : `Loading ${label} %`,

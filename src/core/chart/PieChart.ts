@@ -1,9 +1,9 @@
 import { BaseChartOptions, BaseChart } from "./BaseChart";
-import * as d3 from "d3";
 import { Path } from "../component/Path";
 import { colorPicker } from "../ColorPicker";
 import { FontWeight, Text } from "../component/Text";
 import { font } from "../Constant";
+import { arc, pie, scaleLinear } from "d3";
 interface PieChartOptions extends BaseChartOptions {
   radius?: [number, number];
   labelTextStyle?: {
@@ -42,13 +42,10 @@ export class PieChart extends BaseChart implements PieChartOptions {
     const end = start + this.keyDurationSec;
     const comp0 = this.getPieData(start);
     const comp1 = this.getPieData(end);
-    const pieData = d3.scaleLinear(
-      [start, end],
-      [comp0, comp1]
-    )(remained + start);
-    const arc = d3.arc().innerRadius(0).outerRadius(100);
+    const pieData = scaleLinear([start, end], [comp0, comp1])(remained + start);
+    const arcGen = arc().innerRadius(0).outerRadius(100);
     for (const d of pieData) {
-      const path = arc
+      const path = arcGen
         .endAngle(d.endAngle)
         .padAngle(d.padAngle)
         .startAngle(d.startAngle)
@@ -61,7 +58,7 @@ export class PieChart extends BaseChart implements PieChartOptions {
         startAngle: 0,
         endAngle: 0,
       });
-      const centroid = arc.centroid(pieData as any);
+      const centroid = arcGen.centroid(pieData as any);
       const label = new Text({
         text: d.data[this.idField],
         fontSize: this.labelTextStyle.fontSize,
@@ -86,8 +83,7 @@ export class PieChart extends BaseChart implements PieChartOptions {
   }
 
   private getPieData(sec: number) {
-    const pieGen = d3
-      .pie()
+    const pieGen = pie()
       .padAngle((Math.PI / 180) * this.padAngle)
       .value((d) => d[this.valueField]);
 

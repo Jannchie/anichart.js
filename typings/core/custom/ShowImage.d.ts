@@ -1,4 +1,3 @@
-import * as d3 from "d3";
 import { Ani } from "../ani/Ani";
 export declare function showImage({ src, position, shape, time, freezeTime, center, animation, animationTime, ease, }: {
     src?: string | undefined;
@@ -15,5 +14,5 @@ export declare function showImage({ src, position, shape, time, freezeTime, cent
     center?: null | undefined;
     animation?: "fade" | "scale" | undefined;
     animationTime?: number | undefined;
-    ease?: d3.ElasticEasingFactory | undefined;
+    ease?: import("d3-ease").ElasticEasingFactory | undefined;
 }): Ani;

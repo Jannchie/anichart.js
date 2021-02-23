@@ -1,4 +1,19 @@
-import * as d3 from "d3";
+import {
+  GeoPath,
+  GeoPermissibleObjects,
+  GeoProjection,
+  ScaleLinear,
+  interpolateInferno,
+  geoOrthographic,
+  geoNaturalEarth1,
+  geoMercator,
+  geoEquirectangular,
+  geoPath,
+  color,
+  extent,
+  scaleLinear,
+  geoGraticule10,
+} from "d3";
 import { Component, ShadowOptions } from "../component/Component";
 import { Path } from "../component/Path";
 import { recourse } from "../Recourse";
@@ -19,10 +34,10 @@ interface MapChartOptions extends BaseChartOptions {
   defaultFill?: string;
 }
 export class MapChart extends BaseChart {
-  geoGener: d3.GeoPath<any, d3.GeoPermissibleObjects>;
+  geoGener: GeoPath<any, GeoPermissibleObjects>;
   pathMap: Map<string, string>;
   pathComponentMap: Map<string, Path>;
-  projection: d3.GeoProjection;
+  projection: GeoProjection;
   map: any;
   mapIdField: string;
   visualMap: (t: number) => string;
@@ -31,7 +46,7 @@ export class MapChart extends BaseChart {
   strokeStyle: string;
   defaultFill: string;
   projectionType: "orthographic" | "natural" | "mercator" | "equirectangular";
-  scale: d3.ScaleLinear<number, number, never>;
+  scale: ScaleLinear<number, number, never>;
   showGraticule: boolean;
   graticulePath: string;
   graticulePathComp: Path;
@@ -42,14 +57,14 @@ export class MapChart extends BaseChart {
 
   constructor(options?: MapChartOptions) {
     super(options);
-    if (!options) return;
+    if (!options) options = {};
     this.margin = options?.margin ?? {
       top: 20,
       left: 20,
       right: 20,
       bottom: 20,
     };
-    this.visualMap = options.visualMap ?? d3.interpolateInferno;
+    this.visualMap = options.visualMap ?? interpolateInferno;
     this.getMapId = options.getMapId ?? ((id) => id);
     this.mapIdField = options.mapIdField ?? "alpha3Code";
     this.strokeStyle = options.strokeStyle ?? "#FFF";
@@ -66,21 +81,21 @@ export class MapChart extends BaseChart {
     super.setup(stage);
     if (stage) {
       const map = recourse.data.get("map");
-      let projection: d3.GeoProjection;
+      let projection: GeoProjection;
       switch (this.projectionType) {
         case "orthographic":
-          projection = d3.geoOrthographic();
+          projection = geoOrthographic();
           break;
         case "natural":
-          projection = d3.geoNaturalEarth1();
+          projection = geoNaturalEarth1();
           break;
         case "mercator":
-          projection = d3.geoMercator();
+          projection = geoMercator();
           break;
         case "equirectangular":
-          projection = d3.geoEquirectangular();
+          projection = geoEquirectangular();
         default:
-          projection = d3.geoNaturalEarth1();
+          projection = geoNaturalEarth1();
       }
       projection.fitExtent(
         [
@@ -99,13 +114,13 @@ export class MapChart extends BaseChart {
     }
   }
   wrapper: Component;
-  private init(projection: d3.GeoProjection, map: any) {
+  private init(projection: GeoProjection, map: any) {
     this.initGeoPath(projection, map);
     this.initComps();
   }
 
-  private initGeoPath(projection: d3.GeoProjection, map: any) {
-    const geoGener = d3.geoPath(projection);
+  private initGeoPath(projection: GeoProjection, map: any) {
+    const geoGener = geoPath(projection);
     this.geoGener = geoGener;
     this.pathMap = new Map<string, string>();
     this.updatePathMap(map, geoGener);
@@ -113,7 +128,7 @@ export class MapChart extends BaseChart {
 
   private updatePathMap(
     map: any,
-    geoGener: d3.GeoPath<any, d3.GeoPermissibleObjects>
+    geoGener: GeoPath<any, GeoPermissibleObjects>
   ) {
     for (const feature of map.features) {
       const mapId = feature.properties[this.mapIdField];
@@ -135,7 +150,7 @@ export class MapChart extends BaseChart {
       this.pathComponentMap.set(mapId, path);
     });
     if (this.showGraticule) {
-      const stroke = d3.color(this.strokeStyle);
+      const stroke = color(this.strokeStyle);
       if (stroke) {
         stroke.opacity = 0.25;
       }
@@ -155,7 +170,7 @@ export class MapChart extends BaseChart {
     return this.wrapper;
   }
   updateScale(sec: number) {
-    [this.currentMin, this.currentMax] = d3.extent(
+    [this.currentMin, this.currentMax] = extent(
       this.getCurrentData(sec),
       (d) => d[this.valueField]
     );
@@ -165,30 +180,33 @@ export class MapChart extends BaseChart {
     if (this.historyMin > this.currentMin) {
       this.historyMin = this.currentMax;
     }
-    if (typeof this.visualRange === "string") {
+    if (!this.visualRange || typeof this.visualRange === "string") {
       switch (this.visualRange) {
         case "total":
-          this.scale = d3
-            .scaleLinear([this.totallyMin, this.totallyMax], [0, 1])
-            .clamp(true);
+          this.scale = scaleLinear(
+            [this.totallyMin, this.totallyMax],
+            [0, 1]
+          ).clamp(true);
           break;
         case "history":
-          this.scale = d3
-            .scaleLinear([this.historyMin, this.historyMax], [0, 1])
-            .clamp(true);
+          this.scale = scaleLinear(
+            [this.historyMin, this.historyMax],
+            [0, 1]
+          ).clamp(true);
         default:
-          this.scale = d3
-            .scaleLinear([this.currentMin, this.currentMax], [0, 1])
-            .clamp(true);
+          this.scale = scaleLinear(
+            [this.currentMin, this.currentMax],
+            [0, 1]
+          ).clamp(true);
           break;
       }
     } else {
-      this.scale = d3.scaleLinear(this.visualRange, [0, 1]).clamp(true);
+      this.scale = scaleLinear(this.visualRange, [0, 1]).clamp(true);
     }
   }
   updatePath(sec: number) {
     if (this.showGraticule) {
-      const graticulePath = this.geoGener(d3.geoGraticule10());
+      const graticulePath = this.geoGener(geoGraticule10());
       if (graticulePath) {
         this.graticulePathComp.path = graticulePath;
       }

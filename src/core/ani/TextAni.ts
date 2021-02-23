@@ -1,6 +1,6 @@
-import * as d3 from "d3";
 import { Ani } from "./Ani";
 import { Text } from "../component/Text";
+import { scaleLinear } from "d3";
 interface TextAniOptions {
   time?: number;
   last?: number;
@@ -27,17 +27,15 @@ export class TextAni extends Ani {
     this.rise = options.rise ? options.rise : 10;
   }
   getComponent(sec: number) {
-    const scale = d3
-      .scaleLinear(
-        [
-          this.time,
-          this.time + this.fade,
-          this.time + this.last - this.fade,
-          this.time + this.last,
-        ],
-        [0, 1, 1, 0]
-      )
-      .clamp(true);
+    const scale = scaleLinear(
+      [
+        this.time,
+        this.time + this.fade,
+        this.time + this.last - this.fade,
+        this.time + this.last,
+      ],
+      [0, 1, 1, 0]
+    ).clamp(true);
     this.component.alpha = scale(sec);
     switch (this.type) {
       case "blur":

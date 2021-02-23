@@ -1,12 +1,12 @@
 import { Component } from "../component/Component";
-import * as d3 from "d3";
 import { Ani } from "./Ani";
-import { getFadeWrapped } from "../..";
+import { getFadeWrapped } from "../wrapper/Fade";
+import { bisectLeft, easeLinear, interpolate, scaleLinear } from "d3";
 export function easeInterpolate<T extends Component | number>(
   e: (i: number) => number
 ) {
   return (a: T, b: T) => {
-    const i = d3.interpolate(a, b as any);
+    const i = interpolate(a, b as any);
     return (t: number): T => {
       return i(e(t));
     };
@@ -46,7 +46,7 @@ class CustomAni extends Ani {
   }
   getComponent(sec: number): Component | null {
     // [0, 3, 6]
-    let rIdx = d3.bisectLeft(this.keyTimes, sec);
+    let rIdx = bisectLeft(this.keyTimes, sec);
     if (rIdx >= this.keyFrames.length) {
       rIdx = this.keyFrames.length - 1;
     }
@@ -55,16 +55,15 @@ class CustomAni extends Ani {
       return null;
     }
     const eIdx = lIdx >= this.eases.length ? this.eases.length - 1 : lIdx;
-    const scale = d3
-      .scaleLinear(
-        [this.keyTimes[lIdx], this.keyTimes[rIdx]],
-        [this.keyFrames[lIdx], this.keyFrames[rIdx]]
-      )
+    const scale = scaleLinear(
+      [this.keyTimes[lIdx], this.keyTimes[rIdx]],
+      [this.keyFrames[lIdx], this.keyFrames[rIdx]]
+    )
       .interpolate(easeInterpolate(this.eases[eIdx]))
       .clamp(true);
     return scale(sec);
   }
-  duration(duration: number, ease: (n: number) => number = d3.easeLinear) {
+  duration(duration: number, ease: (n: number) => number = easeLinear) {
     this.keyTimes.push(this.keyTimes[this.keyTimes.length - 1] + duration);
     this.eases.push(ease);
     return this.aniSeries;
@@ -78,10 +77,9 @@ export function customAni(startSec?: number) {
 export function createAni<T extends Component>(
   keyFrames: T[],
   keyTimes: number[] = [0, 1],
-  ease: (n: number) => number = d3.easeLinear
+  ease: (n: number) => number = easeLinear
 ): Ani {
-  const scale = d3
-    .scaleLinear(keyTimes, keyFrames)
+  const scale = scaleLinear(keyTimes, keyFrames)
     .interpolate(easeInterpolate(ease))
     .clamp(true);
   return {
@@ -103,16 +101,14 @@ export function getFadeAni(
   const startSec = options?.startSec ?? 0;
   const durationSec = options?.durationSec ?? 3;
   const fadeSec = options?.fadeSec ?? 1;
-  const alphaScale = d3
-    .scaleLinear(
-      [
-        startSec,
-        startSec + fadeSec,
-        startSec + durationSec - fadeSec,
-        startSec + durationSec,
-      ],
-      [0, 1, 1, 0]
-    )
-    .clamp(true);
+  const alphaScale = scaleLinear(
+    [
+      startSec,
+      startSec + fadeSec,
+      startSec + durationSec - fadeSec,
+      startSec + durationSec,
+    ],
+    [0, 1, 1, 0]
+  ).clamp(true);
   return getFadeWrapped(obj, alphaScale);
 }

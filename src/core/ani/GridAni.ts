@@ -1,4 +1,7 @@
-import { Ani, Component, Stage } from "../..";
+import { Component } from "../component/Component";
+import { Stage } from "../Stage";
+import { Ani } from "./Ani";
+
 export interface GridOptions {
   aniTime?: [number, number];
   col?: number;
@@ -42,7 +45,7 @@ export class GridAni extends Ani {
       const col = index % this.col;
       const row = Math.floor(index / this.col);
       item.position = { x: width * col + width / 2, y: height * row };
-      this.wrapper.addChild?.(item);
+      this.wrapper.addChild(item);
     });
   }
   getComponent(sec: number) {

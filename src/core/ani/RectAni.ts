@@ -1,4 +1,3 @@
-import * as d3 from "d3";
 import { Ani } from "./Ani";
 import { Rect } from "../component/Rect";
 interface RectOptions {

@@ -1,12 +1,7 @@
-import {
-  FontWeight,
-  TextAlign,
-  TextBaseline,
-  Component,
-  canvasHelper,
-  Rect,
-  Text,
-} from "../..";
+import { canvasHelper } from "../CanvasHelper";
+import { Component } from "../component/Component";
+import { Rect } from "../component/Rect";
+import { FontWeight, TextAlign, TextBaseline, Text } from "../component/Text";
 import { font } from "../Constant";
 
 export function getTextWithBackground({
