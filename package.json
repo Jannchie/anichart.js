@@ -1,7 +1,7 @@
 {
   "name": "anichart",
   "sideEffects": false,
-  "version": "2.0.0-50",
+  "version": "2.0.0-52",
   "description": "",
   "author": "jannchie <jannchie@gmail.com>",
   "license": "MIT",
@@ -9,7 +9,7 @@
   "main": "lib/index.js",
   "unpkg": "dist/anichart.js",
   "jsdelivr": "dist/anichart.js",
-  "typings": "typings/index.d.ts",
+  "types": "lib/index.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/Jannchie/anichart.js.git"
