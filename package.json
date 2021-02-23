@@ -1,7 +1,7 @@
 {
   "name": "anichart",
   "sideEffects": false,
-  "version": "2.0.0-54",
+  "version": "2.0.0",
   "description": "Data visualization animation library",
   "author": "jannchie <jannchie@gmail.com>",
   "license": "MIT",
