@@ -1,10 +1,8 @@
 {
   "compilerOptions": {
     "outDir": "lib",
-    "declarationDir": "typings",
     "target": "es5",
-    "declarationMap": false,
-    "declaration": true,
+    "declaration": false,
     "inlineSourceMap": true,
     "moduleResolution": "Node",
     "allowUmdGlobalAccess": true,
@@ -18,14 +16,14 @@
     "noUnusedParameters": false,
     "noImplicitReturns": true,
     "noImplicitAny": false,
-    "noUnusedLocals": false
+    "noUnusedLocals": false,
+    "allowUnreachableCode": false,
+    "disableSizeLimit": true,
+    "disableReferencedProjectLoad": true,
+    "extendedDiagnostics": true,
+    "noImplicitUseStrict": true,
+    "noImplicitThis": true
   },
   "compileOnSave": true,
-  "exclude": [
-    "node_modules",
-    "**/dist/**",
-    "**/lib/**",
-    "**/test/**",
-    "**/typings/**"
-  ]
+  "include": ["src/**/*"]
 }

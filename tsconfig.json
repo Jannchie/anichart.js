@@ -18,14 +18,14 @@
     "noUnusedParameters": false,
     "noImplicitReturns": true,
     "noImplicitAny": false,
-    "noUnusedLocals": false
+    "noUnusedLocals": false,
+    "allowUnreachableCode": false,
+    "disableSizeLimit": true,
+    "disableReferencedProjectLoad": true,
+    "extendedDiagnostics": true,
+    "noImplicitUseStrict": true,
+    "noImplicitThis": true
   },
   "compileOnSave": true,
-  "exclude": [
-    "node_modules",
-    "**/dist/**",
-    "**/lib/**",
-    "**/test/**",
-    "**/typings/**"
-  ]
+  "include": ["src/**/*"]
 }
