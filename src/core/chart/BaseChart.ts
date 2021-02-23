@@ -154,7 +154,14 @@ export abstract class BaseChart extends Ani {
       });
     });
     this.dataGroupByID = d3.group(this.data, (d) => d[this.idField]);
-    this.dataGroupByDate = d3.group(this.data, (d) => d[this.dateField]);
+    const dataGroupByDate = d3.group(this.data, (d) =>
+      (d[this.dateField] as Date).getTime()
+    );
+    const result = new Map<Date, any>();
+    dataGroupByDate.forEach((v: any[], k: number) => {
+      result.set(new Date(k), v);
+    });
+    this.dataGroupByDate = result;
   }
   private setDataScales() {
     // 整体日期范围

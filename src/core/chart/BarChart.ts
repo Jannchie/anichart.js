@@ -86,13 +86,15 @@ export class BarChart extends BaseChart {
 
   private setShowingIDList() {
     const idSet = new Set<string>();
-    this.dataGroupByDate.forEach((_, dt) => {
+    this.dataGroupByDate.forEach((_, date) => {
+      const dt = this.secToDate.invert(date);
       [...this.dataScales.entries()]
-        .map((entry) => {
-          const [id, scale] = entry;
-          return [id, scale(dt)];
+        .filter((d) => {
+          return !isNaN(d[1](dt)[this.valueField]);
         })
-        .sort((a, b) => b[1] - a[1])
+        .sort((a, b) => {
+          return b[1](dt)[this.valueField] - a[1](dt)[this.valueField];
+        })
         .slice(0, this.itemCount)
         .forEach((item) => {
           let id = item[0];
