@@ -1,10 +1,13 @@
 import * as d3 from "d3";
-import { BaseChart, BaseChartOptions, Component, Path, Stage } from "../..";
+import { Component } from "../component/Component";
+import { Path } from "../component/Path";
+import { Stage } from "../Stage";
+import { BaseChart, BaseChartOptions } from "./BaseChart";
 interface MapChartOptions extends BaseChartOptions {
-    pathShadowBlur: number;
-    pathShadowColor: string;
-    useShadow: boolean;
-    showGraticule: boolean;
+    pathShadowBlur?: number;
+    pathShadowColor?: string;
+    useShadow?: boolean;
+    showGraticule?: boolean;
     margin?: {
         top: number;
         left: number;
@@ -12,10 +15,10 @@ interface MapChartOptions extends BaseChartOptions {
         bottom: number;
     };
     projectionType?: "orthographic" | "natural" | "mercator" | "equirectangular";
-    mapIdField: string;
+    mapIdField?: string;
     visualMap?: (t: number) => string;
     getMapId?: (id: string) => string;
-    visualRange: "total" | "current" | "history" | [number, number];
+    visualRange?: "total" | "current" | "history" | [number, number];
     strokeStyle?: string;
     defaultFill?: string;
 }
@@ -37,7 +40,7 @@ export declare class MapChart extends BaseChart {
     graticulePath: string;
     graticulePathComp: Path;
     pathShadowBlur: number;
-    pathShadowColor: string;
+    pathShadowColor: string | undefined;
     useShadow: boolean;
     constructor(options?: MapChartOptions);
     margin: {

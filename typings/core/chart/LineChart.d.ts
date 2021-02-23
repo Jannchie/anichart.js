@@ -17,7 +17,7 @@ export declare class LineChart extends BaseChart {
         y: d3.ScaleLinear<number, number, never>;
     };
     setup(stage: Stage): void;
-    getComponent(sec: number): Component;
+    getComponent(sec: number): Component | null;
     protected getScalesBySec(sec: number): {
         x: d3.ScaleLinear<number, number, never>;
         y: d3.ScaleLinear<number, number, never>;

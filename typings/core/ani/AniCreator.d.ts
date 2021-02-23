@@ -14,7 +14,7 @@ declare class CustomAni extends Ani {
     private eases;
     private keyFrames;
     constructor(aniSeries: CustomAniNeedFrame, keyTimes: number[], keyFrames: Component[], eases: ((n: number) => number)[]);
-    getComponent(sec: number): Component;
+    getComponent(sec: number): Component | null;
     duration(duration: number, ease?: (n: number) => number): CustomAniNeedFrame;
 }
 export declare function customAni(startSec?: number): CustomAniNeedFrame;

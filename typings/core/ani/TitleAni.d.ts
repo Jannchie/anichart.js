@@ -4,9 +4,9 @@ export declare class TiTleAniAlpha extends Ani {
     getComponent(sec: number): Component;
 }
 export declare function getTitleAniStyle1({ txt, position, }: {
-    txt?: string;
+    txt?: string | undefined;
     position?: {
         x: number;
         y: number;
-    };
+    } | undefined;
 }): Ani;

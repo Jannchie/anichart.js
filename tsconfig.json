@@ -16,5 +16,6 @@
     "downlevelIteration": true,
     "strictNullChecks": true
   },
-  "compileOnSave": true
+  "compileOnSave": true,
+  "include": ["src/**/*"]
 }

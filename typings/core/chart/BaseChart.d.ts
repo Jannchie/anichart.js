@@ -1,7 +1,7 @@
 import * as d3 from "d3";
 import { Ani } from "../ani/Ani";
 import { Component } from "../component/Component";
-import { Text } from "../component/Text";
+import { TextOptions } from "../component/Text";
 import { Stage } from "../Stage";
 export interface BaseChartOptions {
     aniTime?: [number, number];
@@ -34,13 +34,14 @@ export interface BaseChartOptions {
     metaName?: string;
     maxInterval?: number;
 }
-export declare type KeyGenerate = ((id: string) => string) | ((id: string, meta: Map<string, any>) => string) | ((id: string, meta: Map<string, any>, data: Map<string, any>) => string);
+export declare type KeyGenerate = ((id: string) => string) | ((id: string, meta: Map<string, any> | undefined) => string) | ((id: string, meta: Map<string, any> | undefined, data: Map<string, any> | undefined) => string);
 export declare abstract class BaseChart extends Ani {
     yAxisWidth: number;
     xAxisHeight: number;
     yAxisPadding: number;
     xAxisPadding: number;
     maxInterval: number;
+    dataGroupByDate: Map<any, any[]>;
     constructor(options?: BaseChartOptions);
     tickKeyFrameDuration: number;
     dataScales: Map<string, any>;
@@ -69,7 +70,7 @@ export declare abstract class BaseChart extends Ani {
     freezeTime: [number, number];
     fadeTime: [number, number];
     data: any[];
-    dataGroup: Map<string, any>;
+    dataGroupByID: Map<string, any>;
     meta: Map<string, any>;
     dataName: string;
     metaName: string;
@@ -92,7 +93,7 @@ export declare abstract class BaseChart extends Ani {
     private setData;
     private setDataScales;
     private insertNaN;
-    getComponent(sec: number): Component;
+    getComponent(sec: number): Component | null;
     setMeta(): void;
     valueFormat: (cData: any) => string;
     labelFormat: KeyGenerate;
@@ -112,6 +113,6 @@ export declare abstract class BaseChart extends Ani {
     };
     protected getAxisComponent(format: (v: number | {
         valueOf(): number;
-    }) => string, scale0: d3.ScaleLinear<number, number, never>, scale1: d3.ScaleLinear<number, number, never>, pos: number, count: number, text: Text, type: "x" | "y", sec: number, secRange: [number, number], scale: d3.ScaleLinear<number, number, never>): Component;
+    }) => string, scale0: d3.ScaleLinear<number, number, never>, scale1: d3.ScaleLinear<number, number, never>, pos: number, count: number, text: TextOptions, type: "x" | "y", sec: number, secRange: [number, number], scale: d3.ScaleLinear<number, number, never>): Component;
     protected tickKeySecRange(sec: number): [number, number];
 }
