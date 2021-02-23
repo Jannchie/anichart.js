@@ -15,9 +15,9 @@ export async function addFrameToFFmpeg(
   canvas: HTMLCanvasElement,
   frame: number,
   name = "output",
-  qulity = 1
+  quality = 1
 ) {
-  const imageData = canvas.toDataURL("image/png", qulity);
+  const imageData = canvas.toDataURL("image/png", quality);
   ffmpeg.FS("writeFile", `${name}-${frame}.png`, await fetchFile(imageData));
 }
 export function removePNG(list: string[]) {

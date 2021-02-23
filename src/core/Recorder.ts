@@ -2,19 +2,19 @@ declare var MediaRecorder: any;
 export class Recorder {
   record(canvas: any, time: number) {
     const recordedChunks = [] as any[];
-    return new Promise((res, rej) => {
+    return new Promise((res, _) => {
       const stream = canvas.captureStream(60 /*fps*/);
       const mediaRecorder = new MediaRecorder(stream, {
         mimeType: "video/webm; codecs=vp9",
       });
 
-      // ondataavailable will fire in interval of `time || 4000 ms`
+      // on data available will fire in interval of `time || 4000 ms`
       mediaRecorder.start(time || 4000);
 
-      mediaRecorder.ondataavailable = (e: any) => {
+      mediaRecorder.onDataAvailable = (e: any) => {
         recordedChunks.push(e.data);
         if (mediaRecorder.state === "recording") {
-          // after stop data avilable event run one more time
+          // after stop data available event run one more time
           mediaRecorder.stop();
         }
       };

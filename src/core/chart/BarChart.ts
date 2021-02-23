@@ -9,7 +9,7 @@ import { canvasHelper } from "../CanvasHelper";
 import { Stage } from "../Stage";
 import { BaseChart, BaseChartOptions, KeyGenerate } from "./BaseChart";
 import { recourse } from "../Recourse";
-import { font } from "../..";
+import { font } from "../Constant";
 
 interface BarChartOptions extends BaseChartOptions {
   itemCount?: number;

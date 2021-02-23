@@ -8,7 +8,7 @@ import { Rect } from "../component/Rect";
 import { Text } from "../component/Text";
 import { Stage } from "../Stage";
 import { BaseChart, BaseChartOptions } from "./BaseChart";
-import { font } from "../..";
+import { font } from "../Constant";
 interface LineChartOptions extends BaseChartOptions {
   pointerR?: number;
 }

@@ -1,7 +1,7 @@
 import { Component } from "../component/Component";
 import * as d3 from "d3";
 import { Ani } from "./Ani";
-import { getFadeWrapped } from "../..";
+import { getFadeWrapped } from "../wrapper/Fade";
 export function easeInterpolate<T extends Component | number>(
   e: (i: number) => number
 ) {
