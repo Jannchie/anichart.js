@@ -1,7 +1,7 @@
 {
   "name": "anichart",
   "sideEffects": false,
-  "version": "2.0.0-49",
+  "version": "2.0.0-50",
   "description": "",
   "author": "jannchie <jannchie@gmail.com>",
   "license": "MIT",
@@ -18,8 +18,7 @@
     "dist/**/*",
     "lib/**/*",
     "typings/**/*",
-    "src/**/*",
-    "index.d.ts"
+    "src/**/*"
   ],
   "scripts": {
     "build": "tsc --build tsconfig.json & webpack --config webpack.prod.js",
