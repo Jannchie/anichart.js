@@ -1,4 +1,4 @@
-import { Component } from "../..";
+import { Component } from "../component/Component";
 export declare function getTextWithBackground({ txt, position, fontSize, fontWeight, textAlign, textBaseline, foregroundStyle, backgroundStyle, padding, }: {
     txt?: string | undefined;
     position?: {

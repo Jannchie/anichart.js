@@ -1,7 +1,7 @@
-import * as d3 from "d3";
 import { Ani } from "./ani/Ani";
 import { CanvasRenderer } from "./CanvasRenderer";
 import { Component } from "./component/Component";
+import { Timer } from "d3";
 export declare class Stage {
     aniRoot: Ani;
     compRoot: Component;
@@ -14,7 +14,7 @@ export declare class Stage {
         fileName: string;
         splitSec: number;
     };
-    interval: d3.Timer | null;
+    interval: Timer | null;
     output: boolean;
     outputConcurrency: number;
     mode: string;

@@ -2,7 +2,6 @@ import { Component } from "../component/Component";
 import { Image } from "../component/Image";
 import { Rect } from "../component/Rect";
 import { Text, TextOptions } from "../component/Text";
-import * as d3 from "d3";
 import * as _ from "lodash-es";
 import { colorPicker } from "../ColorPicker";
 import { canvasHelper } from "../CanvasHelper";
@@ -10,6 +9,15 @@ import { Stage } from "../Stage";
 import { BaseChart, BaseChartOptions, KeyGenerate } from "./BaseChart";
 import { recourse } from "../Recourse";
 import { font } from "../Constant";
+import {
+  extent,
+  max,
+  mean,
+  range,
+  ScaleLinear,
+  scaleLinear,
+  timeFormat,
+} from "d3";
 
 interface BarChartOptions extends BaseChartOptions {
   itemCount?: number;
@@ -105,12 +113,12 @@ export class BarChart extends BaseChart {
   }
 
   private setHistoryIndex() {
-    const range = d3.range(
+    const dataRange = range(
       this.aniTime[0] - this.swap,
       this.aniTime[0],
       this.swap / this.sampling
     );
-    const data = range.map((t) =>
+    const data = dataRange.map((t) =>
       this.getCurrentData(t).map((v) => v[this.idField])
     );
     this.historyIndex = this.IDList.reduce((d, id) => {
@@ -128,7 +136,7 @@ export class BarChart extends BaseChart {
   private get maxValueLabelWidth() {
     const d = [...this.data.values()];
     const maxWidth =
-      d3.max(d, (item) => {
+      max(d, (item) => {
         const text = new Text(
           this.getLabelTextOptions(
             this.valueFormat(item),
@@ -143,7 +151,7 @@ export class BarChart extends BaseChart {
   }
   private get maxLabelWidth() {
     const maxWidth =
-      d3.max(this.IDList, (id) => {
+      max(this.IDList, (id) => {
         const text = new Text(
           this.getLabelTextOptions(
             this.labelFormat(id, this.meta, this.dataGroupByID),
@@ -174,12 +182,12 @@ export class BarChart extends BaseChart {
       (map, id) =>
         map.set(
           id,
-          d3.mean(this.historyIndex.get(id).map((data: unknown) => data))
+          mean(this.historyIndex.get(id).map((data: unknown) => data))
         ),
       new Map()
     );
-    const [min, max] = d3.extent(currentData, (d) => d[this.valueField]);
-    const scaleX = d3.scaleLinear(
+    const [min, max] = extent(currentData, (d) => d[this.valueField]);
+    const scaleX = scaleLinear(
       [0, max],
       [
         0,
@@ -205,7 +213,7 @@ export class BarChart extends BaseChart {
 
     if (this.showDateLabel) {
       const dateLabel = new Text({
-        text: d3.timeFormat(this.dateFormat)(this.secToDate(sec)),
+        text: timeFormat(this.dateFormat)(this.secToDate(sec)),
         font,
         fontSize: this.dateLabelSize,
         fillStyle: "#777",
@@ -233,16 +241,17 @@ export class BarChart extends BaseChart {
 
   private getBarOptions(
     data: any,
-    scaleX: d3.ScaleLinear<number, number, never>,
+    scaleX: ScaleLinear<number, number, never>,
     indexes: Map<string, number>
   ): BarOptions {
     if (!Number.isNaN(data[this.valueField])) {
       this.lastValue.set(data[this.idField], data[this.valueField]);
     }
     data[this.valueField] = this.lastValue.get(data[this.idField]);
-    const alpha = d3
-      .scaleLinear([this.itemCount - 1, this.itemCount], [1, 0])
-      .clamp(true)(indexes.get(data[this.idField])!);
+    const alpha = scaleLinear(
+      [this.itemCount - 1, this.itemCount],
+      [1, 0]
+    ).clamp(true)(indexes.get(data[this.idField])!);
     let color: string;
     if (typeof this.colorField === "string") {
       color = data[this.idField];

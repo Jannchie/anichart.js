@@ -1,4 +1,3 @@
-import * as d3 from "d3";
 import { canvasHelper } from "../CanvasHelper";
 import { colorPicker } from "../ColorPicker";
 import { Arc } from "../component/Arc";
@@ -9,6 +8,18 @@ import { Text } from "../component/Text";
 import { Stage } from "../Stage";
 import { BaseChart, BaseChartOptions } from "./BaseChart";
 import { font } from "../Constant";
+import {
+  area,
+  bisector,
+  curveMonotoneX,
+  extent,
+  line,
+  max,
+  range,
+  scaleLinear,
+  ScaleLinear,
+  timeFormat,
+} from "d3";
 interface LineChartOptions extends BaseChartOptions {
   pointerR?: number;
 }
@@ -24,13 +35,13 @@ export class LineChart extends BaseChart {
     this.pointerR = options.pointerR ?? 10;
   }
   scales: {
-    x: d3.ScaleLinear<number, number, never>;
-    y: d3.ScaleLinear<number, number, never>;
+    x: ScaleLinear<number, number, never>;
+    y: ScaleLinear<number, number, never>;
   };
   setup(stage: Stage) {
     super.setup(stage);
     this.xTickFormat = (n: number | { valueOf(): number }) => {
-      return d3.timeFormat("%Y-%m-%d")(this.secToDate(n));
+      return timeFormat("%Y-%m-%d")(this.secToDate(n));
     };
     // Calculate label placeholder
     const textModel = new Text({
@@ -38,7 +49,7 @@ export class LineChart extends BaseChart {
       font,
     });
     const labelMaxWidth =
-      d3.max(this.data, (d) => {
+      max(this.data, (d) => {
         textModel.text = this.labelFormat(d[this.idField], this.meta, d);
         return canvasHelper.measure(textModel)?.width ?? 0;
       }) ?? 0;
@@ -53,13 +64,11 @@ export class LineChart extends BaseChart {
     if (this.aniTime[0] > sec) return null;
     this.scales = this.getScalesBySec(sec);
     const { xAxis, yAxis } = this.getAxis(sec, this.scales);
-    const lineGen = d3
-      .line()
+    const lineGen = line()
       .defined((d: any) => !isNaN(d[this.valueField]))
       .x((d: any) => this.scales.x(this.secToDate.invert(d[this.dateField])))
       .y((d: any) => this.scales.y(d[this.valueField]));
-    const areaGen = d3
-      .area()
+    const areaGen = area()
       .defined((d: any) => !isNaN(d[this.valueField]))
       .x((d: any) => this.scales.x(this.secToDate.invert(d[this.dateField])))
       .y0(this.shape.height)
@@ -102,18 +111,18 @@ export class LineChart extends BaseChart {
         y: this.margin.top + this.xAxisHeight + this.xAxisPadding,
       },
     });
-    const maxX = d3.max(this.scales.x.range());
+    const maxX = max(this.scales.x.range());
     // 找不到最大值说明啥数据都没有，直接返回
     if (!maxX) return res;
     this.dataGroupByID.forEach((v: any[], k) => {
       const line = new Path();
       const color = colorPicker.getColor(k);
       line.strokeStyle = color;
-      line.path = lineGen.curve(d3.curveMonotoneX)(v);
+      line.path = lineGen.curve(curveMonotoneX)(v);
       line.lineWidth = 3;
       lineArea.children.push(line);
 
-      const areaPath = areaGen.curve(d3.curveMonotoneX)(v);
+      const areaPath = areaGen.curve(curveMonotoneX)(v);
 
       // 如果画不出Path直接返回
       if (!areaPath) return;
@@ -155,10 +164,7 @@ export class LineChart extends BaseChart {
   }
   protected getScalesBySec(sec: number) {
     const currentData = this.getCurrentData(sec);
-    let valueRange = d3.extent(
-      currentData,
-      (d) => d[this.valueField] as number
-    );
+    let valueRange = extent(currentData, (d) => d[this.valueField] as number);
     if (valueRange[0] == undefined) {
       valueRange = [0, 0];
     }
@@ -178,7 +184,7 @@ export class LineChart extends BaseChart {
         ? this.aniTime[1]
         : sec;
     const scales = {
-      x: d3.scaleLinear(
+      x: scaleLinear(
         [this.aniTime[0], trueSec],
         [
           0,
@@ -192,7 +198,7 @@ export class LineChart extends BaseChart {
             this.pointerR,
         ]
       ),
-      y: d3.scaleLinear(valueRange, [
+      y: scaleLinear(valueRange, [
         this.shape.height -
           this.margin.top -
           this.margin.bottom -
@@ -208,11 +214,11 @@ export class LineChart extends BaseChart {
     const r = this.shape.height;
     // 9w => 4k
     // 使用中值优化，提升>22倍的性能
-    const b = d3.bisector((d: number) => {
+    const b = bisector((d: number) => {
       return canvasHelper.isPointInPath(area, x, d);
     }).left;
-    const range = d3.range(l, r, 1);
-    const index = b(range, true);
-    return range[index];
+    const yRange = range(l, r, 1);
+    const index = b(yRange, true);
+    return yRange[index];
   }
 }

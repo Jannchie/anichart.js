@@ -1,5 +1,6 @@
 import { Component } from "../component/Component";
 import { Stage } from "../Stage";
+import { Ani } from "./Ani";
 
 export interface GridOptions {
   aniTime?: [number, number];

@@ -1,4 +1,4 @@
-import * as d3 from "d3";
+import { GeoPath, GeoPermissibleObjects, GeoProjection, ScaleLinear } from "d3";
 import { Component } from "../component/Component";
 import { Path } from "../component/Path";
 import { Stage } from "../Stage";
@@ -23,10 +23,10 @@ interface MapChartOptions extends BaseChartOptions {
     defaultFill?: string;
 }
 export declare class MapChart extends BaseChart {
-    geoGener: d3.GeoPath<any, d3.GeoPermissibleObjects>;
+    geoGener: GeoPath<any, GeoPermissibleObjects>;
     pathMap: Map<string, string>;
     pathComponentMap: Map<string, Path>;
-    projection: d3.GeoProjection;
+    projection: GeoProjection;
     map: any;
     mapIdField: string;
     visualMap: (t: number) => string;
@@ -35,7 +35,7 @@ export declare class MapChart extends BaseChart {
     strokeStyle: string;
     defaultFill: string;
     projectionType: "orthographic" | "natural" | "mercator" | "equirectangular";
-    scale: d3.ScaleLinear<number, number, never>;
+    scale: ScaleLinear<number, number, never>;
     showGraticule: boolean;
     graticulePath: string;
     graticulePathComp: Path;

@@ -1,4 +1,13 @@
-import * as d3 from "d3";
+import {
+  extent,
+  format,
+  group,
+  max,
+  min,
+  rollup,
+  scaleLinear,
+  ScaleLinear,
+} from "d3";
 import * as _ from "lodash-es";
 import moment from "moment";
 import { Ani } from "../ani/Ani";
@@ -96,12 +105,12 @@ export abstract class BaseChart extends Ani {
 
   dataName = "data";
   metaName = "meta";
-  alphaScale: d3.ScaleLinear<number, number, never>;
-  secToDate: d3.ScaleLinear<any, any, never>;
+  alphaScale: ScaleLinear<number, number, never>;
+  secToDate: ScaleLinear<any, any, never>;
   dateFormat = "%Y-%m-%d";
 
-  xTickFormat = d3.format(",d");
-  yTickFormat = d3.format(",d");
+  xTickFormat = format(",d");
+  yTickFormat = format(",d");
   totallyMax: number;
   totallyMin: number;
   currentMax: number;
@@ -117,8 +126,8 @@ export abstract class BaseChart extends Ani {
     this.setDataScales();
     this.setAlphaScale();
     // 初始化整体最值
-    this.totallyMax = d3.max(this.data, (d) => d[this.valueField]);
-    this.totallyMin = d3.min(this.data, (d) => d[this.valueField]);
+    this.totallyMax = max(this.data, (d) => d[this.valueField]);
+    this.totallyMin = min(this.data, (d) => d[this.valueField]);
     // 初始化历史最值
     this.historyMax = this.totallyMin;
     this.historyMin = this.totallyMin;
@@ -153,8 +162,8 @@ export abstract class BaseChart extends Ani {
         }
       });
     });
-    this.dataGroupByID = d3.group(this.data, (d) => d[this.idField]);
-    const dataGroupByDate = d3.group(this.data, (d) =>
+    this.dataGroupByID = group(this.data, (d) => d[this.idField]);
+    const dataGroupByDate = group(this.data, (d) =>
       (d[this.dateField] as Date).getTime()
     );
     const result = new Map<Date, any>();
@@ -165,10 +174,10 @@ export abstract class BaseChart extends Ani {
   }
   private setDataScales() {
     // 整体日期范围
-    const dateExtent = d3.extent(this.data, (d) => d[this.dateField]);
+    const dateExtent = extent(this.data, (d) => d[this.dateField]);
     // 播放进度到日期的映射
-    this.secToDate = d3.scaleLinear(this.aniTime, dateExtent).clamp(true);
-    const g = d3.group(this.data, (d) => d[this.idField]);
+    this.secToDate = scaleLinear(this.aniTime, dateExtent).clamp(true);
+    const g = group(this.data, (d) => d[this.idField]);
     const dataScales = new Map();
     g.forEach((dataList, k) => {
       // 如果设置了 maxInterval 则需要插入 NaN
@@ -180,7 +189,7 @@ export abstract class BaseChart extends Ani {
       const secList = dateList.map((d) => this.secToDate.invert(d));
 
       // 线性插值
-      const dataScale = d3.scaleLinear(secList, dataList).clamp(true);
+      const dataScale = scaleLinear(secList, dataList).clamp(true);
       dataScales.set(k, dataScale);
     });
     this.dataScales = dataScales;
@@ -241,7 +250,7 @@ export abstract class BaseChart extends Ani {
 
   setMeta() {
     if (recourse.data.get(this.metaName)) {
-      this.meta = d3.rollup(
+      this.meta = rollup(
         _.cloneDeep(recourse.data.get(this.metaName)),
         (v) => v[0],
         (d) => (d as any)[this.idField]
@@ -249,7 +258,7 @@ export abstract class BaseChart extends Ani {
     }
   }
   valueFormat = (cData: any) => {
-    return d3.format(",.0f")(cData[this.valueField]);
+    return format(",.0f")(cData[this.valueField]);
   };
 
   labelFormat: KeyGenerate = (id: string, meta?: Map<string, any>) => {
@@ -261,17 +270,15 @@ export abstract class BaseChart extends Ani {
   };
 
   private setAlphaScale() {
-    this.alphaScale = d3
-      .scaleLinear(
-        [
-          this.aniTime[0] - this.freezeTime[0] - this.fadeTime[0],
-          this.aniTime[0] - this.freezeTime[0],
-          this.aniTime[1] + this.freezeTime[1],
-          this.aniTime[1] + this.freezeTime[1] + this.fadeTime[1],
-        ],
-        [this.fadeTime[0] ? 0 : 1, 1, 1, this.fadeTime[1] ? 0 : 1]
-      )
-      .clamp(true);
+    this.alphaScale = scaleLinear(
+      [
+        this.aniTime[0] - this.freezeTime[0] - this.fadeTime[0],
+        this.aniTime[0] - this.freezeTime[0],
+        this.aniTime[1] + this.freezeTime[1],
+        this.aniTime[1] + this.freezeTime[1] + this.fadeTime[1],
+      ],
+      [this.fadeTime[0] ? 0 : 1, 1, 1, this.fadeTime[1] ? 0 : 1]
+    ).clamp(true);
   }
 
   private setDefaultAniTime(stage: Stage) {
@@ -304,10 +311,7 @@ export abstract class BaseChart extends Ani {
 
   protected getScalesBySec(sec: number) {
     const currentData = this.getCurrentData(sec);
-    let [minValue, maxValue] = d3.extent(
-      currentData,
-      (d) => d[this.valueField]
-    );
+    let [minValue, maxValue] = extent(currentData, (d) => d[this.valueField]);
 
     if (this.historyMax > maxValue) {
       maxValue = this.historyMax;
@@ -322,11 +326,11 @@ export abstract class BaseChart extends Ani {
         ? this.aniTime[1]
         : sec;
     const scales = {
-      x: d3.scaleLinear(
+      x: scaleLinear(
         [this.aniTime[0], trueSec],
         [0, this.shape.width - this.margin.left - this.margin.right]
       ),
-      y: d3.scaleLinear(
+      y: scaleLinear(
         [minValue, maxValue],
         [this.shape.height - this.margin.top - this.margin.bottom, 0]
       ),
@@ -377,15 +381,15 @@ export abstract class BaseChart extends Ani {
 
   protected getAxisComponent(
     format: (v: number | { valueOf(): number }) => string,
-    scale0: d3.ScaleLinear<number, number, never>,
-    scale1: d3.ScaleLinear<number, number, never>,
+    scale0: ScaleLinear<number, number, never>,
+    scale1: ScaleLinear<number, number, never>,
     pos: number,
     count: number,
     text: TextOptions,
     type: "x" | "y",
     sec: number,
     secRange: [number, number],
-    scale: d3.ScaleLinear<number, number, never>
+    scale: ScaleLinear<number, number, never>
   ) {
     const alpha = (sec - secRange[0]) / (secRange[1] - secRange[0]);
     const ticks0 = scale0.ticks(count);

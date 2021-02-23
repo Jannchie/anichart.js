@@ -1,16 +1,16 @@
-import * as d3 from "d3";
+import { easeCubicOut, scaleLinear } from "d3";
 import { easeInterpolate } from "../ani/AniCreator";
 export function customInOut(
   time: [number, number, number, number],
   range: [number, number] = [0, 1],
-  interruption = [d3.easeCubicOut, d3.easeCubicOut]
+  interruption = [easeCubicOut, easeCubicOut]
 ) {
-  const scaleIn = d3
-    .scaleLinear([time[0], time[1]], range)
-    .interpolate(easeInterpolate(interruption[0]));
-  const scaleOut = d3
-    .scaleLinear([time[3], time[2]], range)
-    .interpolate(easeInterpolate(interruption[1]));
+  const scaleIn = scaleLinear([time[0], time[1]], range).interpolate(
+    easeInterpolate(interruption[0])
+  );
+  const scaleOut = scaleLinear([time[3], time[2]], range).interpolate(
+    easeInterpolate(interruption[1])
+  );
 
   return (normalizedTime: number) => {
     if (normalizedTime < time[0]) {
