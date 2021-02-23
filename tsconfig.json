@@ -2,20 +2,31 @@
   "compilerOptions": {
     "outDir": "lib",
     "declarationDir": "typings",
-    "noImplicitAny": false,
-    "module": "ES6",
     "target": "es5",
     "declarationMap": false,
     "declaration": true,
     "inlineSourceMap": true,
     "moduleResolution": "Node",
     "allowUmdGlobalAccess": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
     "esModuleInterop": true,
     "allowJs": true,
     "skipLibCheck": true,
     "downlevelIteration": true,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "noUnusedParameters": false,
+    "noImplicitReturns": true,
+    "noImplicitAny": false,
+    "noUnusedLocals": false
   },
   "compileOnSave": true,
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "exclude": [
+    "node_modules",
+    "**/dist/**",
+    "**/lib/**",
+    "**/test/**",
+    "**/typings/**"
+  ]
 }
