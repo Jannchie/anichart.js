@@ -98,7 +98,8 @@ export class BarChart extends BaseChart {
       const dt = this.secToDate.invert(date);
       [...this.dataScales.entries()]
         .filter((d) => {
-          return !isNaN(d[1](dt)[this.valueField]);
+          const data = d[1](dt);
+          return data != undefined && !isNaN(data[this.valueField]);
         })
         .sort((a, b) => {
           return b[1](dt)[this.valueField] - a[1](dt)[this.valueField];
