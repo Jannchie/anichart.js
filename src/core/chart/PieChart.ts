@@ -3,7 +3,7 @@ import { Path } from "../component/Path";
 import { colorPicker } from "../ColorPicker";
 import { FontWeight, Text } from "../component/Text";
 import { font } from "../Constant";
-import { arc, max, pie, scaleLinear, timeFormat } from "d3";
+import { arc, max, pie, scaleLinear, sum, timeFormat } from "d3";
 interface PieChartOptions extends BaseChartOptions {
   radius?: [number, number];
   labelTextStyle?: {
@@ -102,8 +102,9 @@ export class PieChart extends BaseChart implements PieChartOptions {
     const currentData = [...this.dataScales.values()].map((scale) => {
       return scale(sec);
     });
-    const maxValue = max(currentData, (d) => d[this.valueField]);
-    const minValue = maxValue * this.minRadio;
+    const minRadio = this.minRadio / 360;
+    const sumValue = sum(currentData, (d) => d[this.valueField]);
+    const minValue = sumValue * minRadio;
     const pieGen = pie()
       .padAngle((Math.PI / 180) * this.padAngle)
       .value((d) => max([d[this.valueField], minValue]));
