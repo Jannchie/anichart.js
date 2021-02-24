@@ -16,8 +16,10 @@ interface PieChartOptions extends BaseChartOptions {
   showDateLabel?: boolean;
   cornerRadius?: number;
   padAngle?: number;
+  minRadio?: number;
 }
 export class PieChart extends BaseChart implements PieChartOptions {
+  minRadio: number = 0;
   radius: [number, number] = [0, 120];
   cornerRadius: number = 4;
   padAngle: number = 5;
@@ -100,9 +102,8 @@ export class PieChart extends BaseChart implements PieChartOptions {
     const currentData = [...this.dataScales.values()].map((scale) => {
       return scale(sec);
     });
-    const minRadio = 5 / 360;
     const maxValue = max(currentData, (d) => d[this.valueField]);
-    const minValue = maxValue * minRadio;
+    const minValue = maxValue * this.minRadio;
     const pieGen = pie()
       .padAngle((Math.PI / 180) * this.padAngle)
       .value((d) => max([d[this.valueField], minValue]));
