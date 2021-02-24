@@ -1,18 +1,28 @@
 {
   "compilerOptions": {
     "outDir": "lib",
-    "noImplicitAny": false,
-    "module": "es6",
     "target": "es5",
-    "declarationMap": false,
     "declaration": false,
     "inlineSourceMap": true,
     "moduleResolution": "Node",
     "allowUmdGlobalAccess": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
     "esModuleInterop": true,
     "allowJs": true,
+    "skipLibCheck": true,
     "downlevelIteration": true,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "noUnusedParameters": false,
+    "noImplicitReturns": true,
+    "noImplicitAny": false,
+    "noUnusedLocals": false,
+    "allowUnreachableCode": false,
+    "disableSizeLimit": true,
+    "disableReferencedProjectLoad": true,
+    "extendedDiagnostics": true,
+    "noImplicitUseStrict": true,
+    "noImplicitThis": true
   },
   "compileOnSave": true,
   "include": ["src/**/*"]

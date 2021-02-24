@@ -3,7 +3,7 @@ import { Path } from "../component/Path";
 import { colorPicker } from "../ColorPicker";
 import { FontWeight, Text } from "../component/Text";
 import { font } from "../Constant";
-import { arc, pie, scaleLinear } from "d3";
+import { arc, max, pie, scaleLinear, sum, timeFormat } from "d3";
 interface PieChartOptions extends BaseChartOptions {
   radius?: [number, number];
   labelTextStyle?: {
@@ -13,10 +13,13 @@ interface PieChartOptions extends BaseChartOptions {
     fontWeight: FontWeight;
     strokeStyle: string;
   };
+  showDateLabel?: boolean;
   cornerRadius?: number;
   padAngle?: number;
+  minRadio?: number;
 }
 export class PieChart extends BaseChart implements PieChartOptions {
+  minRadio: number = 0;
   radius: [number, number] = [0, 120];
   cornerRadius: number = 4;
   padAngle: number = 5;
@@ -28,6 +31,8 @@ export class PieChart extends BaseChart implements PieChartOptions {
     fontWeight: "bolder" as FontWeight,
     strokeStyle: "#1e1e1e",
   };
+  dateLabel: Text;
+  showDateLabel: boolean;
   constructor(options?: PieChartOptions) {
     super(options);
     if (options) {
@@ -37,13 +42,24 @@ export class PieChart extends BaseChart implements PieChartOptions {
 
   getComponent(sec: number) {
     const res = super.getComponent(sec);
+    if (this.showDateLabel) {
+      const date = this.secToDate(sec);
+      const dateLabel = new Text({
+        text: timeFormat(this.dateFormat)(date),
+        fillStyle: "#FFF",
+        fontSize: 30,
+        position: { x: 0, y: 0 },
+      });
+      res?.children.push(dateLabel);
+    }
+
     const remained = sec % this.keyDurationSec;
     const start = sec - remained;
     const end = start + this.keyDurationSec;
     const comp0 = this.getPieData(start);
     const comp1 = this.getPieData(end);
     const pieData = scaleLinear([start, end], [comp0, comp1])(remained + start);
-    const arcGen = arc().innerRadius(0).outerRadius(100);
+    const arcGen = arc();
     for (const d of pieData) {
       const path = arcGen
         .endAngle(d.endAngle)
@@ -83,13 +99,16 @@ export class PieChart extends BaseChart implements PieChartOptions {
   }
 
   private getPieData(sec: number) {
-    const pieGen = pie()
-      .padAngle((Math.PI / 180) * this.padAngle)
-      .value((d) => d[this.valueField]);
-
     const currentData = [...this.dataScales.values()].map((scale) => {
       return scale(sec);
     });
+    const minRadio = this.minRadio / 360;
+    const sumValue = sum(currentData, (d) => d[this.valueField]);
+    const minValue = sumValue * minRadio;
+    const pieGen = pie()
+      .padAngle((Math.PI / 180) * this.padAngle)
+      .value((d) => max([d[this.valueField], minValue]));
+
     currentData.sort((a, b) => {
       if (Number.isNaN(b[this.valueField])) {
         return -1;
