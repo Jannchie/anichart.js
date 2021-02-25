@@ -9,12 +9,12 @@ export class Ani {
     this.children = ani?.children ?? [];
   }
   getComponent(sec: number): Component | null {
-    return new Component();
+    return null;
   }
   setup(stage: Stage) {
     this.stage = stage;
-    this?.children?.forEach((child: Component | Ani) => {
-      child?.setup?.(stage);
+    this.children.forEach((child: Component | Ani) => {
+      child.setup(stage);
     });
   }
 }

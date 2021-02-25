@@ -41,7 +41,7 @@ export class CanvasRenderer {
           this.renderArc(component as Arc);
           break;
         case "Line":
-          this.renderLine(component as Path);
+          this.renderPath(component as Path);
           break;
       }
       // render children components
@@ -64,7 +64,7 @@ export class CanvasRenderer {
     if (arc.strokeStyle) this.ctx.stroke();
     if (arc.fillStyle) this.ctx.fill();
   }
-  renderLine(line: Path) {
+  renderPath(line: Path) {
     if (!line.path) {
       return;
     }

@@ -35,7 +35,7 @@ interface MapChartOptions extends BaseChartOptions {
 }
 export class MapChart extends BaseChart {
   geoGener: GeoPath<any, GeoPermissibleObjects>;
-  pathMap: Map<string, string>;
+  pathMap: Map<string, string | null>;
   pathComponentMap: Map<string, Path>;
   projection: GeoProjection;
   map: any;
@@ -123,17 +123,14 @@ export class MapChart extends BaseChart {
     const geoGener = geoPath(projection);
     this.geoGener = geoGener;
     this.pathMap = new Map<string, string>();
-    this.updatePathMap(map, geoGener);
+    this.initPathMap(map, geoGener);
   }
 
-  private updatePathMap(
-    map: any,
-    geoGener: GeoPath<any, GeoPermissibleObjects>
-  ) {
+  private initPathMap(map: any, geoGener: GeoPath<any, GeoPermissibleObjects>) {
     for (const feature of map.features) {
       const mapId = feature.properties[this.mapIdField];
       const path = geoGener(feature);
-      if (path) this.pathMap.set(mapId, path);
+      this.pathMap.set(mapId, path);
     }
   }
   private initComps() {
@@ -215,7 +212,9 @@ export class MapChart extends BaseChart {
       const mapId = feature.properties[this.mapIdField];
       const path = this.geoGener(feature);
       const comp = this.pathComponentMap.get(mapId);
-      if (comp && path) comp.path = path;
+      if (comp && path) {
+        comp.path = path;
+      }
     }
     for (const [id, data] of this.dataScales) {
       const mapId = this.getMapId(id);
