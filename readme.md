@@ -12,6 +12,8 @@
     <a href="https://lgtm.com/projects/g/Jannchie/anichart.js/context:javascript"><img alt="Language grade: JavaScript" src="https://img.shields.io/lgtm/grade/javascript/g/Jannchie/anichart.js.svg?style=flat-square&logo=lgtm&logoWidth=18"/></a>
 </p>
 
+[中文文档](https://anichart-doc.netlify.app/)
+
 轻松地制作数据可视化动画视频。
 
 ## 示例
