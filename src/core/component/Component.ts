@@ -1,3 +1,6 @@
+import { Ani } from "../ani/Ani";
+import { Stage } from "../Stage";
+
 export interface ShadowOptions {
   enable?: boolean;
   color?: string;
@@ -27,18 +30,19 @@ export class Component {
   position: { x: number; y: number };
   offset: { x: number; y: number } = { x: 0, y: 0 };
   scale: { x: number; y: number };
-  children: (Component | null)[] = [];
+  children: (Component | Ani)[] = [];
   alpha: number;
   filter: string;
   fillStyle: string | CanvasGradient | CanvasPattern;
   strokeStyle: string | CanvasGradient | CanvasPattern;
   lineWidth: number;
-  setup() {
+  stage: Stage;
+  setup(stage: Stage): void {
     this.children.forEach((child: Component) => {
-      child.setup();
+      child.setup(stage);
     });
   }
-  addChild(comp: Component | null) {
+  addChild(comp: Component | Ani) {
     this.children.push(comp);
   }
   constructor(options?: BaseCompOptions) {

@@ -11,9 +11,11 @@ export class CanvasHelper {
   renderer: CanvasRenderer = canvasRenderer;
   constructor() {
     var canvas = document.querySelector("canvas");
-    if (canvas) {
-      this.renderer.canvas = canvas;
+    if (!canvas) {
+      canvas = document.createElement("canvas");
     }
+    this.renderer.canvas = canvas;
+    this.renderer.ctx = canvas.getContext("2d")!;
   }
 
   measure<T extends Component>(c: T) {

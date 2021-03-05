@@ -6,6 +6,7 @@ import { fontSize as defaultFontSize } from "../Constant";
 export class TextLinesAni extends Ani {
   component: Text = new Text();
   lineSpacing = 0;
+  children: Text[] = new Array<Text>();
   getComponent(sec: number) {
     this.component.text = "";
     this.component.children = [];

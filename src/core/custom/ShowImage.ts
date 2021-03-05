@@ -45,7 +45,7 @@ export function showImage({
       ])
     );
   }
-  ani.children.push(wrapped);
+  // ani.children.push(wrapped);
   ani.getComponent = (sec) => {
     return wrapped.getComponent(sec);
   };

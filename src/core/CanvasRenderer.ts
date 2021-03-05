@@ -5,9 +5,12 @@ import { Image } from "./component/Image";
 import { recourse } from "./Recourse";
 import { Path } from "./component/Path";
 import { Arc } from "./component/Arc";
+import { Ani } from "./ani/Ani";
+import { Stage } from "./Stage";
 export class CanvasRenderer {
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
+  stage: Stage;
   constructor(canvas?: HTMLCanvasElement) {
     if (canvas) this.setCanvas(canvas);
   }
@@ -18,35 +21,43 @@ export class CanvasRenderer {
     this.canvas = canvas;
     this.ctx = this.canvas.getContext("2d")!;
   }
-  render(component: Component) {
-    if (!component) return;
+  render(child: Component | Ani | null) {
+    const sec = this.stage.sec;
+    let comp: Component | Ani | null;
+    if (child instanceof Ani) {
+      comp = child?.getComponent(sec);
+    } else {
+      comp = child;
+    }
+    if (!comp) return;
+
     this.ctx.save();
-    // render itself
-    // render base component props
-    this.renderBase(component);
 
     // render special component props
-    if (this.ctx.globalAlpha >= 0) {
-      switch (component.type) {
+    if (this.ctx.globalAlpha > 0) {
+      // render itself
+      // render base component props
+      this.renderBase(comp);
+      switch (comp.type) {
         case "Text":
-          this.renderText(component as Text);
+          this.renderText(comp as Text);
           break;
         case "Rect":
-          this.renderRect(component as Rect);
+          this.renderRect(comp as Rect);
           break;
         case "Image":
-          this.renderImage(component as Image);
+          this.renderImage(comp as Image);
           break;
         case "Arc":
-          this.renderArc(component as Arc);
+          this.renderArc(comp as Arc);
           break;
         case "Line":
-          this.renderPath(component as Path);
+          this.renderPath(comp as Path);
           break;
       }
       // render children components
-      component.children.forEach((child) => {
-        if (child) this.render(child);
+      comp.children.forEach((c) => {
+        if (c) this.render(c);
       });
     }
     this.ctx.restore();

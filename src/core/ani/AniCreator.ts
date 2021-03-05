@@ -82,16 +82,11 @@ export function createAni<T extends Component>(
   const scale = scaleLinear(keyTimes, keyFrames)
     .interpolate(easeInterpolate(ease))
     .clamp(true);
-  return {
-    stage: undefined,
-    children: [],
-    setup() {
-      return;
-    },
-    getComponent: (i: number): T => {
-      return scale(i);
-    },
+  const ani = new Ani();
+  ani.getComponent = (i) => {
+    return scale(i);
   };
+  return ani;
 }
 
 export function getFadeAni(
