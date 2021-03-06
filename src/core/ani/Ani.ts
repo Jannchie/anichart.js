@@ -3,9 +3,9 @@ import { Stage } from "../Stage";
 
 export class Ani {
   stage: Stage | undefined;
-  constructor(ani?: Ani) {
-    this.stage = ani?.stage;
-  }
+  offsetSec: number = 0;
+  parent: Ani | Component;
+  constructor() {}
   getComponent(sec: number): Component | null {
     return null;
   }

@@ -59,7 +59,7 @@ export class Stage {
 
   render(sec: number) {
     this.renderer.clean();
-    this.renderer.render(this.compRoot);
+    this.renderer.render(this.compRoot, this.compRoot.offsetSec);
   }
 
   loadRecourse() {

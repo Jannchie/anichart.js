@@ -11,6 +11,7 @@ export interface ShadowOptions {
 }
 export interface BaseCompOptions {
   shadow?: ShadowOptions;
+  offsetSec?: number;
   center?: { x: number; y: number };
   position?: { x: number; y: number };
   offset?: { x: number; y: number };
@@ -25,6 +26,7 @@ export interface BaseCompOptions {
 
 export class Component {
   type = "Component";
+  offsetSec: number = 0;
   shadow = { enable: false } as ShadowOptions;
   center: { x: number; y: number } = { x: 0, y: 0 };
   position: { x: number; y: number };
@@ -37,6 +39,7 @@ export class Component {
   strokeStyle: string | CanvasGradient | CanvasPattern;
   lineWidth: number;
   stage: Stage;
+  parent: Component | Ani;
   setup(stage: Stage): void {
     this.children.forEach((child: Component) => {
       child.setup(stage);
@@ -44,9 +47,11 @@ export class Component {
   }
   addChild(comp: Component | Ani) {
     this.children.push(comp);
+    comp.parent = this;
   }
   constructor(options?: BaseCompOptions) {
     if (options) {
+      if (options.offsetSec) this.offsetSec = options.offsetSec;
       if (options.center) this.center = options.center;
       if (options.shadow) this.shadow = options.shadow;
       if (options.position) this.position = options.position;

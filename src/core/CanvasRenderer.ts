@@ -7,6 +7,7 @@ import { Path } from "./component/Path";
 import { Arc } from "./component/Arc";
 import { Ani } from "./ani/Ani";
 import { Stage } from "./Stage";
+import { Scene } from "./ani/Series";
 export class CanvasRenderer {
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
@@ -21,18 +22,18 @@ export class CanvasRenderer {
     this.canvas = canvas;
     this.ctx = this.canvas.getContext("2d")!;
   }
-  render(child: Component | Ani | null) {
+  render(child: Component | Ani | null, offset: number = 0) {
+    if (!child) return;
+    offset += child.offsetSec;
     const sec = this.stage.sec;
     let comp: Component | Ani | null;
     if (child instanceof Ani) {
-      comp = child?.getComponent(sec);
+      comp = child?.getComponent(sec - offset);
     } else {
       comp = child;
     }
     if (!comp) return;
-
     this.ctx.save();
-
     // render special component props
     if (this.ctx.globalAlpha > 0) {
       // render itself
@@ -57,7 +58,7 @@ export class CanvasRenderer {
       }
       // render children components
       comp.children.forEach((c) => {
-        if (c) this.render(c);
+        if (c) this.render(c, offset);
       });
     }
     this.ctx.restore();
