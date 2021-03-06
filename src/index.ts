@@ -17,6 +17,8 @@ export * from "./core/component/Arc";
 export * from "./core/component/Component";
 export * from "./core/component/Image";
 export * from "./core/component/Path";
+export * from "./core/component/Grid";
+export * from "./core/component/Scene";
 export * from "./core/component/Rect";
 export * from "./core/component/Text";
 
@@ -27,6 +29,7 @@ export * from "./core/chart/BaseChart";
 export * from "./core/chart/PieChart";
 export * from "./core/chart/MapChart";
 
+export * from "./core/ani/Effector";
 export * from "./core/ani/Ani";
 export * from "./core/ani/AniCreator";
 export * from "./core/util/Ease";
