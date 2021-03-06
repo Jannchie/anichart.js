@@ -41,6 +41,7 @@ export class Text extends Component {
       this.font = options.font ?? font;
       this.fontStyle = options.fontStyle ?? "normal";
       this.fontSize = options.fontSize ?? fontSize;
+      this.fillStyle = options.fillStyle ?? "#888";
     }
   }
   text: string = "";
