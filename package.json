@@ -1,6 +1,6 @@
 {
   "name": "anichart",
-  "version": "2.0.2-3",
+  "version": "2.0.2-4",
   "description": "Data visualization animation library",
   "author": "jannchie <jannchie@gmail.com>",
   "license": "MIT",
@@ -19,6 +19,7 @@
   "files": [
     "dist/**/*",
     "lib/**/*",
+    "src/**/*",
     "typings/**/*"
   ],
   "scripts": {
