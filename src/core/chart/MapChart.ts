@@ -29,7 +29,6 @@ interface MapChartOptions extends BaseChartOptions {
   mapIdField?: string;
   visualMap?: (t: number) => string;
   getMapId?: (id: string) => string;
-  visualRange?: "total" | "current" | "history" | [number, number];
   strokeStyle?: string;
   defaultFill?: string;
 }
@@ -41,7 +40,6 @@ export class MapChart extends BaseChart {
   map: any;
   mapIdField: string;
   visualMap: (t: number) => string;
-  visualRange: "total" | "current" | "history" | [number, number];
   getMapId: (id: string) => string;
   strokeStyle: string;
   defaultFill: string;
@@ -70,7 +68,6 @@ export class MapChart extends BaseChart {
     this.strokeStyle = options.strokeStyle ?? "#FFF";
     this.defaultFill = options.defaultFill ?? "#FFF1";
     this.projectionType = options.projectionType ?? "natural";
-    this.visualRange = options.visualRange ?? "current";
     this.useShadow = options.useShadow ?? false;
     this.pathShadowColor = options.pathShadowColor;
     this.pathShadowBlur = options.pathShadowBlur ?? 100;

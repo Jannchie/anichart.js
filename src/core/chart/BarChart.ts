@@ -187,20 +187,35 @@ export class BarChart extends BaseChart {
         ),
       new Map()
     );
-    const [min, max] = extent(currentData, (d) => d[this.valueField]);
-    const scaleX = scaleLinear(
-      [0, max],
-      [
-        0,
-        this.shape.width -
-          this.margin.left -
-          this.barPadding -
-          this.labelPlaceholder -
-          this.margin.right -
-          this.valuePlaceholder,
-      ]
-    );
-
+    let scaleX: ScaleLinear<number, number, never>;
+    if (this.visualRange != "history") {
+      const [_, max] = extent(currentData, (d) => d[this.valueField]);
+      scaleX = scaleLinear(
+        [0, max],
+        [
+          0,
+          this.shape.width -
+            this.margin.left -
+            this.barPadding -
+            this.labelPlaceholder -
+            this.margin.right -
+            this.valuePlaceholder,
+        ]
+      );
+    } else {
+      scaleX = scaleLinear(
+        [0, max(this.data, (d) => d[this.valueField])],
+        [
+          0,
+          this.shape.width -
+            this.margin.left -
+            this.barPadding -
+            this.labelPlaceholder -
+            this.margin.right -
+            this.valuePlaceholder,
+        ]
+      );
+    }
     const res = new Component({
       alpha: this.alphaScale(sec),
       position: this.position,

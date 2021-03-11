@@ -38,11 +38,11 @@ export interface BaseChartOptions {
   valueFormat?: (cData: any) => string;
   labelFormat?: (
     id: string,
-    meta: Map<string, any>,
-    data: Map<string, any>
+    meta?: Map<string, any>,
+    data?: Map<string, any>
   ) => string;
   dateFormat?: string;
-
+  visualRange?: "total" | "current" | "history" | [number, number];
   dataName?: string;
   metaName?: string;
   maxIntervalMS?: number;
@@ -62,6 +62,7 @@ export abstract class BaseChart extends Ani {
   xAxisPadding: number = 4;
   maxIntervalMS: number;
   dataGroupByDate: Map<any, any[]>;
+  visualRange: "total" | "current" | "history" | [number, number];
   constructor(options?: BaseChartOptions) {
     super();
     if (!options) return;
@@ -81,6 +82,7 @@ export abstract class BaseChart extends Ani {
     if (options.valueFormat) this.valueFormat = options.valueFormat;
     if (options.dataName) this.dataName = options.dataName;
     if (options.metaName) this.metaName = options.metaName;
+    if (options.visualRange) this.visualRange = options.visualRange;
     if (options.position) this.position = options.position;
     this.maxIntervalMS = options.maxIntervalMS ?? Number.MAX_VALUE;
   }
@@ -208,7 +210,7 @@ export abstract class BaseChart extends Ani {
         this.maxIntervalMS
       ) {
         const obj = Object.assign({}, last);
-        obj[this.valueField] = NaN;
+        obj[this.valueField] = 0;
         obj[this.dateField] = new Date(obj[this.dateField].getTime() + 1);
         // console.log(obj);
         dataList.push(obj);
@@ -220,7 +222,7 @@ export abstract class BaseChart extends Ani {
         this.maxIntervalMS
       ) {
         const obj = Object.assign({}, first);
-        obj[this.valueField] = NaN;
+        obj[this.valueField] = 0;
         obj[this.dateField] = new Date(obj[this.dateField].getTime() - 1);
         // console.log(obj);
         dataList.unshift(obj);
@@ -261,7 +263,11 @@ export abstract class BaseChart extends Ani {
     return format(",.0f")(cData[this.valueField]);
   };
 
-  labelFormat: KeyGenerate = (id: string, meta?: Map<string, any>) => {
+  labelFormat: KeyGenerate = (
+    id: string,
+    meta?: Map<string, any>,
+    data?: any
+  ) => {
     if (meta && meta.get(id) && meta.get(id).name) {
       return meta.get(id).name;
     } else {
