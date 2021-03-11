@@ -95,11 +95,13 @@ export class Stage {
             frames.push(this.cFrame);
           }
           eachLimit(frames, this.outputConcurrency, (f, cb) => {
+            this.cFrame = f;
             this.render(f / this.options.fps);
             const no =
               f - (p - 1) * this.outputOptions.splitSec * this.options.fps;
             picNameList.push(`output-${no}.png`);
-            addFrameToFFmpeg(this.canvas, no).then(() => cb());
+            const imageData = this.canvas.toDataURL("image/png", 0.99);
+            addFrameToFFmpeg(imageData, no).then(() => cb());
           }).then(() => {
             outputMP4(this.options.fps).then(() => {
               removePNG(picNameList);

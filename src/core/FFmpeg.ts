@@ -12,12 +12,10 @@ export type Preset =
   | "placebo ";
 export const ffmpeg = createFFmpeg({ log: true });
 export async function addFrameToFFmpeg(
-  canvas: HTMLCanvasElement,
+  imageData: string,
   frame: number,
-  name = "output",
-  quality = 1
+  name = "output"
 ) {
-  const imageData = canvas.toDataURL("image/png", quality);
   ffmpeg.FS("writeFile", `${name}-${frame}.png`, await fetchFile(imageData));
 }
 export function removePNG(list: string[]) {
